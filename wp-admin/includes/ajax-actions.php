@@ -1409,17 +1409,12 @@ function wp_ajax_replyto_comment( $action ) {
 	$position = ( isset( $_POST['position'] ) && (int) $_POST['position'] ) ? (int) $_POST['position'] : '-1';
 
 	ob_start();
-	if ( isset( $_REQUEST['mode'] ) && 'dashboard' === $_REQUEST['mode'] ) {
-		require_once ABSPATH . 'wp-admin/includes/dashboard.php';
-		_wp_dashboard_recent_comments_row( $comment );
+	if ( isset( $_REQUEST['mode'] ) && 'single' === $_REQUEST['mode'] ) {
+		$wp_list_table = _get_list_table( 'WP_Post_Comments_List_Table', array( 'screen' => 'edit-comments' ) );
 	} else {
-		if ( isset( $_REQUEST['mode'] ) && 'single' === $_REQUEST['mode'] ) {
-			$wp_list_table = _get_list_table( 'WP_Post_Comments_List_Table', array( 'screen' => 'edit-comments' ) );
-		} else {
-			$wp_list_table = _get_list_table( 'WP_Comments_List_Table', array( 'screen' => 'edit-comments' ) );
-		}
-		$wp_list_table->single_row( $comment );
+		$wp_list_table = _get_list_table( 'WP_Comments_List_Table', array( 'screen' => 'edit-comments' ) );
 	}
+	$wp_list_table->single_row( $comment );
 	$comment_list_item = ob_get_clean();
 
 	$response_data = array(

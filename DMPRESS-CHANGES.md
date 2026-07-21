@@ -10,8 +10,8 @@ This document logs everything that has been changed relative to stock WordPress 
 5. [Upstream WordPress fixes ported](#5-upstream-wordpress-fixes-ported)
 6. [Known consequences & decisions](#6-known-consequences--decisions)
 
-> **Baseline:** stock WordPress 7.0. **Product version:** DMPress 1.0.0-beta.5 (pre-release).
-> Internally `$wp_version` remains `7.0` for plugin/API compatibility; `$dmpress_version` (`1.0.0-beta.5`) is the product version shown to users.
+> **Baseline:** stock WordPress 7.0. **Product version:** DMPress 1.0.0-beta.6 (pre-release).
+> Internally `$wp_version` remains `7.0` for plugin/API compatibility; `$dmpress_version` (`1.0.0-beta.6`) is the product version shown to users.
 
 ---
 
@@ -41,11 +41,17 @@ DMPress does not render any front-end HTML from core. Front-end requests no long
 ### Theme template system — reduced to metadata
 Themes no longer contain templates or `style.css`. The default `dmpone` theme was reduced to a single `theme.json` manifest. (Core's now-inert front-end template functions were left in place to avoid breaking plugins; they are never invoked.)
 
-### Dashboard clutter — removed
+### Dashboard widgets — removed
+The dashboard now ships with no content widgets at all:
+
 - Welcome/"Get started" banner
 - **WordPress Events and News** widget
-- **Quick Draft** widget
-- (Related help-tab text and the `post-quickdraft-save` handler were removed too.)
+- **Quick Draft** widget (and the `post-quickdraft-save` handler)
+- **At a Glance** (`wp_dashboard_right_now`) — plus `wp_dashboard_quota`, which only ran on the `activity_box_end` hook that this widget fired
+- **Activity** (`wp_dashboard_site_activity`) — plus its helpers `wp_dashboard_recent_posts`, `wp_dashboard_recent_comments` and `_wp_dashboard_recent_comments_row`, and the `mode=dashboard` branch of the comment-reply AJAX handler that only the Activity widget used
+- Related help-tab text was removed alongside each widget.
+
+Only the conditional browser/PHP upgrade nags remain, and the dashboard API (`wp_add_dashboard_widget()`, the RSS widget helpers, the `wp_dashboard_setup` hook) is untouched so plugins can still add their own widgets.
 
 ### Site Health — removed
 The Site Health feature is gone in its entirety:
@@ -118,7 +124,7 @@ Inert, no-op implementations of the public block API (`register_block_type`, `re
 
 ### Dual-version scheme — `wp-includes/version.php`
 - `$wp_version = '7.0'` (compatibility: plugin `Requires at least`, wordpress.org APIs, WP-CLI). **Never** set this to the DMPress version — doing so breaks plugin installation.
-- `$dmpress_version = '1.0.0-beta.5'` (product version shown in generator tags, admin footer, dashboard).
+- `$dmpress_version = '1.0.0-beta.6'` (product version shown in generator tags, admin footer, dashboard).
 
 **Release process:** bump `$dmpress_version` on every published release/push — `1.0.0-beta.1` → `1.0.0-beta.2` → … → `1.0.0` — and record what changed in this file.
 
