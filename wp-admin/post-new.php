@@ -16,7 +16,14 @@ require_once __DIR__ . '/admin.php';
  */
 global $post_type, $post_type_object, $post;
 
+/*
+ * DMPress: the default 'post' type is a deletable Content-Type Builder entry,
+ * so validate it like any other rather than assuming it is registered.
+ */
 if ( ! isset( $_GET['post_type'] ) ) {
+	if ( ! post_type_exists( 'post' ) ) {
+		wp_die( __( 'Invalid post type.' ), '', 404 );
+	}
 	$post_type = 'post';
 } elseif ( in_array( $_GET['post_type'], get_post_types( array( 'show_ui' => true ) ), true ) ) {
 	$post_type = $_GET['post_type'];

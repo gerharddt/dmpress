@@ -18,6 +18,15 @@ if ( ! $typenow ) {
 	wp_die( __( 'Invalid post type.' ) );
 }
 
+/*
+ * DMPress: 'post' is a deletable Content-Type Builder entry, so this screen's
+ * default type may legitimately not exist. Report that as an invalid post type
+ * (404) rather than the misleading "not allowed" permission error.
+ */
+if ( ! post_type_exists( $typenow ) ) {
+	wp_die( __( 'Invalid post type.' ), '', 404 );
+}
+
 if ( ! in_array( $typenow, get_post_types( array( 'show_ui' => true ) ), true ) ) {
 	wp_die( __( 'Sorry, you are not allowed to edit posts in this post type.' ) );
 }
