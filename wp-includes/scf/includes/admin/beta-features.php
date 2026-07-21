@@ -90,6 +90,18 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 		 * @return  void
 		 */
 		public function admin_menu() {
+			/*
+			 * DMPress: the "Beta Features" item is not exposed in the
+			 * Content-Type Builder's "More" menu. Returning before
+			 * add_submenu_page() unregisters the page entirely, so it also
+			 * drops out of the nav (which is built from $submenu) and is not
+			 * reachable by URL. The class, scf_register_admin_beta_feature()
+			 * and acf()->admin_beta_features all remain intact so nothing
+			 * that references them fatals.
+			 */
+			return;
+
+			// phpcs:disable Squiz.PHP.NonExecutableCode.Unreachable
 			// bail early if no show_admin
 			if ( ! acf_get_setting( 'show_admin' ) ) {
 				return;
@@ -99,6 +111,7 @@ if ( ! class_exists( 'SCF_Admin_Beta_Features' ) ) :
 
 			add_action( 'load-' . $page, array( $this, 'load' ) );
 			add_action( 'admin_enqueue_scripts', array( $this, 'add_beta_features_script' ), 20 );
+			// phpcs:enable Squiz.PHP.NonExecutableCode.Unreachable
 		}
 
 		/**
