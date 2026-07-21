@@ -1,0 +1,7 @@
+{
+	"name": "DMS One",
+	"version": "1.0.0",
+	"description": "Default metadata-only theme for DMPress. DMPress is headless — themes carry no templates; the front end is served via the REST API or a separate headless application.",
+	"author": "Ninjas For Hire",
+	"requiresPHP": "7.4"
+}

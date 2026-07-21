@@ -1,0 +1,37 @@
+# DMPress — repository ignore rules
+#
+# IMPORTANT: wp-config.php is intentionally excluded. It holds database
+# credentials and the secret auth keys/salts for a specific installation and
+# must never be committed. Distribute wp-config-sample.php instead; each site
+# creates its own wp-config.php at install time.
+
+# Local site configuration (database credentials + secret salts)
+/wp-config.php
+
+# Per-site content and generated data
+/wp-content/uploads/
+/wp-content/upgrade/
+/wp-content/upgrade-temp-backup/
+/wp-content/cache/
+/wp-content/backup-db/
+/wp-content/blogs.dir/
+/wp-content/advanced-cache.php
+/wp-content/db.php
+/wp-content/object-cache.php
+/wp-content/debug.log
+
+# Headless front-end build output (drop-in entry served by index.php)
+/front/
+
+# Local tooling / editor / OS noise
+/.claude/settings.local.json
+.DS_Store
+Thumbs.db
+*.log
+*.swp
+*~
+.idea/
+.vscode/
+
+# Dependency directories that should be installed, not committed
+node_modules/
