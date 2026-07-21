@@ -692,7 +692,7 @@ class WP_Plugins_List_Table extends WP_List_Table {
 		} elseif ( 'top' === $which && 'dropins' === $status ) {
 			echo '<p>' . sprintf(
 				/* translators: %s: wp-content directory name. */
-				__( 'Drop-ins are single files, found in the %s directory, that replace or enhance WordPress features in ways that are not possible for traditional plugins.' ),
+				__( 'Drop-ins are single files, found in the %s directory, that replace or enhance DMPress features in ways that are not possible for traditional plugins.' ),
 				'<code>' . str_replace( ABSPATH, '', WP_CONTENT_DIR ) . '</code>'
 			) . '</p>';
 		}
@@ -1434,11 +1434,11 @@ class WP_Plugins_List_Table extends WP_List_Table {
 
 			$incompatible_message = '';
 			if ( ! $compatible_php && ! $compatible_wp ) {
-				$incompatible_message .= __( 'This plugin does not work with your versions of WordPress and PHP.' );
+				$incompatible_message .= __( 'This plugin does not work with your versions of DMPress and PHP.' );
 				if ( current_user_can( 'update_core' ) && current_user_can( 'update_php' ) ) {
 					$incompatible_message .= sprintf(
 						/* translators: 1: URL to WordPress Updates screen, 2: URL to Update PHP page. */
-						' ' . __( '<a href="%1$s">Please update WordPress</a>, and then <a href="%2$s">learn more about updating PHP</a>.' ),
+						' ' . __( '<a href="%1$s">Please update DMPress</a>, and then <a href="%2$s">learn more about updating PHP</a>.' ),
 						self_admin_url( 'update-core.php' ),
 						esc_url( wp_get_update_php_url() )
 					);
@@ -1446,7 +1446,7 @@ class WP_Plugins_List_Table extends WP_List_Table {
 				} elseif ( current_user_can( 'update_core' ) ) {
 					$incompatible_message .= sprintf(
 						/* translators: %s: URL to WordPress Updates screen. */
-						' ' . __( '<a href="%s">Please update WordPress</a>.' ),
+						' ' . __( '<a href="%s">Please update DMPress</a>.' ),
 						self_admin_url( 'update-core.php' )
 					);
 				} elseif ( current_user_can( 'update_php' ) ) {
@@ -1458,11 +1458,11 @@ class WP_Plugins_List_Table extends WP_List_Table {
 					$incompatible_message .= wp_update_php_annotation( '</p><p><em>', '</em>', false );
 				}
 			} elseif ( ! $compatible_wp ) {
-				$incompatible_message .= __( 'This plugin does not work with your version of WordPress.' );
+				$incompatible_message .= __( 'This plugin does not work with your version of DMPress.' );
 				if ( current_user_can( 'update_core' ) ) {
 					$incompatible_message .= sprintf(
 						/* translators: %s: URL to WordPress Updates screen. */
-						' ' . __( '<a href="%s">Please update WordPress</a>.' ),
+						' ' . __( '<a href="%s">Please update DMPress</a>.' ),
 						self_admin_url( 'update-core.php' )
 					);
 				}

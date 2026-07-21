@@ -1229,7 +1229,7 @@ class wpdb {
 
 				$message .= '<p>' . sprintf(
 					/* translators: %s: Support forums URL. */
-					__( 'If you do not know how to set up a database you should <strong>contact your host</strong>. If all else fails you may find help at the <a href="%s">WordPress support forums</a>.' ),
+					__( 'If you do not know how to set up a database you should <strong>contact your host</strong>. If all else fails you may find help at the <a href="%s">DMPress support forums</a>.' ),
 					__( 'https://wordpress.org/support/forums/' )
 				) . "</p>\n";
 
@@ -1833,7 +1833,7 @@ class wpdb {
 		if ( is_multisite() ) {
 			$msg = sprintf(
 				"%s [%s]\n%s\n",
-				__( 'WordPress database error:' ),
+				__( 'DMPress database error:' ),
 				$str,
 				$this->last_query
 			);
@@ -1850,7 +1850,7 @@ class wpdb {
 
 			printf(
 				'<div id="error"><p class="wpdberror"><strong>%s</strong> [%s]<br /><code>%s</code></p></div>',
-				__( 'WordPress database error:' ),
+				__( 'DMPress database error:' ),
 				$str,
 				$query
 			);
@@ -2021,7 +2021,7 @@ class wpdb {
 
 			$message .= '<p>' . sprintf(
 				/* translators: %s: Support forums URL. */
-				__( 'If you are unsure what these terms mean you should probably contact your host. If you still need help you can always visit the <a href="%s">WordPress support forums</a>.' ),
+				__( 'If you are unsure what these terms mean you should probably contact your host. If you still need help you can always visit the <a href="%s">DMPress support forums</a>.' ),
 				__( 'https://wordpress.org/support/forums/' )
 			) . "</p>\n";
 
@@ -2182,7 +2182,7 @@ class wpdb {
 
 		$message .= '<p>' . sprintf(
 			/* translators: %s: Support forums URL. */
-			__( 'If you are unsure what these terms mean you should probably contact your host. If you still need help you can always visit the <a href="%s">WordPress support forums</a>.' ),
+			__( 'If you are unsure what these terms mean you should probably contact your host. If you still need help you can always visit the <a href="%s">DMPress support forums</a>.' ),
 			__( 'https://wordpress.org/support/forums/' )
 		) . "</p>\n";
 
@@ -2251,7 +2251,7 @@ class wpdb {
 
 				wp_load_translations_early();
 
-				$this->last_error = __( 'WordPress database error: Could not perform query because it contains invalid data.' );
+				$this->last_error = __( 'DMPress database error: Could not perform query because it contains invalid data.' );
 
 				return false;
 			}
@@ -2839,13 +2839,13 @@ class wpdb {
 			if ( 1 === count( $problem_fields ) ) {
 				$this->last_error = sprintf(
 					/* translators: %s: Database field where the error occurred. */
-					__( 'WordPress database error: Processing the value for the following field failed: %s. The supplied value may be too long or contains invalid data.' ),
+					__( 'DMPress database error: Processing the value for the following field failed: %s. The supplied value may be too long or contains invalid data.' ),
 					reset( $problem_fields )
 				);
 			} else {
 				$this->last_error = sprintf(
 					/* translators: %s: Database fields where the error occurred. */
-					__( 'WordPress database error: Processing the values for the following fields failed: %s. The supplied values may be too long or contain invalid data.' ),
+					__( 'DMPress database error: Processing the values for the following fields failed: %s. The supplied values may be too long or contain invalid data.' ),
 					implode( ', ', $problem_fields )
 				);
 			}

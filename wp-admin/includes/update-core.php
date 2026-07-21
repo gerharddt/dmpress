@@ -1750,7 +1750,7 @@ function _redirect_to_about_wordpress( $new_version ) {
 	load_default_textdomain();
 
 	// See do_core_upgrade().
-	show_message( __( 'WordPress updated successfully.' ) );
+	show_message( __( 'DMPress updated successfully.' ) );
 
 	// self_admin_url() won't exist when upgrading from <= 3.0, so relative URLs are intentional.
 	show_message(
@@ -1758,7 +1758,7 @@ function _redirect_to_about_wordpress( $new_version ) {
 			/* translators: 1: WordPress version, 2: URL to About screen. */
 			__( 'Welcome to WordPress %1$s. You will be redirected to the About WordPress screen. If not, click <a href="%2$s">here</a>.' ),
 			$new_version,
-			'about.php?updated'
+			'update-core.php'
 		) . '</span>'
 	);
 	show_message(
@@ -1766,13 +1766,13 @@ function _redirect_to_about_wordpress( $new_version ) {
 			/* translators: 1: WordPress version, 2: URL to About screen. */
 			__( 'Welcome to WordPress %1$s. <a href="%2$s">Learn more</a>.' ),
 			$new_version,
-			'about.php?updated'
+			'update-core.php'
 		) . '</span>'
 	);
 	echo '</div>';
 	?>
 <script>
-window.location = 'about.php?updated';
+window.location = 'update-core.php';
 </script>
 	<?php
 

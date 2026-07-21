@@ -258,7 +258,7 @@ if ( $annotation ) {
 if ( ! $mysql_compat && ! $php_compat ) {
 	$compat = sprintf(
 		/* translators: 1: URL to WordPress release notes, 2: WordPress version number, 3: Minimum required PHP version number, 4: Minimum required MySQL version number, 5: Current PHP version number, 6: Current MySQL version number. */
-		__( 'You cannot install because <a href="%1$s">WordPress %2$s</a> requires PHP version %3$s or higher and MySQL version %4$s or higher. You are running PHP version %5$s and MySQL version %6$s.' ),
+		__( 'You cannot install because <a href="%1$s">DMPress</a> requires PHP version %3$s or higher and MySQL version %4$s or higher. You are running PHP version %5$s and MySQL version %6$s.' ),
 		$version_url,
 		$wp_version,
 		$required_php_version,
@@ -269,7 +269,7 @@ if ( ! $mysql_compat && ! $php_compat ) {
 } elseif ( ! $php_compat ) {
 	$compat = sprintf(
 		/* translators: 1: URL to WordPress release notes, 2: WordPress version number, 3: Minimum required PHP version number, 4: Current PHP version number. */
-		__( 'You cannot install because <a href="%1$s">WordPress %2$s</a> requires PHP version %3$s or higher. You are running version %4$s.' ),
+		__( 'You cannot install because <a href="%1$s">DMPress</a> requires PHP version %3$s or higher. You are running version %4$s.' ),
 		$version_url,
 		$wp_version,
 		$required_php_version,
@@ -278,7 +278,7 @@ if ( ! $mysql_compat && ! $php_compat ) {
 } elseif ( ! $mysql_compat ) {
 	$compat = sprintf(
 		/* translators: 1: URL to WordPress release notes, 2: WordPress version number, 3: Minimum required MySQL version number, 4: Current MySQL version number. */
-		__( 'You cannot install because <a href="%1$s">WordPress %2$s</a> requires MySQL version %3$s or higher. You are running version %4$s.' ),
+		__( 'You cannot install because <a href="%1$s">DMPress</a> requires MySQL version %3$s or higher. You are running version %4$s.' ),
 		$version_url,
 		$wp_version,
 		$required_mysql_version,
@@ -301,7 +301,7 @@ if ( isset( $required_php_extensions ) && is_array( $required_php_extensions ) )
 
 		$missing_extensions[] = sprintf(
 			/* translators: 1: URL to WordPress release notes, 2: WordPress version number, 3: The PHP extension name needed. */
-			__( 'You cannot install because <a href="%1$s">WordPress %2$s</a> requires the %3$s PHP extension.' ),
+			__( 'You cannot install because <a href="%1$s">DMPress</a> requires the %3$s PHP extension.' ),
 			$version_url,
 			$wp_version,
 			$extension
@@ -333,7 +333,7 @@ if ( defined( 'DO_NOT_UPGRADE_GLOBAL_TABLES' ) ) {
 		'<h1>' . __( 'Configuration Error' ) . '</h1>' .
 		'<p>' . sprintf(
 			/* translators: %s: DO_NOT_UPGRADE_GLOBAL_TABLES */
-			__( 'The constant %s cannot be defined when installing WordPress.' ),
+			__( 'The constant %s cannot be defined when installing DMPress.' ),
 			'<code>DO_NOT_UPGRADE_GLOBAL_TABLES</code>'
 		) . '</p></body></html>'
 	);
@@ -444,7 +444,7 @@ switch ( $step ) {
 
 <h1><?php _e( 'Success!' ); ?></h1>
 
-<p><?php _e( 'WordPress has been installed. Thank you, and enjoy!' ); ?></p>
+<p><?php _e( 'DMPress has been installed. Thank you, and enjoy!' ); ?></p>
 
 <table class="form-table install-success">
 	<tr>

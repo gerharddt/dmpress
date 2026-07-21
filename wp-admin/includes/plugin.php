@@ -2647,7 +2647,7 @@ function deactivated_plugins_notice() {
 			'<strong>%s</strong><br>%s</p><p><a href="%s">%s</a>',
 			sprintf(
 				/* translators: %s: Name of deactivated plugin. */
-				__( '%s plugin deactivated during WordPress upgrade.' ),
+				__( '%s plugin deactivated during DMPress upgrade.' ),
 				$plugin['plugin_name']
 			),
 			$explanation,

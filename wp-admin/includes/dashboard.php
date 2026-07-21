@@ -1210,17 +1210,17 @@ function wp_dashboard_browser_nag() {
 
 	if ( $response ) {
 		if ( $is_IE ) {
-			$msg = __( 'Internet Explorer does not give you the best WordPress experience. Switch to Microsoft Edge, or another more modern browser to get the most from your site.' );
+			$msg = __( 'Internet Explorer does not give you the best DMPress experience. Switch to Microsoft Edge, or another more modern browser to get the most from your site.' );
 		} elseif ( $response['insecure'] ) {
 			$msg = sprintf(
 				/* translators: %s: Browser name and link. */
-				__( "It looks like you're using an insecure version of %s. Using an outdated browser makes your computer unsafe. For the best WordPress experience, please update your browser." ),
+				__( "It looks like you're using an insecure version of %s. Using an outdated browser makes your computer unsafe. For the best DMPress experience, please update your browser." ),
 				sprintf( '<a href="%s">%s</a>', esc_url( $response['update_url'] ), esc_html( $response['name'] ) )
 			);
 		} else {
 			$msg = sprintf(
 				/* translators: %s: Browser name and link. */
-				__( "It looks like you're using an old version of %s. For the best WordPress experience, please update your browser." ),
+				__( "It looks like you're using an old version of %s. For the best DMPress experience, please update your browser." ),
 				sprintf( '<a href="%s">%s</a>', esc_url( $response['update_url'] ), esc_html( $response['name'] ) )
 			);
 		}
@@ -1366,7 +1366,7 @@ function wp_dashboard_php_nag() {
 		if ( $response['is_lower_than_future_minimum'] ) {
 			$message = sprintf(
 				/* translators: %s: The server PHP version. */
-				__( 'Your site is running on an outdated version of PHP (%s), which does not receive security updates and soon will not be supported by WordPress. Ensure that PHP is updated on your server as soon as possible. Otherwise you will not be able to upgrade WordPress.' ),
+				__( 'Your site is running on an outdated version of PHP (%s), which does not receive security updates and soon will not be supported by DMPress. Ensure that PHP is updated on your server as soon as possible. Otherwise you will not be able to upgrade DMPress.' ),
 				PHP_VERSION
 			);
 		} else {
@@ -1379,7 +1379,7 @@ function wp_dashboard_php_nag() {
 	} elseif ( $response['is_lower_than_future_minimum'] ) {
 		$message = sprintf(
 			/* translators: %s: The server PHP version. */
-			__( 'Your site is running on an outdated version of PHP (%s), which soon will not be supported by WordPress. Ensure that PHP is updated on your server as soon as possible. Otherwise you will not be able to upgrade WordPress.' ),
+			__( 'Your site is running on an outdated version of PHP (%s), which soon will not be supported by DMPress. Ensure that PHP is updated on your server as soon as possible. Otherwise you will not be able to upgrade DMPress.' ),
 			PHP_VERSION
 		);
 	} else {
@@ -1394,7 +1394,7 @@ function wp_dashboard_php_nag() {
 
 	<p><?php _e( 'What is PHP and how does it affect my site?' ); ?></p>
 	<p>
-		<?php _e( 'PHP is one of the programming languages used to build WordPress. Newer versions of PHP receive regular security updates and may increase your site&#8217;s performance.' ); ?>
+		<?php _e( 'PHP is one of the programming languages used to build DMPress. Newer versions of PHP receive regular security updates and may increase your site&#8217;s performance.' ); ?>
 		<?php
 		if ( ! empty( $response['recommended_version'] ) ) {
 			printf(

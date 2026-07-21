@@ -129,7 +129,7 @@ $parent_file = 'themes.php';
 
 // Help tab: Overview.
 if ( current_user_can( 'switch_themes' ) ) {
-	$help_overview = '<p>' . __( 'This screen is used for managing your installed themes. Aside from the default theme(s) included with your WordPress installation, themes are designed and developed by third parties.' ) . '</p>' .
+	$help_overview = '<p>' . __( 'This screen is used for managing your installed themes. Aside from the default theme(s) included with your DMPress installation, themes are designed and developed by third parties.' ) . '</p>' .
 		'<p>' . __( 'From this screen you can:' ) . '</p>' .
 		'<ul><li>' . __( 'Hover or tap to see Activate and Live Preview buttons' ) . '</li>' .
 		'<li>' . __( 'Click on the theme to see the theme name, version, author, description, tags, and the Delete link' ) . '</li>' .
@@ -189,7 +189,7 @@ $help_sidebar_autoupdates = '';
 if ( current_user_can( 'update_themes' ) && wp_is_auto_update_enabled_for_type( 'theme' ) ) {
 	$help_tab_autoupdates =
 		'<p>' . __( 'Auto-updates can be enabled or disabled for each individual theme. Themes with auto-updates enabled will display the estimated date of the next auto-update. Auto-updates depends on the WP-Cron task scheduling system.' ) . '</p>' .
-		'<p>' . __( 'Please note: Third-party themes and plugins, or custom code, may override WordPress scheduling.' ) . '</p>';
+		'<p>' . __( 'Please note: Third-party themes and plugins, or custom code, may override DMPress scheduling.' ) . '</p>';
 
 	get_current_screen()->add_help_tab(
 		array(
@@ -461,13 +461,13 @@ foreach ( $themes as $theme ) :
 			if ( ! $theme['updateResponse']['compatibleWP'] && ! $theme['updateResponse']['compatiblePHP'] ) {
 				$theme_update_error .= sprintf(
 					/* translators: %s: Theme name. */
-					__( 'There is a new version of %s available, but it does not work with your versions of WordPress and PHP.' ),
+					__( 'There is a new version of %s available, but it does not work with your versions of DMPress and PHP.' ),
 					$theme['name']
 				);
 				if ( current_user_can( 'update_core' ) && current_user_can( 'update_php' ) ) {
 					$theme_update_error .= sprintf(
 						/* translators: 1: URL to WordPress Updates screen, 2: URL to Update PHP page. */
-						' ' . __( '<a href="%1$s">Please update WordPress</a>, and then <a href="%2$s">learn more about updating PHP</a>.' ),
+						' ' . __( '<a href="%1$s">Please update DMPress</a>, and then <a href="%2$s">learn more about updating PHP</a>.' ),
 						self_admin_url( 'update-core.php' ),
 						esc_url( wp_get_update_php_url() )
 					);
@@ -475,7 +475,7 @@ foreach ( $themes as $theme ) :
 				} elseif ( current_user_can( 'update_core' ) ) {
 					$theme_update_error .= sprintf(
 						/* translators: %s: URL to WordPress Updates screen. */
-						' ' . __( '<a href="%s">Please update WordPress</a>.' ),
+						' ' . __( '<a href="%s">Please update DMPress</a>.' ),
 						self_admin_url( 'update-core.php' )
 					);
 				} elseif ( current_user_can( 'update_php' ) ) {
@@ -489,13 +489,13 @@ foreach ( $themes as $theme ) :
 			} elseif ( ! $theme['updateResponse']['compatibleWP'] ) {
 				$theme_update_error .= sprintf(
 					/* translators: %s: Theme name. */
-					__( 'There is a new version of %s available, but it does not work with your version of WordPress.' ),
+					__( 'There is a new version of %s available, but it does not work with your version of DMPress.' ),
 					$theme['name']
 				);
 				if ( current_user_can( 'update_core' ) ) {
 					$theme_update_error .= sprintf(
 						/* translators: %s: URL to WordPress Updates screen. */
-						' ' . __( '<a href="%s">Please update WordPress</a>.' ),
+						' ' . __( '<a href="%s">Please update DMPress</a>.' ),
 						self_admin_url( 'update-core.php' )
 					);
 				}
@@ -527,11 +527,11 @@ foreach ( $themes as $theme ) :
 	if ( ! $theme['compatibleWP'] || ! $theme['compatiblePHP'] ) {
 		$message = '';
 		if ( ! $theme['compatibleWP'] && ! $theme['compatiblePHP'] ) {
-			$message = __( 'This theme does not work with your versions of WordPress and PHP.' );
+			$message = __( 'This theme does not work with your versions of DMPress and PHP.' );
 			if ( current_user_can( 'update_core' ) && current_user_can( 'update_php' ) ) {
 				$message .= sprintf(
 					/* translators: 1: URL to WordPress Updates screen, 2: URL to Update PHP page. */
-					' ' . __( '<a href="%1$s">Please update WordPress</a>, and then <a href="%2$s">learn more about updating PHP</a>.' ),
+					' ' . __( '<a href="%1$s">Please update DMPress</a>, and then <a href="%2$s">learn more about updating PHP</a>.' ),
 					self_admin_url( 'update-core.php' ),
 					esc_url( wp_get_update_php_url() )
 				);
@@ -539,7 +539,7 @@ foreach ( $themes as $theme ) :
 			} elseif ( current_user_can( 'update_core' ) ) {
 				$message .= sprintf(
 					/* translators: %s: URL to WordPress Updates screen. */
-					' ' . __( '<a href="%s">Please update WordPress</a>.' ),
+					' ' . __( '<a href="%s">Please update DMPress</a>.' ),
 					self_admin_url( 'update-core.php' )
 				);
 			} elseif ( current_user_can( 'update_php' ) ) {
@@ -551,11 +551,11 @@ foreach ( $themes as $theme ) :
 				$message .= wp_update_php_annotation( '</p><p><em>', '</em>', false );
 			}
 		} elseif ( ! $theme['compatibleWP'] ) {
-			$message .= __( 'This theme does not work with your version of WordPress.' );
+			$message .= __( 'This theme does not work with your version of DMPress.' );
 			if ( current_user_can( 'update_core' ) ) {
 				$message .= sprintf(
 					/* translators: %s: URL to WordPress Updates screen. */
-					' ' . __( '<a href="%s">Please update WordPress</a>.' ),
+					' ' . __( '<a href="%s">Please update DMPress</a>.' ),
 					self_admin_url( 'update-core.php' )
 				);
 			}
@@ -854,13 +854,13 @@ function wp_theme_auto_update_setting_template() {
 					<?php
 					printf(
 						/* translators: %s: Theme name. */
-						__( 'There is a new version of %s available, but it does not work with your versions of WordPress and PHP.' ),
+						__( 'There is a new version of %s available, but it does not work with your versions of DMPress and PHP.' ),
 						'{{{ data.name }}}'
 					);
 					if ( current_user_can( 'update_core' ) && current_user_can( 'update_php' ) ) {
 						printf(
 							/* translators: 1: URL to WordPress Updates screen, 2: URL to Update PHP page. */
-							' ' . __( '<a href="%1$s">Please update WordPress</a>, and then <a href="%2$s">learn more about updating PHP</a>.' ),
+							' ' . __( '<a href="%1$s">Please update DMPress</a>, and then <a href="%2$s">learn more about updating PHP</a>.' ),
 							self_admin_url( 'update-core.php' ),
 							esc_url( wp_get_update_php_url() )
 						);
@@ -868,7 +868,7 @@ function wp_theme_auto_update_setting_template() {
 					} elseif ( current_user_can( 'update_core' ) ) {
 						printf(
 							/* translators: %s: URL to WordPress Updates screen. */
-							' ' . __( '<a href="%s">Please update WordPress</a>.' ),
+							' ' . __( '<a href="%s">Please update DMPress</a>.' ),
 							self_admin_url( 'update-core.php' )
 						);
 					} elseif ( current_user_can( 'update_php' ) ) {
@@ -884,13 +884,13 @@ function wp_theme_auto_update_setting_template() {
 					<?php
 					printf(
 						/* translators: %s: Theme name. */
-						__( 'There is a new version of %s available, but it does not work with your version of WordPress.' ),
+						__( 'There is a new version of %s available, but it does not work with your version of DMPress.' ),
 						'{{{ data.name }}}'
 					);
 					if ( current_user_can( 'update_core' ) ) {
 						printf(
 							/* translators: %s: URL to WordPress Updates screen. */
-							' ' . __( '<a href="%s">Please update WordPress</a>.' ),
+							' ' . __( '<a href="%s">Please update DMPress</a>.' ),
 							self_admin_url( 'update-core.php' )
 						);
 					}
@@ -920,11 +920,11 @@ function wp_theme_auto_update_setting_template() {
 		<div class="notice notice-error notice-alt"><p>
 			<# if ( ! data.compatibleWP && ! data.compatiblePHP ) { #>
 				<?php
-				_e( 'This theme does not work with your versions of WordPress and PHP.' );
+				_e( 'This theme does not work with your versions of DMPress and PHP.' );
 				if ( current_user_can( 'update_core' ) && current_user_can( 'update_php' ) ) {
 					printf(
 						/* translators: 1: URL to WordPress Updates screen, 2: URL to Update PHP page. */
-						' ' . __( '<a href="%1$s">Please update WordPress</a>, and then <a href="%2$s">learn more about updating PHP</a>.' ),
+						' ' . __( '<a href="%1$s">Please update DMPress</a>, and then <a href="%2$s">learn more about updating PHP</a>.' ),
 						self_admin_url( 'update-core.php' ),
 						esc_url( wp_get_update_php_url() )
 					);
@@ -932,7 +932,7 @@ function wp_theme_auto_update_setting_template() {
 				} elseif ( current_user_can( 'update_core' ) ) {
 					printf(
 						/* translators: %s: URL to WordPress Updates screen. */
-						' ' . __( '<a href="%s">Please update WordPress</a>.' ),
+						' ' . __( '<a href="%s">Please update DMPress</a>.' ),
 						self_admin_url( 'update-core.php' )
 					);
 				} elseif ( current_user_can( 'update_php' ) ) {
@@ -946,11 +946,11 @@ function wp_theme_auto_update_setting_template() {
 				?>
 			<# } else if ( ! data.compatibleWP ) { #>
 				<?php
-				_e( 'This theme does not work with your version of WordPress.' );
+				_e( 'This theme does not work with your version of DMPress.' );
 				if ( current_user_can( 'update_core' ) ) {
 					printf(
 						/* translators: %s: URL to WordPress Updates screen. */
-						' ' . __( '<a href="%s">Please update WordPress</a>.' ),
+						' ' . __( '<a href="%s">Please update DMPress</a>.' ),
 						self_admin_url( 'update-core.php' )
 					);
 				}
@@ -1100,11 +1100,11 @@ function wp_theme_auto_update_setting_template() {
 					<div class="notice notice-error notice-alt notice-large"><p>
 						<# if ( ! data.compatibleWP && ! data.compatiblePHP ) { #>
 							<?php
-							_e( 'This theme does not work with your versions of WordPress and PHP.' );
+							_e( 'This theme does not work with your versions of DMPress and PHP.' );
 							if ( current_user_can( 'update_core' ) && current_user_can( 'update_php' ) ) {
 								printf(
 									/* translators: 1: URL to WordPress Updates screen, 2: URL to Update PHP page. */
-									' ' . __( '<a href="%1$s">Please update WordPress</a>, and then <a href="%2$s">learn more about updating PHP</a>.' ),
+									' ' . __( '<a href="%1$s">Please update DMPress</a>, and then <a href="%2$s">learn more about updating PHP</a>.' ),
 									self_admin_url( 'update-core.php' ),
 									esc_url( wp_get_update_php_url() )
 								);
@@ -1112,7 +1112,7 @@ function wp_theme_auto_update_setting_template() {
 							} elseif ( current_user_can( 'update_core' ) ) {
 								printf(
 									/* translators: %s: URL to WordPress Updates screen. */
-									' ' . __( '<a href="%s">Please update WordPress</a>.' ),
+									' ' . __( '<a href="%s">Please update DMPress</a>.' ),
 									self_admin_url( 'update-core.php' )
 								);
 							} elseif ( current_user_can( 'update_php' ) ) {
@@ -1126,11 +1126,11 @@ function wp_theme_auto_update_setting_template() {
 							?>
 						<# } else if ( ! data.compatibleWP ) { #>
 							<?php
-							_e( 'This theme does not work with your version of WordPress.' );
+							_e( 'This theme does not work with your version of DMPress.' );
 							if ( current_user_can( 'update_core' ) ) {
 								printf(
 									/* translators: %s: URL to WordPress Updates screen. */
-									' ' . __( '<a href="%s">Please update WordPress</a>.' ),
+									' ' . __( '<a href="%s">Please update DMPress</a>.' ),
 									self_admin_url( 'update-core.php' )
 								);
 							}
@@ -1165,13 +1165,13 @@ function wp_theme_auto_update_setting_template() {
 									<?php
 									printf(
 										/* translators: %s: Theme name. */
-										__( 'There is a new version of %s available, but it does not work with your versions of WordPress and PHP.' ),
+										__( 'There is a new version of %s available, but it does not work with your versions of DMPress and PHP.' ),
 										'{{{ data.name }}}'
 									);
 									if ( current_user_can( 'update_core' ) && current_user_can( 'update_php' ) ) {
 										printf(
 											/* translators: 1: URL to WordPress Updates screen, 2: URL to Update PHP page. */
-											' ' . __( '<a href="%1$s">Please update WordPress</a>, and then <a href="%2$s">learn more about updating PHP</a>.' ),
+											' ' . __( '<a href="%1$s">Please update DMPress</a>, and then <a href="%2$s">learn more about updating PHP</a>.' ),
 											self_admin_url( 'update-core.php' ),
 											esc_url( wp_get_update_php_url() )
 										);
@@ -1179,7 +1179,7 @@ function wp_theme_auto_update_setting_template() {
 									} elseif ( current_user_can( 'update_core' ) ) {
 										printf(
 											/* translators: %s: URL to WordPress Updates screen. */
-											' ' . __( '<a href="%s">Please update WordPress</a>.' ),
+											' ' . __( '<a href="%s">Please update DMPress</a>.' ),
 											self_admin_url( 'update-core.php' )
 										);
 									} elseif ( current_user_can( 'update_php' ) ) {
@@ -1195,13 +1195,13 @@ function wp_theme_auto_update_setting_template() {
 									<?php
 									printf(
 										/* translators: %s: Theme name. */
-										__( 'There is a new version of %s available, but it does not work with your version of WordPress.' ),
+										__( 'There is a new version of %s available, but it does not work with your version of DMPress.' ),
 										'{{{ data.name }}}'
 									);
 									if ( current_user_can( 'update_core' ) ) {
 										printf(
 											/* translators: %s: URL to WordPress Updates screen. */
-											' ' . __( '<a href="%s">Please update WordPress</a>.' ),
+											' ' . __( '<a href="%s">Please update DMPress</a>.' ),
 											self_admin_url( 'update-core.php' )
 										);
 									}

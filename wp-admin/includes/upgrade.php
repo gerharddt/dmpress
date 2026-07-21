@@ -617,7 +617,7 @@ https://wordpress.org/
 
 		$installed_email = array(
 			'to'      => $email,
-			'subject' => __( 'New WordPress Site' ),
+			'subject' => __( 'New DMPress Site' ),
 			'message' => $message,
 			'headers' => '',
 		);

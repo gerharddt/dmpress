@@ -110,7 +110,7 @@ function list_core_update( $update ) {
 			if ( ! $mysql_compat && ! $php_compat ) {
 				$message = sprintf(
 					/* translators: 1: URL to WordPress release notes, 2: WordPress version number, 3: Minimum required PHP version number, 4: Minimum required MySQL version number, 5: Current PHP version number, 6: Current MySQL version number. */
-					__( 'You cannot update because <a href="%1$s">WordPress %2$s</a> requires PHP version %3$s or higher and MySQL version %4$s or higher. You are running PHP version %5$s and MySQL version %6$s.' ),
+					__( 'You cannot update because <a href="%1$s">DMPress</a> requires PHP version %3$s or higher and MySQL version %4$s or higher. You are running PHP version %5$s and MySQL version %6$s.' ),
 					$version_url,
 					$update->current,
 					$update->php_version,
@@ -121,7 +121,7 @@ function list_core_update( $update ) {
 			} elseif ( ! $php_compat ) {
 				$message = sprintf(
 					/* translators: 1: URL to WordPress release notes, 2: WordPress version number, 3: Minimum required PHP version number, 4: Current PHP version number. */
-					__( 'You cannot update because <a href="%1$s">WordPress %2$s</a> requires PHP version %3$s or higher. You are running version %4$s.' ),
+					__( 'You cannot update because <a href="%1$s">DMPress</a> requires PHP version %3$s or higher. You are running version %4$s.' ),
 					$version_url,
 					$update->current,
 					$update->php_version,
@@ -130,7 +130,7 @@ function list_core_update( $update ) {
 			} elseif ( ! $mysql_compat ) {
 				$message = sprintf(
 					/* translators: 1: URL to WordPress release notes, 2: WordPress version number, 3: Minimum required MySQL version number, 4: Current MySQL version number. */
-					__( 'You cannot update because <a href="%1$s">WordPress %2$s</a> requires MySQL version %3$s or higher. You are running version %4$s.' ),
+					__( 'You cannot update because <a href="%1$s">DMPress</a> requires MySQL version %3$s or higher. You are running version %4$s.' ),
 					$version_url,
 					$update->current,
 					$update->mysql_version,
@@ -252,12 +252,12 @@ function core_upgrade_preamble() {
 
 	if ( isset( $updates[0]->version ) && version_compare( $updates[0]->version, $wp_version, '>' ) ) {
 		echo '<h2 class="response">';
-		_e( 'An updated version of WordPress is available.' );
+		_e( 'An updated version of DMPress is available.' );
 		echo '</h2>';
 
 		$message = sprintf(
 			/* translators: 1: Documentation on WordPress backups, 2: Documentation on updating WordPress. */
-			__( '<strong>Important:</strong> Before updating, please <a href="%1$s">back up your database and files</a>. For help with updates, visit the <a href="%2$s">Updating WordPress</a> documentation page.' ),
+			__( '<strong>Important:</strong> Before updating, please <a href="%1$s">back up your database and files</a>. For help with updates, visit the <a href="%2$s">Updating DMPress</a> documentation page.' ),
 			__( 'https://developer.wordpress.org/advanced-administration/security/backup/' ),
 			__( 'https://wordpress.org/documentation/article/updating-wordpress/' )
 		);
@@ -269,9 +269,9 @@ function core_upgrade_preamble() {
 			)
 		);
 	} elseif ( $is_development_version ) {
-		echo '<h2 class="response">' . __( 'You are using a development version of WordPress.' ) . '</h2>';
+		echo '<h2 class="response">' . __( 'You are using a development version of DMPress.' ) . '</h2>';
 	} else {
-		echo '<h2 class="response">' . __( 'You have the latest version of WordPress.' ) . '</h2>';
+		echo '<h2 class="response">' . __( 'You have the latest version of DMPress.' ) . '</h2>';
 	}
 
 	echo '<ul class="core-updates">';
@@ -285,14 +285,6 @@ function core_upgrade_preamble() {
 	// Don't show the maintenance mode notice when we are only showing a single re-install option.
 	if ( $updates && ( count( $updates ) > 1 || 'latest' !== $updates[0]->response ) ) {
 		echo '<p>' . __( 'While your site is being updated, it will be in maintenance mode. As soon as your updates are complete, this mode will be deactivated.' ) . '</p>';
-	} elseif ( ! $updates ) {
-		list( $normalized_version ) = explode( '-', $wp_version );
-		echo '<p>' . sprintf(
-			/* translators: 1: URL to About screen, 2: WordPress version. */
-			__( '<a href="%1$s">Learn more about WordPress %2$s</a>.' ),
-			esc_url( self_admin_url( 'about.php' ) ),
-			$normalized_version
-		) . '</p>';
 	}
 
 	dismissed_updates();
@@ -306,7 +298,7 @@ function core_upgrade_preamble() {
 function core_auto_updates_settings() {
 	if ( isset( $_GET['core-major-auto-updates-saved'] ) ) {
 		if ( 'enabled' === $_GET['core-major-auto-updates-saved'] ) {
-			$notice_text = __( 'Automatic updates for all WordPress versions have been enabled. Thank you!' );
+			$notice_text = __( 'Automatic updates for all DMPress versions have been enabled. Thank you!' );
 			wp_admin_notice(
 				$notice_text,
 				array(
@@ -315,7 +307,7 @@ function core_auto_updates_settings() {
 				)
 			);
 		} elseif ( 'disabled' === $_GET['core-major-auto-updates-saved'] ) {
-			$notice_text = __( 'WordPress will only receive automatic security and maintenance releases from now on.' );
+			$notice_text = __( 'DMPress will only receive automatic security and maintenance releases from now on.' );
 			wp_admin_notice(
 				$notice_text,
 				array(
@@ -410,7 +402,7 @@ function core_auto_updates_settings() {
 		if ( $updater->is_vcs_checkout( ABSPATH ) ) {
 			_e( 'This site appears to be under version control. Automatic updates are disabled.' );
 		} elseif ( $upgrade_major ) {
-			_e( 'This site is automatically kept up to date with each new version of WordPress.' );
+			_e( 'This site is automatically kept up to date with each new version of DMPress.' );
 
 			if ( $can_set_update_option ) {
 				echo '<br />';
@@ -421,18 +413,18 @@ function core_auto_updates_settings() {
 				);
 			}
 		} elseif ( $upgrade_minor ) {
-			_e( 'This site is automatically kept up to date with maintenance and security releases of WordPress only.' );
+			_e( 'This site is automatically kept up to date with maintenance and security releases of DMPress only.' );
 
 			if ( $can_set_update_option ) {
 				echo '<br />';
 				printf(
 					'<a href="%s" class="core-auto-update-settings-link core-auto-update-settings-link-enable">%s</a>',
 					wp_nonce_url( add_query_arg( 'value', 'enable', $action_url ), 'core-major-auto-updates-nonce' ),
-					__( 'Enable automatic updates for all new versions of WordPress.' )
+					__( 'Enable automatic updates for all new versions of DMPress.' )
 				);
 			}
 		} else {
-			_e( 'This site will not receive automatic updates for new versions of WordPress.' );
+			_e( 'This site will not receive automatic updates for new versions of DMPress.' );
 		}
 		?>
 	</p>
@@ -696,11 +688,11 @@ function list_theme_updates() {
 		$compat = '';
 
 		if ( ! $compatible_wp && ! $compatible_php ) {
-			$compat .= '<br />' . __( 'This update does not work with your versions of WordPress and PHP.' ) . '&nbsp;';
+			$compat .= '<br />' . __( 'This update does not work with your versions of DMPress and PHP.' ) . '&nbsp;';
 			if ( current_user_can( 'update_core' ) && current_user_can( 'update_php' ) ) {
 				$compat .= sprintf(
 					/* translators: 1: URL to WordPress Updates screen, 2: URL to Update PHP page. */
-					__( '<a href="%1$s">Please update WordPress</a>, and then <a href="%2$s">learn more about updating PHP</a>.' ),
+					__( '<a href="%1$s">Please update DMPress</a>, and then <a href="%2$s">learn more about updating PHP</a>.' ),
 					esc_url( self_admin_url( 'update-core.php' ) ),
 					esc_url( wp_get_update_php_url() )
 				);
@@ -713,7 +705,7 @@ function list_theme_updates() {
 			} elseif ( current_user_can( 'update_core' ) ) {
 				$compat .= sprintf(
 					/* translators: %s: URL to WordPress Updates screen. */
-					__( '<a href="%s">Please update WordPress</a>.' ),
+					__( '<a href="%s">Please update DMPress</a>.' ),
 					esc_url( self_admin_url( 'update-core.php' ) )
 				);
 			} elseif ( current_user_can( 'update_php' ) ) {
@@ -730,11 +722,11 @@ function list_theme_updates() {
 				}
 			}
 		} elseif ( ! $compatible_wp ) {
-			$compat .= '<br />' . __( 'This update does not work with your version of WordPress.' ) . '&nbsp;';
+			$compat .= '<br />' . __( 'This update does not work with your version of DMPress.' ) . '&nbsp;';
 			if ( current_user_can( 'update_core' ) ) {
 				$compat .= sprintf(
 					/* translators: %s: URL to WordPress Updates screen. */
-					__( '<a href="%s">Please update WordPress</a>.' ),
+					__( '<a href="%s">Please update DMPress</a>.' ),
 					esc_url( self_admin_url( 'update-core.php' ) )
 				);
 			}
@@ -869,7 +861,7 @@ function do_core_upgrade( $reinstall = false ) {
 
 	?>
 	<div class="wrap">
-	<h1><?php _e( 'Update WordPress' ); ?></h1>
+	<h1><?php _e( 'Update DMPress' ); ?></h1>
 	<?php
 
 	$credentials = request_filesystem_credentials( $url, '', false, ABSPATH, array( 'version', 'locale' ), $allow_relaxed_file_ownership );
@@ -916,28 +908,16 @@ function do_core_upgrade( $reinstall = false ) {
 		return;
 	}
 
-	show_message( __( 'WordPress updated successfully.' ) );
+	show_message( __( 'DMPress updated successfully.' ) );
 	show_message(
-		'<span class="hide-if-no-js">' . sprintf(
-			/* translators: 1: WordPress version, 2: URL to About screen. */
-			__( 'Welcome to WordPress %1$s. You will be redirected to the About WordPress screen. If not, click <a href="%2$s">here</a>.' ),
-			$result,
-			esc_url( self_admin_url( 'about.php?updated' ) )
-		) . '</span>'
-	);
-	show_message(
-		'<span class="hide-if-js">' . sprintf(
-			/* translators: 1: WordPress version, 2: URL to About screen. */
-			__( 'Welcome to WordPress %1$s. <a href="%2$s">Learn more</a>.' ),
-			$result,
-			esc_url( self_admin_url( 'about.php?updated' ) )
-		) . '</span>'
+		sprintf(
+			/* translators: %s: DMPress version. */
+			__( 'Welcome to DMPress %s.' ),
+			$result
+		)
 	);
 	?>
 	</div>
-	<script>
-	window.location = '<?php echo esc_url( self_admin_url( 'about.php?updated' ) ); ?>';
-	</script>
 	<?php
 }
 
@@ -984,10 +964,10 @@ if ( ( 'do-theme-upgrade' === $action || ( 'do-plugin-upgrade' === $action && ! 
 	$action        = 'upgrade-core';
 }
 
-$title       = __( 'WordPress Updates' );
+$title       = __( 'DMPress Updates' );
 $parent_file = 'index.php';
 
-$updates_overview  = '<p>' . __( 'On this screen, you can update to the latest version of WordPress, as well as update your themes, plugins, and translations.' ) . '</p>';
+$updates_overview  = '<p>' . __( 'On this screen, you can update to the latest version of DMPress, as well as update your themes, plugins, and translations.' ) . '</p>';
 $updates_overview .= '<p>' . __( 'If an update is available, you&#8127;ll see a notification appear in the Toolbar and navigation menu.' ) . ' ' . __( 'Keeping your site updated is important for security. It also makes the internet a safer place for you and your readers.' ) . '</p>';
 
 get_current_screen()->add_help_tab(
@@ -998,11 +978,11 @@ get_current_screen()->add_help_tab(
 	)
 );
 
-$updates_howto  = '<p>' . __( '<strong>WordPress</strong> &mdash; Updating your WordPress installation is a simple one-click procedure: just <strong>click on the &#8220;Update now&#8221; button</strong> when you are notified that a new version is available.' ) . ' ' . __( 'In most cases, WordPress will automatically apply maintenance and security updates in the background for you.' ) . '</p>';
+$updates_howto  = '<p>' . __( '<strong>DMPress</strong> &mdash; Updating your DMPress installation is a simple one-click procedure: just <strong>click on the &#8220;Update now&#8221; button</strong> when you are notified that a new version is available.' ) . ' ' . __( 'In most cases, DMPress will automatically apply maintenance and security updates in the background for you.' ) . '</p>';
 $updates_howto .= '<p>' . __( '<strong>Themes and Plugins</strong> &mdash; To update individual themes or plugins from this screen, use the checkboxes to make your selection, then <strong>click on the appropriate &#8220;Update&#8221; button</strong>. To update all of your themes or plugins at once, you can check the box at the top of the section to select all before clicking the update button.' ) . '</p>';
 
 if ( 'en_US' !== get_locale() ) {
-	$updates_howto .= '<p>' . __( '<strong>Translations</strong> &mdash; The files translating WordPress into your language are updated for you whenever any other updates occur. But if these files are out of date, you can <strong>click the &#8220;Update Translations&#8221;</strong> button.' ) . '</p>';
+	$updates_howto .= '<p>' . __( '<strong>Translations</strong> &mdash; The files translating DMPress into your language are updated for you whenever any other updates occur. But if these files are out of date, you can <strong>click the &#8220;Update Translations&#8221;</strong> button.' ) . '</p>';
 }
 
 get_current_screen()->add_help_tab(
@@ -1016,8 +996,8 @@ get_current_screen()->add_help_tab(
 $help_sidebar_autoupdates = '';
 
 if ( ( current_user_can( 'update_themes' ) && wp_is_auto_update_enabled_for_type( 'theme' ) ) || ( current_user_can( 'update_plugins' ) && wp_is_auto_update_enabled_for_type( 'plugin' ) ) ) {
-	$help_tab_autoupdates  = '<p>' . __( 'Auto-updates can be enabled or disabled for WordPress major versions and for each individual theme or plugin. Themes or plugins with auto-updates enabled will display the estimated date of the next auto-update. Auto-updates depends on the WP-Cron task scheduling system.' ) . '</p>';
-	$help_tab_autoupdates .= '<p>' . __( 'Please note: Third-party themes and plugins, or custom code, may override WordPress scheduling.' ) . '</p>';
+	$help_tab_autoupdates  = '<p>' . __( 'Auto-updates can be enabled or disabled for DMPress major versions and for each individual theme or plugin. Themes or plugins with auto-updates enabled will display the estimated date of the next auto-update. Auto-updates depends on the WP-Cron task scheduling system.' ) . '</p>';
+	$help_tab_autoupdates .= '<p>' . __( 'Please note: Third-party themes and plugins, or custom code, may override DMPress scheduling.' ) . '</p>';
 
 	get_current_screen()->add_help_tab(
 		array(
@@ -1064,7 +1044,7 @@ if ( 'upgrade-core' === $action ) {
 	require_once ABSPATH . 'wp-admin/admin-header.php';
 	?>
 	<div class="wrap">
-	<h1><?php _e( 'WordPress Updates' ); ?></h1>
+	<h1><?php _e( 'DMPress Updates' ); ?></h1>
 	<p><?php _e( 'Updates may take several minutes to complete. If there is no feedback after 5 minutes, or if there are errors please refer to the Help section above.' ); ?></p>
 
 	<?php

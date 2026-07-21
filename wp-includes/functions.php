@@ -4364,7 +4364,7 @@ function _wp_die_process_input( $message, $title = '', $args = array() ) {
 		$args['response'] = 500;
 	}
 	if ( empty( $title ) ) {
-		$title = $have_gettext ? __( 'WordPress &rsaquo; Error' ) : 'WordPress &rsaquo; Error';
+		$title = $have_gettext ? __( 'DMPress &rsaquo; Error' ) : 'DMPress &rsaquo; Error';
 	}
 	if ( empty( $args['text_direction'] ) || ! in_array( $args['text_direction'], array( 'ltr', 'rtl' ), true ) ) {
 		$args['text_direction'] = 'ltr';
@@ -6052,7 +6052,7 @@ function _doing_it_wrong( $function_name, $message, $version ) {
 
 			$message .= ' ' . sprintf(
 				/* translators: %s: Documentation URL. */
-				__( 'Please see <a href="%s">Debugging in WordPress</a> for more information.' ),
+				__( 'Please see <a href="%s">Debugging in DMPress</a> for more information.' ),
 				__( 'https://developer.wordpress.org/advanced-administration/debug/debug-wordpress/' )
 			);
 
@@ -8612,7 +8612,7 @@ function wp_get_update_php_annotation() {
 
 	$annotation = sprintf(
 		/* translators: %s: Default Update PHP page URL. */
-		__( 'This resource is provided by your web host, and is specific to your site. For more information, <a href="%s" target="_blank">see the official WordPress documentation</a>.' ),
+		__( 'This resource is provided by your web host, and is specific to your site. For more information, <a href="%s" target="_blank">see the official DMPress documentation</a>.' ),
 		esc_url( $default_url )
 	);
 

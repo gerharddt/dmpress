@@ -30,7 +30,7 @@ class Core_Upgrader extends WP_Upgrader {
 	 * @since 2.8.0
 	 */
 	public function upgrade_strings() {
-		$this->strings['up_to_date'] = __( 'WordPress is at the latest version.' );
+		$this->strings['up_to_date'] = __( 'DMPress is at the latest version.' );
 		$this->strings['locked']     = __( 'Another update is currently in progress.' );
 		$this->strings['no_package'] = __( 'Update package not available.' );
 		/* translators: %s: Package URL. */
@@ -39,7 +39,7 @@ class Core_Upgrader extends WP_Upgrader {
 		$this->strings['copy_failed']           = __( 'Could not copy files.' );
 		$this->strings['copy_failed_space']     = __( 'Could not copy files. You may have run out of disk space.' );
 		$this->strings['start_rollback']        = __( 'Attempting to restore the previous version.' );
-		$this->strings['rollback_was_required'] = __( 'Due to an error during updating, WordPress has been restored to your previous version.' );
+		$this->strings['rollback_was_required'] = __( 'Due to an error during updating, DMPress has been restored to your previous version.' );
 	}
 
 	/**

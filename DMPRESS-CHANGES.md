@@ -11,7 +11,7 @@ This document logs everything that has been changed relative to stock WordPress 
 6. [Known consequences & decisions](#6-known-consequences--decisions)
 
 > **Baseline:** stock WordPress 7.0. **Product version:** DMPress 1.0.0-beta.1 (pre-release).
-> Internally `$wp_version` remains `7.0` for plugin/API compatibility; `$dmpress_version` (`1.0`) is the product version shown to users.
+> Internally `$wp_version` remains `7.0` for plugin/API compatibility; `$dmpress_version` (`1.0.0-beta.1`) is the product version shown to users.
 
 ---
 
@@ -134,6 +134,9 @@ Inert, no-op implementations of the public block API (`register_block_type`, `re
 - Generator meta + RSS tags → `DMPress <version>`.
 - HTTP User-Agent → `WordPress/7.0; DMPress/1.0; <url>` (keeps a WP-compatible token so services still recognise it).
 - Default outgoing-mail sender name → `DMPress`.
+- **Admin branding sweep** — ~300 user-facing strings across the admin rebranded WordPress → DMPress, plus `wp-config-sample.php` and the `setup-config.php` install flow. The admin bar's **"About WordPress" logo menu** (and its wordpress.org / Documentation / Support / Feedback links) was removed entirely, along with the WordPress marketing pages it linked to — `about.php`, `credits.php`, `freedoms.php`, `contribute.php` (plus their network/user wrappers) — which described block-editor features DMPress no longer ships. Dangling links to those pages were cleaned up.
+
+  Two categories of "WordPress" are **intentionally retained** because changing them would make the software lie: references to **wordpress.org services** (the plugin/theme directories, the salt-key service, update APIs) and **WordPress-version compatibility messages** (plugins declare `Requires at least` against a WordPress version — which is exactly what `$wp_version` reports).
 - **Default install content** (`wp-admin/includes/upgrade.php`) — the sample "Hello world!" post now reads "Welcome to DMPress…", and the accompanying sample comment is authored by "A DMPress Commenter" with a neutral e-mail and no author URL (was "A WordPress Commenter" linking to wordpress.org). The dormant sample-page copy was rebranded too. All of this default content was additionally **stripped of Gutenberg block markup** (`<!-- wp:paragraph -->` etc.), which would otherwise appear as literal comments in the classic editor now that the block editor is gone.
 - **Project naming.** The product was briefly named "DMSPress" during early development and was renamed to **DMPress**. The rename covers display strings, documentation, and all code identifiers: `$dmpress_version`, `dmpress_is_rest_request()`, `DMPRESS_REST_PREFIX`, `_dmpress_is_ctb_screen()`, the public `dmpress_comments_menu_label` filter, and `@package DMPress` tags.
 

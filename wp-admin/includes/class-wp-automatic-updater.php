@@ -334,7 +334,7 @@ class WP_Automatic_Updater {
 		 * was already notified of the same new version, WordPress won't repeatedly
 		 * email the administrator.
 		 *
-		 * This filter is also used on about.php to check if a plugin has disabled
+		 * This filter is also used to check if a plugin has disabled
 		 * these notifications.
 		 *
 		 * @since 3.7.0
@@ -526,7 +526,7 @@ class WP_Automatic_Updater {
 				$upgrade_result->add( 'installation_failed', __( 'Installation failed.' ) );
 				$skin->error( $upgrade_result );
 			} else {
-				$skin->feedback( __( 'WordPress updated successfully.' ) );
+				$skin->feedback( __( 'DMPress updated successfully.' ) );
 			}
 		}
 
@@ -987,8 +987,8 @@ class WP_Automatic_Updater {
 				// Can only reference the About screen if their update was successful.
 				list( $about_version ) = explode( '-', $core_update->current, 2 );
 				/* translators: %s: WordPress version. */
-				$body .= sprintf( __( 'For more on version %s, see the About WordPress screen:' ), $about_version );
-				$body .= "\n" . admin_url( 'about.php' );
+				$body .= sprintf( __( 'For more on version %s, see the About DMPress screen:' ), $about_version );
+				$body .= "\n" . admin_url();
 
 				if ( $newer_version_available ) {
 					/* translators: %s: WordPress latest version. */
@@ -1026,14 +1026,14 @@ class WP_Automatic_Updater {
 				if ( $newer_version_available ) {
 					$body .= sprintf(
 						/* translators: 1: Home URL, 2: WordPress version. */
-						__( 'Your site at %1$s experienced a critical failure while trying to update WordPress to version %2$s.' ),
+						__( 'Your site at %1$s experienced a critical failure while trying to update DMPress to version %2$s.' ),
 						home_url(),
 						$core_update->current
 					);
 				} else {
 					$body .= sprintf(
 						/* translators: 1: Home URL, 2: WordPress latest version. */
-						__( 'Your site at %1$s experienced a critical failure while trying to update to the latest version of WordPress, %2$s.' ),
+						__( 'Your site at %1$s experienced a critical failure while trying to update to the latest version of DMPress, %2$s.' ),
 						home_url(),
 						$core_update->current
 					);
@@ -1051,7 +1051,7 @@ class WP_Automatic_Updater {
 			// Support offer if available.
 			$body .= "\n\n" . sprintf(
 				/* translators: %s: Support email address. */
-				__( 'The WordPress team is willing to help you. Forward this email to %s and the team will work with you to make sure your site is working.' ),
+				__( 'The DMPress team is willing to help you. Forward this email to %s and the team will work with you to make sure your site is working.' ),
 				$core_update->support_email
 			);
 		} else {
@@ -1066,7 +1066,7 @@ class WP_Automatic_Updater {
 		}
 
 		if ( $critical_support ) {
-			$body .= ' ' . __( "Reach out to WordPress Core developers to ensure you'll never have this problem again." );
+			$body .= ' ' . __( "Reach out to DMPress Core developers to ensure you'll never have this problem again." );
 		}
 
 		// If things are successful and we're now on the latest, mention plugins and themes if any are out of date.
@@ -1075,7 +1075,7 @@ class WP_Automatic_Updater {
 			$body .= "\n" . network_admin_url();
 		}
 
-		$body .= "\n\n" . __( 'The WordPress Team' ) . "\n";
+		$body .= "\n\n" . __( 'The DMPress Team' ) . "\n";
 
 		if ( 'critical' === $type && is_wp_error( $result ) ) {
 			$body .= "\n***\n\n";
@@ -1505,7 +1505,7 @@ class WP_Automatic_Updater {
 		// Add a note about the support forums.
 		$body[] = __( 'If you experience any issues or need support, the volunteers in the WordPress.org support forums may be able to help.' );
 		$body[] = __( 'https://wordpress.org/support/forums/' );
-		$body[] = "\n" . __( 'The WordPress Team' );
+		$body[] = "\n" . __( 'The DMPress Team' );
 
 		if ( '' !== get_option( 'blogname' ) ) {
 			$site_title = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
@@ -1569,7 +1569,7 @@ class WP_Automatic_Updater {
 		$failures = 0;
 
 		/* translators: %s: Network home URL. */
-		$body[] = sprintf( __( 'WordPress site: %s' ), network_home_url( '/' ) );
+		$body[] = sprintf( __( 'DMPress site: %s' ), network_home_url( '/' ) );
 
 		// Core.
 		if ( isset( $this->update_results['core'] ) ) {
@@ -1577,10 +1577,10 @@ class WP_Automatic_Updater {
 
 			if ( $result->result && ! is_wp_error( $result->result ) ) {
 				/* translators: %s: WordPress version. */
-				$body[] = sprintf( __( 'SUCCESS: WordPress was successfully updated to %s' ), $result->name );
+				$body[] = sprintf( __( 'SUCCESS: DMPress was successfully updated to %s' ), $result->name );
 			} else {
 				/* translators: %s: WordPress version. */
-				$body[] = sprintf( __( 'FAILED: WordPress failed to update to %s' ), $result->name );
+				$body[] = sprintf( __( 'FAILED: DMPress failed to update to %s' ), $result->name );
 				++$failures;
 			}
 

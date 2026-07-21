@@ -544,7 +544,7 @@ class wp_xmlrpc_server extends IXR_Server {
 				'value'    => get_bloginfo( 'version' ),
 			),
 			'blog_url'                => array(
-				'desc'     => __( 'WordPress Address (URL)' ),
+				'desc'     => __( 'DMPress Address (URL)' ),
 				'readonly' => true,
 				'option'   => 'siteurl',
 			),

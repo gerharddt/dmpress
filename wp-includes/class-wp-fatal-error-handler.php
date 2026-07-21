@@ -205,7 +205,7 @@ class WP_Fatal_Error_Handler {
 			$message,
 			/* translators: Documentation about troubleshooting. */
 			__( 'https://wordpress.org/documentation/article/faq-troubleshooting/' ),
-			__( 'Learn more about troubleshooting WordPress.' )
+			__( 'Learn more about troubleshooting DMPress.' )
 		);
 
 		$args = array(

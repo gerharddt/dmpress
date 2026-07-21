@@ -61,7 +61,7 @@ if ( isset( $required_php_extensions ) && is_array( $required_php_extensions ) )
 
 		$missing_extensions[] = sprintf(
 			/* translators: 1: URL to WordPress release notes, 2: WordPress version number, 3: The PHP extension name needed. */
-			__( 'You cannot upgrade because <a href="%1$s">WordPress %2$s</a> requires the %3$s PHP extension.' ),
+			__( 'You cannot upgrade because <a href="%1$s">DMPress</a> requires the %3$s PHP extension.' ),
 			$version_url,
 			$wp_version,
 			$extension
@@ -86,7 +86,7 @@ header( 'Content-Type: ' . get_option( 'html_type' ) . '; charset=' . get_option
 <?php if ( (int) get_option( 'db_version' ) === $wp_db_version || ! is_blog_installed() ) : ?>
 
 <h1><?php _e( 'No Update Required' ); ?></h1>
-<p><?php _e( 'Your WordPress database is already up to date!' ); ?></p>
+<p><?php _e( 'Your DMPress database is already up to date!' ); ?></p>
 <p class="step"><a class="button button-large" href="<?php echo esc_url( get_option( 'home' ) ); ?>/"><?php _e( 'Continue' ); ?></a></p>
 
 	<?php
@@ -112,7 +112,7 @@ elseif ( ! $php_compat || ! $mysql_compat ) :
 	if ( ! $mysql_compat && ! $php_compat ) {
 		$message = sprintf(
 			/* translators: 1: URL to WordPress release notes, 2: WordPress version number, 3: Minimum required PHP version number, 4: Minimum required MySQL version number, 5: Current PHP version number, 6: Current MySQL version number. */
-			__( 'You cannot update because <a href="%1$s">WordPress %2$s</a> requires PHP version %3$s or higher and MySQL version %4$s or higher. You are running PHP version %5$s and MySQL version %6$s.' ),
+			__( 'You cannot update because <a href="%1$s">DMPress</a> requires PHP version %3$s or higher and MySQL version %4$s or higher. You are running PHP version %5$s and MySQL version %6$s.' ),
 			$version_url,
 			$wp_version,
 			$required_php_version,
@@ -123,7 +123,7 @@ elseif ( ! $php_compat || ! $mysql_compat ) :
 	} elseif ( ! $php_compat ) {
 		$message = sprintf(
 			/* translators: 1: URL to WordPress release notes, 2: WordPress version number, 3: Minimum required PHP version number, 4: Current PHP version number. */
-			__( 'You cannot update because <a href="%1$s">WordPress %2$s</a> requires PHP version %3$s or higher. You are running version %4$s.' ),
+			__( 'You cannot update because <a href="%1$s">DMPress</a> requires PHP version %3$s or higher. You are running version %4$s.' ),
 			$version_url,
 			$wp_version,
 			$required_php_version,
@@ -132,7 +132,7 @@ elseif ( ! $php_compat || ! $mysql_compat ) :
 	} elseif ( ! $mysql_compat ) {
 		$message = sprintf(
 			/* translators: 1: URL to WordPress release notes, 2: WordPress version number, 3: Minimum required MySQL version number, 4: Current MySQL version number. */
-			__( 'You cannot update because <a href="%1$s">WordPress %2$s</a> requires MySQL version %3$s or higher. You are running version %4$s.' ),
+			__( 'You cannot update because <a href="%1$s">DMPress</a> requires MySQL version %3$s or higher. You are running version %4$s.' ),
 			$version_url,
 			$wp_version,
 			$required_mysql_version,
@@ -153,9 +153,9 @@ else :
 			}
 			?>
 	<h1><?php _e( 'Database Update Required' ); ?></h1>
-<p><?php _e( 'WordPress has been updated! Next and final step is to update your database to the newest version.' ); ?></p>
+<p><?php _e( 'DMPress has been updated! Next and final step is to update your database to the newest version.' ); ?></p>
 <p><?php _e( 'The database update process may take a little while, so please be patient.' ); ?></p>
-<p class="step"><a class="button button-large button-primary" href="upgrade.php?step=1&amp;backto=<?php echo $goback; ?>"><?php _e( 'Update WordPress Database' ); ?></a></p>
+<p class="step"><a class="button button-large button-primary" href="upgrade.php?step=1&amp;backto=<?php echo $goback; ?>"><?php _e( 'Update DMPress Database' ); ?></a></p>
 			<?php
 			break;
 		case 1:
@@ -166,7 +166,7 @@ else :
 			$backto = wp_validate_redirect( $backto, __get_option( 'home' ) . '/' );
 			?>
 	<h1><?php _e( 'Update Complete' ); ?></h1>
-	<p><?php _e( 'Your WordPress database has been successfully updated!' ); ?></p>
+	<p><?php _e( 'Your DMPress database has been successfully updated!' ); ?></p>
 	<p class="step"><a class="button button-large" href="<?php echo $backto; ?>"><?php _e( 'Continue' ); ?></a></p>
 			<?php
 			break;

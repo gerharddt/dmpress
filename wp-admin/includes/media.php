@@ -554,7 +554,7 @@ function wp_iframe( $content_func, ...$args ) {
 
 	_wp_admin_html_begin();
 	?>
-	<title><?php bloginfo( 'name' ); ?> &rsaquo; <?php _e( 'Uploads' ); ?> &#8212; <?php _e( 'WordPress' ); ?></title>
+	<title><?php bloginfo( 'name' ); ?> &rsaquo; <?php _e( 'Uploads' ); ?> &#8212; <?php _e( 'DMPress' ); ?></title>
 	<?php
 
 	wp_enqueue_style( 'colors' );
@@ -3073,7 +3073,7 @@ function media_upload_html_bypass() {
 	<?php
 		printf(
 			/* translators: %s: HTML attributes for button. */
-			__( 'You are using the browser&#8217;s built-in file uploader. The WordPress uploader includes multiple file selection and drag and drop capability. <button %s>Switch to the multi-file uploader</button>.' ),
+			__( 'You are using the browser&#8217;s built-in file uploader. The DMPress uploader includes multiple file selection and drag and drop capability. <button %s>Switch to the multi-file uploader</button>.' ),
 			'type="button" class="button-link"'
 		);
 	?>

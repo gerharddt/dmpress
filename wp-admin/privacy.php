@@ -12,11 +12,10 @@ require_once __DIR__ . '/admin.php';
 // Used in the HTML title tag.
 $title = __( 'Privacy' );
 
-list( $display_version ) = explode( '-', get_bloginfo( 'version' ) );
-$header_alt_text         = sprintf(
+$header_alt_text = sprintf(
 	/* translators: %s: Version number. */
-	__( 'WordPress %s' ),
-	$display_version
+	__( 'DMPress %s' ),
+	$GLOBALS['dmpress_version']
 );
 
 require_once ABSPATH . 'wp-admin/admin-header.php';
@@ -35,17 +34,10 @@ require_once ABSPATH . 'wp-admin/admin-header.php';
 		</div>
 
 		<div class="about__header-text">
-			<?php _e( 'WordPress.org takes privacy and transparency very seriously' ); ?>
+			<?php _e( 'Privacy and transparency matter' ); ?>
 		</div>
 	</div>
 
-	<nav class="about__header-navigation nav-tab-wrapper wp-clearfix" aria-label="<?php esc_attr_e( 'Secondary menu' ); ?>">
-		<a href="about.php" class="nav-tab"><?php _e( 'What&#8217;s New' ); ?></a>
-		<a href="credits.php" class="nav-tab"><?php _e( 'Credits' ); ?></a>
-		<a href="freedoms.php" class="nav-tab"><?php _e( 'Freedoms' ); ?></a>
-		<a href="privacy.php" class="nav-tab nav-tab-active" aria-current="page"><?php _e( 'Privacy' ); ?></a>
-		<a href="contribute.php" class="nav-tab"><?php _e( 'Get Involved' ); ?></a>
-	</nav>
 
 	<div class="about__section has-2-columns is-wider-right">
 		<div class="column about__image">

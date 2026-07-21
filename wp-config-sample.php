@@ -1,6 +1,6 @@
 <?php
 /**
- * The base configuration for WordPress
+ * The base configuration for DMPress
  *
  * The wp-config.php creation script uses this file during the installation.
  * You don't have to use the website, you can copy this file to "wp-config.php"
@@ -13,13 +13,11 @@
  * * Database table prefix
  * * ABSPATH
  *
- * @link https://developer.wordpress.org/advanced-administration/wordpress/wp-config/
- *
- * @package WordPress
+ * @package DMPress
  */
 
 // ** Database settings - You can get this info from your web host ** //
-/** The name of the database for WordPress */
+/** The name of the database for DMPress */
 define( 'DB_NAME', 'database_name_here' );
 
 /** Database username */
@@ -40,8 +38,9 @@ define( 'DB_COLLATE', '' );
 /**#@+
  * Authentication unique keys and salts.
  *
- * Change these to different unique phrases! You can generate these using
- * the {@link https://api.wordpress.org/secret-key/1.1/salt/ WordPress.org secret-key service}.
+ * Change these to different unique phrases! Each one should be a long,
+ * random, unique string. A suitable set can be generated with the public
+ * salt service at {@link https://api.wordpress.org/secret-key/1.1/salt/}.
  *
  * You can change these at any point in time to invalidate all existing cookies.
  * This will force all users to have to log in again.
@@ -60,30 +59,23 @@ define( 'NONCE_SALT',       'put your unique phrase here' );
 /**#@-*/
 
 /**
- * WordPress database table prefix.
+ * DMPress database table prefix.
  *
  * You can have multiple installations in one database if you give each
  * a unique prefix. Only numbers, letters, and underscores please!
  *
  * At the installation time, database tables are created with the specified prefix.
- * Changing this value after WordPress is installed will make your site think
+ * Changing this value after DMPress is installed will make your site think
  * it has not been installed.
- *
- * @link https://developer.wordpress.org/advanced-administration/wordpress/wp-config/#table-prefix
  */
 $table_prefix = 'dmp_';
 
 /**
- * For developers: WordPress debugging mode.
+ * For developers: DMPress debugging mode.
  *
  * Change this to true to enable the display of notices during development.
- * It is strongly recommended that plugin and theme developers use WP_DEBUG
+ * It is strongly recommended that plugin developers use WP_DEBUG
  * in their development environments.
- *
- * For information on other constants that can be used for debugging,
- * visit the documentation.
- *
- * @link https://developer.wordpress.org/advanced-administration/debug/debug-wordpress/
  */
 define( 'WP_DEBUG', false );
 
@@ -93,10 +85,10 @@ define( 'WP_DEBUG', false );
 
 /* That's all, stop editing! Happy publishing. */
 
-/** Absolute path to the WordPress directory. */
+/** Absolute path to the DMPress directory. */
 if ( ! defined( 'ABSPATH' ) ) {
 	define( 'ABSPATH', __DIR__ . '/' );
 }
 
-/** Sets up WordPress vars and included files. */
+/** Sets up DMPress vars and included files. */
 require_once ABSPATH . 'wp-settings.php';

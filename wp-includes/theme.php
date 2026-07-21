@@ -983,7 +983,7 @@ function validate_theme_requirements( $stylesheet ) {
 			'theme_wp_php_incompatible',
 			sprintf(
 				/* translators: %s: Theme name. */
-				_x( '<strong>Error:</strong> Current WordPress and PHP versions do not meet minimum requirements for %s.', 'theme' ),
+				_x( '<strong>Error:</strong> Current DMPress and PHP versions do not meet minimum requirements for %s.', 'theme' ),
 				$theme->display( 'Name' )
 			)
 		);
@@ -1001,7 +1001,7 @@ function validate_theme_requirements( $stylesheet ) {
 			'theme_wp_incompatible',
 			sprintf(
 				/* translators: %s: Theme name. */
-				_x( '<strong>Error:</strong> Current WordPress version does not meet minimum requirements for %s.', 'theme' ),
+				_x( '<strong>Error:</strong> Current DMPress version does not meet minimum requirements for %s.', 'theme' ),
 				$theme->display( 'Name' )
 			)
 		);
@@ -4344,7 +4344,7 @@ function create_initial_theme_features() {
 	register_theme_feature(
 		'wp-block-styles',
 		array(
-			'description'  => __( 'Whether theme opts in to default WordPress block styles for viewing.' ),
+			'description'  => __( 'Whether theme opts in to default DMPress block styles for viewing.' ),
 			'show_in_rest' => true,
 		)
 	);

@@ -26,7 +26,7 @@ get_current_screen()->add_help_tab(
 		'id'      => 'overview',
 		'title'   => __( 'Overview' ),
 		'content' =>
-			'<p>' . __( 'Only use this screen once you have updated to a new version of WordPress through Updates/Available Updates (via the Network Administration navigation menu or the Toolbar). Clicking the Upgrade Network button will step through each site in the network, five at a time, and make sure any database updates are applied.' ) . '</p>' .
+			'<p>' . __( 'Only use this screen once you have updated to a new version of DMPress through Updates/Available Updates (via the Network Administration navigation menu or the Toolbar). Clicking the Upgrade Network button will step through each site in the network, five at a time, and make sure any database updates are applied.' ) . '</p>' .
 			'<p>' . __( 'If a version update to core has not happened, clicking this button will not affect anything.' ) . '</p>' .
 			'<p>' . __( 'If this process fails for any reason, users logging in to their sites will force the same update.' ) . '</p>',
 	)
@@ -139,7 +139,7 @@ switch ( $action ) {
 		if ( (int) get_site_option( 'wpmu_upgrade_site' ) !== $wp_db_version ) :
 			?>
 		<h2><?php _e( 'Database Update Required' ); ?></h2>
-		<p><?php _e( 'WordPress has been updated! Next and final step is to individually upgrade the sites in your network.' ); ?></p>
+		<p><?php _e( 'DMPress has been updated! Next and final step is to individually upgrade the sites in your network.' ); ?></p>
 		<?php endif; ?>
 
 		<p><?php _e( 'The database update process may take a little while, so please be patient.' ); ?></p>

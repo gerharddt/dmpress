@@ -989,7 +989,7 @@ function wp_get_update_data() {
 
 	if ( $counts['wordpress'] ) {
 		/* translators: %d: Number of available WordPress updates. */
-		$titles['wordpress'] = sprintf( __( '%d WordPress Update' ), $counts['wordpress'] );
+		$titles['wordpress'] = sprintf( __( '%d DMPress Update' ), $counts['wordpress'] );
 	}
 
 	if ( $counts['plugins'] ) {
@@ -1173,7 +1173,7 @@ function _wp_delete_all_temp_backups() {
 		wp_trigger_error(
 			__FUNCTION__,
 			/* translators: %s: Directory name. */
-			sprintf( __( 'Unable to locate WordPress content directory (%s).' ), 'wp-content' )
+			sprintf( __( 'Unable to locate DMPress content directory (%s).' ), 'wp-content' )
 		);
 		return;
 	}
