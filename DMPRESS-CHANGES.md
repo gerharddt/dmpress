@@ -10,8 +10,8 @@ This document logs everything that has been changed relative to stock WordPress 
 5. [Upstream WordPress fixes ported](#5-upstream-wordpress-fixes-ported)
 6. [Known consequences & decisions](#6-known-consequences--decisions)
 
-> **Baseline:** stock WordPress 7.0. **Product version:** DMPress 1.0.0-beta.6 (pre-release).
-> Internally `$wp_version` remains `7.0` for plugin/API compatibility; `$dmpress_version` (`1.0.0-beta.6`) is the product version shown to users.
+> **Baseline:** stock WordPress 7.0. **Product version:** DMPress 1.0.0-beta.7 (pre-release).
+> Internally `$wp_version` remains `7.0` for plugin/API compatibility; `$dmpress_version` (`1.0.0-beta.7`) is the product version shown to users.
 
 ---
 
@@ -65,6 +65,23 @@ The Site Health feature is gone in its entirety:
 - **Capability:** the `view_site_health_checks` grant filter (`wp_maybe_grant_site_health_caps`).
 - **Cron:** the weekly `wp_site_health_scheduled_check` event is no longer registered.
 - **Assets:** `site-health` JS/CSS (all variants) and their registrations.
+
+### Privacy (Settings → Privacy) — removed
+The Privacy settings feature is gone in its entirety:
+
+- **Screens:** `wp-admin/options-privacy.php` (Settings → Privacy), `wp-admin/privacy-policy-guide.php` (the Policy Guide tab) and `wp-admin/privacy.php` (the "Privacy Policy" about-page tab).
+- **Class:** `WP_Privacy_Policy_Content` and its `wp-admin/includes/class-wp-privacy-policy-content.php` file, plus the unconditional `require` of it in `wp-admin/includes/admin.php`.
+- **Hooks:** the four `WP_Privacy_Policy_Content` callbacks in `admin-filters.php` (`text_change_check`, `notice`, `add_suggested_content`, `_policy_page_updated`) — so the "your privacy policy has changed" admin notice is gone too.
+- **Admin menu:** the **Privacy** item under Settings.
+- **Install:** the privacy-policy page that a fresh install used to create (already moot — the `page` type was removed).
+- **Legacy redirect:** `tools.php`'s redirect to the old Policy Guide tab.
+- **Help text:** the Policy-Guide links in the Export/Erase Personal Data screens.
+
+Kept deliberately:
+
+- `wp_add_privacy_policy_content()` remains as a **documented no-op**. It is a public plugin API called directly by many plugins; deleting it would fatal them, so it now accepts and discards the suggested text.
+- The **Tools → Export Personal Data** and **Tools → Erase Personal Data** screens and the whole personal-data request workflow are untouched. They are GDPR request tooling under *Tools*, not part of the Settings → Privacy section.
+- `get_privacy_policy_url()`, `is_privacy_policy()`, the `wp_page_for_privacy_policy` option and the `manage_privacy_options` capability all remain, so plugins and the new-user email templates that reference them keep working. Without a `page` type the option is simply always `0`.
 
 ### Customizer & Theme File Editor — removed from the admin menu
 Neither is meaningful in DMPress, so they are no longer listed under **Appearance**:
@@ -124,7 +141,7 @@ Inert, no-op implementations of the public block API (`register_block_type`, `re
 
 ### Dual-version scheme — `wp-includes/version.php`
 - `$wp_version = '7.0'` (compatibility: plugin `Requires at least`, wordpress.org APIs, WP-CLI). **Never** set this to the DMPress version — doing so breaks plugin installation.
-- `$dmpress_version = '1.0.0-beta.6'` (product version shown in generator tags, admin footer, dashboard).
+- `$dmpress_version = '1.0.0-beta.7'` (product version shown in generator tags, admin footer, dashboard).
 
 **Release process:** bump `$dmpress_version` on every published release/push — `1.0.0-beta.1` → `1.0.0-beta.2` → … → `1.0.0` — and record what changed in this file.
 
@@ -198,7 +215,7 @@ Cosmetic UI-only changes (the WP 7.0.1 "compact button" CSS refresh) and Gutenbe
 
 - **Headless preview:** post Preview / "View" and the Customizer live-preview no longer render from core; a headless front-end app handles these via REST.
 - **Feeds / sitemaps / robots / oEmbed HTML:** no longer served by core (front end is headless).
-- **Privacy Policy page management:** inert without a `page` type; recreate `page` via the Content-Type Builder to use it.
+- **No Privacy settings:** Settings → Privacy, the Policy Guide and the suggested-privacy-text collection are gone. Plugins calling `wp_add_privacy_policy_content()` still run — the call is a no-op. Tools → Export/Erase Personal Data are unaffected.
 - **Posts comments are now admin-controlled:** because Posts is a Content-Type Builder entry, its `comments` support is a checkbox in the admin. It ships enabled (so Posts shows a Comments submenu out of the box) and can simply be unchecked — this supersedes the earlier note that changing it required a code edit.
 - **Deleting the Posts type:** supported, and core tolerates it (menus, dashboard, admin bar, XML-RPC and Press This are all guarded). The one visible edge is that a bare `wp-admin/edit.php` URL then shows WordPress's standard "Invalid post type." notice, since that screen defaults to `post`.
 - **Seeded types register on the next request:** the default Posts entry is written during `admin_init`, so it is registered from the following request onward (one page load on a brand-new install).

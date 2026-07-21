@@ -261,7 +261,6 @@ $menu[70] = array( __( 'Admin' ), 'read', 'options-general.php', '', 'menu-top m
 	$submenu['options-general.php'][25] = array( __( 'Discussion' ), 'manage_options', 'options-discussion.php' );
 	$submenu['options-general.php'][30] = array( __( 'Media' ), 'manage_options', 'options-media.php' );
 	$submenu['options-general.php'][40] = array( __( 'Permalinks' ), 'manage_options', 'options-permalink.php' );
-	$submenu['options-general.php'][45] = array( __( 'Privacy' ), 'manage_privacy_options', 'options-privacy.php' );
 
 // Tools.
 	$submenu['options-general.php'][49] = array( __( 'Tools' ), 'edit_posts', 'tools.php#dmp-group-tools', '', 'dmp-menu-heading' );

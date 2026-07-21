@@ -2432,11 +2432,11 @@ function wp_add_privacy_policy_content( $plugin_name, $policy_text ) {
 		return;
 	}
 
-	if ( ! class_exists( 'WP_Privacy_Policy_Content' ) ) {
-		require_once ABSPATH . 'wp-admin/includes/class-wp-privacy-policy-content.php';
-	}
-
-	WP_Privacy_Policy_Content::add( $plugin_name, $policy_text );
+	/*
+	 * DMPress: the privacy policy feature has been removed, so suggested
+	 * content has nowhere to be collected. This remains a no-op rather than
+	 * being deleted, because it is a public API that plugins call directly.
+	 */
 }
 
 /**
