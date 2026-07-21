@@ -302,29 +302,19 @@ if ( ! is_multisite() && current_user_can( 'update_themes' ) ) {
 	/* translators: %s: Number of available theme updates. */
 	$submenu['options-general.php'][84] = array( sprintf( __( 'Themes %s' ), $count ), $appearance_capability, 'themes.php' );
 
-$customize_url = add_query_arg( 'return', urlencode( remove_query_arg( wp_removable_query_args(), wp_unslash( $_SERVER['REQUEST_URI'] ) ) ), 'customize.php' );
-
-	$submenu['options-general.php'][85] = array( __( 'Customize' ), 'customize', esc_url( $customize_url ), '', 'hide-if-no-customize' );
+/*
+ * DMPress: the Customizer and the Theme File Editor are not listed under
+ * Appearance. The front end is headless, so there is no rendered site for the
+ * Customizer to preview, and themes are metadata-only (a theme.json manifest)
+ * so there are no template files to edit. The Header and Background items are
+ * Customizer entry points and are omitted for the same reason.
+ */
 
 if ( current_theme_supports( 'menus' ) || current_theme_supports( 'widgets' ) ) {
 	$submenu['options-general.php'][86] = array( __( 'Menus' ), 'edit_theme_options', 'nav-menus.php' );
 }
 
-if ( current_theme_supports( 'custom-header' ) && current_user_can( 'customize' ) ) {
-	$customize_header_url               = add_query_arg( array( 'autofocus' => array( 'control' => 'header_image' ) ), $customize_url );
-	$submenu['options-general.php'][87] = array( _x( 'Header', 'custom image header' ), $appearance_capability, esc_url( $customize_header_url ), '', 'hide-if-no-customize' );
-}
-
-if ( current_theme_supports( 'custom-background' ) && current_user_can( 'customize' ) ) {
-	$customize_background_url           = add_query_arg( array( 'autofocus' => array( 'control' => 'background_image' ) ), $customize_url );
-	$submenu['options-general.php'][88] = array( _x( 'Background', 'custom background' ), $appearance_capability, esc_url( $customize_background_url ), '', 'hide-if-no-customize' );
-}
-
-if ( ! is_multisite() ) {
-	$submenu['options-general.php'][89] = array( __( 'Theme File Editor' ), 'edit_themes', 'theme-editor.php' );
-}
-
-unset( $customize_url, $appearance_capability );
+unset( $appearance_capability );
 
 // Plugins.
 $count = '';

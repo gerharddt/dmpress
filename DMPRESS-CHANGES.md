@@ -10,8 +10,8 @@ This document logs everything that has been changed relative to stock WordPress 
 5. [Upstream WordPress fixes ported](#5-upstream-wordpress-fixes-ported)
 6. [Known consequences & decisions](#6-known-consequences--decisions)
 
-> **Baseline:** stock WordPress 7.0. **Product version:** DMPress 1.0.0-beta.1 (pre-release).
-> Internally `$wp_version` remains `7.0` for plugin/API compatibility; `$dmpress_version` (`1.0.0-beta.1`) is the product version shown to users.
+> **Baseline:** stock WordPress 7.0. **Product version:** DMPress 1.0.0-beta.2 (pre-release).
+> Internally `$wp_version` remains `7.0` for plugin/API compatibility; `$dmpress_version` (`1.0.0-beta.2`) is the product version shown to users.
 
 ---
 
@@ -60,6 +60,16 @@ The Site Health feature is gone in its entirety:
 - **Cron:** the weekly `wp_site_health_scheduled_check` event is no longer registered.
 - **Assets:** `site-health` JS/CSS (all variants) and their registrations.
 
+### Customizer & Theme File Editor — removed from the admin menu
+Neither is meaningful in DMPress, so they are no longer listed under **Appearance**:
+
+- **Customize** — the front end is headless, so there is no rendered site for the Customizer to preview.
+- **Theme File Editor** — themes are metadata-only (a `theme.json` manifest), so there are no template files to edit.
+- The **Header** and **Background** items were removed too: both are Customizer entry points (`customize.php?autofocus=…`).
+- The **Customize** link was also removed from the admin bar (`wp_admin_bar_customize_menu`) so the two surfaces stay consistent.
+
+Appearance now contains **Themes** (plus **Menus** when a theme declares menu/widget support). The underlying `customize.php` and `theme-editor.php` screens still exist and remain reachable by direct URL — only the menu entries were removed.
+
 ### Global Comments menu — removed
 The top-level **Comments** sidebar item was removed. Comments are now a per-post-type submenu (see [§2](#2-added-by-dmpress-us)).
 
@@ -99,7 +109,7 @@ Inert, no-op implementations of the public block API (`register_block_type`, `re
 
 ### Dual-version scheme — `wp-includes/version.php`
 - `$wp_version = '7.0'` (compatibility: plugin `Requires at least`, wordpress.org APIs, WP-CLI). **Never** set this to the DMPress version — doing so breaks plugin installation.
-- `$dmpress_version = '1.0.0-beta.1'` (product version shown in generator tags, admin footer, dashboard).
+- `$dmpress_version = '1.0.0-beta.2'` (product version shown in generator tags, admin footer, dashboard).
 
 **Release process:** bump `$dmpress_version` on every published release/push — `1.0.0-beta.1` → `1.0.0-beta.2` → … → `1.0.0` — and record what changed in this file.
 
