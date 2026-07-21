@@ -114,10 +114,15 @@ $post_types = (array) get_post_types(
  * DMPress: no post type is hard-coded as built-in. 'page' was removed entirely and
  * 'post' ships as a deletable Content-Type Builder entry, so it is only treated as
  * a leading menu item while it is actually registered.
+ *
+ * Because 'post' is registered by the Content-Type Builder it reports
+ * `_builtin => false`, which means it also matches the query above. Dedupe the
+ * merged list so it is not rendered twice; array_unique() keeps the first
+ * occurrence, i.e. the $builtin one that gets the tidy edit.php URLs.
  */
 $builtin    = post_type_exists( 'post' ) ? array( 'post' ) : array();
 
-foreach ( array_merge( $builtin, $post_types ) as $post_type ) {
+foreach ( array_unique( array_merge( $builtin, $post_types ) ) as $post_type ) {
 	$post_type_obj = get_post_type_object( $post_type );
 
 	// Check if it should be a submenu.

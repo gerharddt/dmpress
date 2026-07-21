@@ -10,8 +10,8 @@ This document logs everything that has been changed relative to stock WordPress 
 5. [Upstream WordPress fixes ported](#5-upstream-wordpress-fixes-ported)
 6. [Known consequences & decisions](#6-known-consequences--decisions)
 
-> **Baseline:** stock WordPress 7.0. **Product version:** DMPress 1.0.0-beta.4 (pre-release).
-> Internally `$wp_version` remains `7.0` for plugin/API compatibility; `$dmpress_version` (`1.0.0-beta.4`) is the product version shown to users.
+> **Baseline:** stock WordPress 7.0. **Product version:** DMPress 1.0.0-beta.5 (pre-release).
+> Internally `$wp_version` remains `7.0` for plugin/API compatibility; `$dmpress_version` (`1.0.0-beta.5`) is the product version shown to users.
 
 ---
 
@@ -118,9 +118,12 @@ Inert, no-op implementations of the public block API (`register_block_type`, `re
 
 ### Dual-version scheme — `wp-includes/version.php`
 - `$wp_version = '7.0'` (compatibility: plugin `Requires at least`, wordpress.org APIs, WP-CLI). **Never** set this to the DMPress version — doing so breaks plugin installation.
-- `$dmpress_version = '1.0.0-beta.4'` (product version shown in generator tags, admin footer, dashboard).
+- `$dmpress_version = '1.0.0-beta.5'` (product version shown in generator tags, admin footer, dashboard).
 
 **Release process:** bump `$dmpress_version` on every published release/push — `1.0.0-beta.1` → `1.0.0-beta.2` → … → `1.0.0` — and record what changed in this file.
+
+### Fix: duplicate Posts menu
+Splitting `post` into a Content-Type Builder entry made it report `_builtin => false`, so it matched both the `_builtin => false` post-type query *and* the `$builtin` special case in `wp-admin/menu.php` — rendering the **Posts** top-level menu twice. The merged list is now passed through `array_unique()`, keeping the `$builtin` entry so Posts retains its tidy `edit.php` URLs. Other post types are unaffected and still get their own menus.
 
 ### Default content types — `wp-includes/dmpress-content-types.php` (new)
 - Seeds **"Posts"** as a default Content-Type Builder entry on the first admin request, so the familiar Posts type is present out of the box without being hard-coded in core.
