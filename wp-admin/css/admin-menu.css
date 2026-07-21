@@ -856,10 +856,10 @@ li#wp-admin-bar-menu-toggle {
 }
 
 /* DMPress: group headings inside the consolidated Admin submenu. */
-#adminmenu .wp-submenu li.dms-menu-heading a,
-#adminmenu .wp-submenu li.dms-menu-heading a:hover,
-#adminmenu .wp-submenu li.dms-menu-heading a:focus,
-#adminmenu .wp-submenu li.dms-menu-heading a:active {
+#adminmenu .wp-submenu li.dmp-menu-heading a,
+#adminmenu .wp-submenu li.dmp-menu-heading a:hover,
+#adminmenu .wp-submenu li.dmp-menu-heading a:focus,
+#adminmenu .wp-submenu li.dmp-menu-heading a:active {
 	pointer-events: none;
 	cursor: default;
 	color: rgba(240, 246, 252, 0.45);
@@ -872,12 +872,12 @@ li#wp-admin-bar-menu-toggle {
 	background: transparent;
 	box-shadow: none;
 }
-#adminmenu .wp-submenu li.dms-menu-heading + li a {
+#adminmenu .wp-submenu li.dmp-menu-heading + li a {
 	padding-top: 5px;
 }
 
-#adminmenu .wp-submenu li.dms-menu-heading a.current,
-#adminmenu .wp-submenu li.dms-menu-heading a[aria-current] {
+#adminmenu .wp-submenu li.dmp-menu-heading a.current,
+#adminmenu .wp-submenu li.dmp-menu-heading a[aria-current] {
 	color: rgba(240, 246, 252, 0.45);
 	font-weight: 600;
 }

@@ -248,7 +248,7 @@ $menu[59] = array( '', 'read', 'separator2', '', 'wp-menu-separator' );
 $menu[70] = array( __( 'Admin' ), 'read', 'options-general.php', '', 'menu-top menu-icon-settings', 'menu-admin', 'dashicons-admin-generic' );
 
 	// Settings.
-	$submenu['options-general.php'][9]  = array( __( 'Settings' ), 'manage_options', 'options-general.php', '', 'dms-menu-heading' );
+	$submenu['options-general.php'][9]  = array( __( 'Settings' ), 'manage_options', 'options-general.php', '', 'dmp-menu-heading' );
 	$submenu['options-general.php'][10] = array( _x( 'General', 'settings screen' ), 'manage_options', 'options-general.php' );
 	$submenu['options-general.php'][12] = array( __( 'Connectors' ), 'manage_options', 'options-connectors.php' );
 	$submenu['options-general.php'][15] = array( __( 'Writing' ), 'manage_options', 'options-writing.php' );
@@ -259,7 +259,7 @@ $menu[70] = array( __( 'Admin' ), 'read', 'options-general.php', '', 'menu-top m
 	$submenu['options-general.php'][45] = array( __( 'Privacy' ), 'manage_privacy_options', 'options-privacy.php' );
 
 // Tools.
-	$submenu['options-general.php'][49] = array( __( 'Tools' ), 'edit_posts', 'tools.php#dms-group-tools', '', 'dms-menu-heading' );
+	$submenu['options-general.php'][49] = array( __( 'Tools' ), 'edit_posts', 'tools.php#dmp-group-tools', '', 'dmp-menu-heading' );
 	$submenu['options-general.php'][50] = array( __( 'Available Tools' ), 'edit_posts', 'tools.php' );
 	$submenu['options-general.php'][52] = array( __( 'Import' ), 'import', 'import.php' );
 	$submenu['options-general.php'][54] = array( __( 'Export' ), 'export', 'export.php' );
@@ -273,7 +273,7 @@ if ( ! is_multisite() && defined( 'WP_ALLOW_MULTISITE' ) && WP_ALLOW_MULTISITE )
 }
 
 	// Users.
-	$submenu['options-general.php'][69] = array( __( 'Users' ), 'read', 'users.php#dms-group-users', '', 'dms-menu-heading' );
+	$submenu['options-general.php'][69] = array( __( 'Users' ), 'read', 'users.php#dmp-group-users', '', 'dmp-menu-heading' );
 	$submenu['options-general.php'][70] = array( __( 'All Users' ), 'list_users', 'users.php' );
 if ( current_user_can( 'create_users' ) ) {
 	$submenu['options-general.php'][72] = array( __( 'Add User' ), 'create_users', 'user-new.php' );
@@ -298,7 +298,7 @@ if ( ! is_multisite() && current_user_can( 'update_themes' ) ) {
 	);
 }
 
-	$submenu['options-general.php'][83] = array( __( 'Appearance' ), $appearance_capability, 'themes.php#dms-group-appearance', '', 'dms-menu-heading' );
+	$submenu['options-general.php'][83] = array( __( 'Appearance' ), $appearance_capability, 'themes.php#dmp-group-appearance', '', 'dmp-menu-heading' );
 	/* translators: %s: Number of available theme updates. */
 	$submenu['options-general.php'][84] = array( sprintf( __( 'Themes %s' ), $count ), $appearance_capability, 'themes.php' );
 
@@ -329,7 +329,7 @@ if ( ! is_multisite() && current_user_can( 'update_plugins' ) ) {
 	);
 }
 
-	$submenu['options-general.php'][93] = array( __( 'Plugins' ), 'activate_plugins', 'plugins.php#dms-group-plugins', '', 'dms-menu-heading' );
+	$submenu['options-general.php'][93] = array( __( 'Plugins' ), 'activate_plugins', 'plugins.php#dmp-group-plugins', '', 'dmp-menu-heading' );
 	/* translators: %s: Number of available plugin updates. */
 	$submenu['options-general.php'][94] = array( sprintf( __( 'Installed Plugins %s' ), $count ), 'activate_plugins', 'plugins.php' );
 
@@ -366,7 +366,7 @@ add_action(
 
 		remove_menu_page( 'edit.php?post_type=acf-field-group' );
 
-		$submenu['options-general.php'][119] = array( __( 'Content Types' ), acf_get_setting( 'capability' ), 'edit.php?post_type=acf-field-group#dms-group-content-types', '', 'dms-menu-heading' );
+		$submenu['options-general.php'][119] = array( __( 'Content Types' ), acf_get_setting( 'capability' ), 'edit.php?post_type=acf-field-group#dmp-group-content-types', '', 'dmp-menu-heading' );
 		$submenu['options-general.php'][120] = array( __( 'Content-Type Builder' ), acf_get_setting( 'capability' ), 'edit.php?post_type=acf-field-group' );
 	},
 	11

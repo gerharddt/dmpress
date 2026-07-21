@@ -10,8 +10,8 @@ This document logs everything that has been changed relative to stock WordPress 
 5. [Upstream WordPress fixes ported](#5-upstream-wordpress-fixes-ported)
 6. [Known consequences & decisions](#6-known-consequences--decisions)
 
-> **Baseline:** stock WordPress 7.0. **Product version:** DMPress 1.0.0-beta.3 (pre-release).
-> Internally `$wp_version` remains `7.0` for plugin/API compatibility; `$dmpress_version` (`1.0.0-beta.3`) is the product version shown to users.
+> **Baseline:** stock WordPress 7.0. **Product version:** DMPress 1.0.0-beta.4 (pre-release).
+> Internally `$wp_version` remains `7.0` for plugin/API compatibility; `$dmpress_version` (`1.0.0-beta.4`) is the product version shown to users.
 
 ---
 
@@ -39,7 +39,7 @@ Neither of WordPress's built-in content types is hard-coded in DMPress any more;
 DMPress does not render any front-end HTML from core. Front-end requests no longer boot WordPress at all (see [§2](#2-added-by-dmpress-us)). Consequently these front-end surfaces no longer serve from core: theme template rendering, feeds, XML sitemaps, robots/favicon output, oEmbed HTML, post preview, Customizer live-preview.
 
 ### Theme template system — reduced to metadata
-Themes no longer contain templates or `style.css`. The default `dmsone` theme was reduced to a single `theme.json` manifest. (Core's now-inert front-end template functions were left in place to avoid breaking plugins; they are never invoked.)
+Themes no longer contain templates or `style.css`. The default `dmpone` theme was reduced to a single `theme.json` manifest. (Core's now-inert front-end template functions were left in place to avoid breaking plugins; they are never invoked.)
 
 ### Dashboard clutter — removed
 - Welcome/"Get started" banner
@@ -102,14 +102,14 @@ Replaced WordPress's Backbone-driven theme grid (~1,330 lines of JS templates, d
 - **`wp-includes/class-wp-theme.php`** — new `parse_theme_json_headers()`; a theme is valid with only a `theme.json` manifest (`name`, `version`, optional `description`/`author`/…), no `style.css` or templates.
 - **`wp-includes/theme.php`** — `validate_current_theme()` accepts metadata-only themes.
 - Themes are just `theme.json` (+ optional `screenshot.png`) and remain selectable/switchable under **Appearance → Themes**.
-- **`wp-content/themes/dmsone/theme.json`** — the default theme, now metadata-only.
+- **`wp-content/themes/dmpone/theme.json`** — the default theme, now metadata-only.
 
 ### Block API compatibility shim — `wp-includes/block-compat.php` (new)
 Inert, no-op implementations of the public block API (`register_block_type`, `register_block_pattern`, `has_blocks`, `do_blocks`, `parse_blocks`, `WP_Block_Type`, `WP_Block_Type_Registry`, …) so third-party plugins that register blocks install and run without fatal errors.
 
 ### Consolidated **Admin** menu — `wp-admin/menu.php`
 - A single top-level **Admin** menu replaces the separate Settings, Tools, Users, Appearance, and Plugins top-levels, plus the Content-Type Builder.
-- Grouped with dim **heading rows** (`dms-menu-heading`, styled in `wp-admin/css/admin-menu*.css`): Settings · Tools · Users · Appearance · Plugins · Content Types.
+- Grouped with dim **heading rows** (`dmp-menu-heading`, styled in `wp-admin/css/admin-menu*.css`): Settings · Tools · Users · Appearance · Plugins · Content Types.
 - Legacy parents (`tools.php`, `users.php`, `themes.php`, `plugins.php`, …) are remapped so third-party submenu registrations group in automatically.
 
 ### Comments as a per-post-type feature — `wp-admin/menu.php`
@@ -118,7 +118,7 @@ Inert, no-op implementations of the public block API (`register_block_type`, `re
 
 ### Dual-version scheme — `wp-includes/version.php`
 - `$wp_version = '7.0'` (compatibility: plugin `Requires at least`, wordpress.org APIs, WP-CLI). **Never** set this to the DMPress version — doing so breaks plugin installation.
-- `$dmpress_version = '1.0.0-beta.3'` (product version shown in generator tags, admin footer, dashboard).
+- `$dmpress_version = '1.0.0-beta.4'` (product version shown in generator tags, admin footer, dashboard).
 
 **Release process:** bump `$dmpress_version` on every published release/push — `1.0.0-beta.1` → `1.0.0-beta.2` → … → `1.0.0` — and record what changed in this file.
 
@@ -157,6 +157,7 @@ Inert, no-op implementations of the public block API (`register_block_type`, `re
 
   Two categories of "WordPress" are **intentionally retained** because changing them would make the software lie: references to **wordpress.org services** (the plugin/theme directories, the salt-key service, update APIs) and **WordPress-version compatibility messages** (plugins declare `Requires at least` against a WordPress version — which is exactly what `$wp_version` reports).
 - **Default install content** (`wp-admin/includes/upgrade.php`) — the sample "Hello world!" post now reads "Welcome to DMPress…", and the accompanying sample comment is authored by "A DMPress Commenter" with a neutral e-mail and no author URL (was "A WordPress Commenter" linking to wordpress.org). The dormant sample-page copy was rebranded too. All of this default content was additionally **stripped of Gutenberg block markup** (`<!-- wp:paragraph -->` etc.), which would otherwise appear as literal comments in the classic editor now that the block editor is gone.
+- **`dms` → `dmp` identifiers.** Leftovers from the earlier "DMSPress" spelling were renamed for consistency: the default theme `dmsone` / "DMS One" became **`dmpone` / "DMP One"** (which also required migrating the `stylesheet`, `template` and `theme_mods_*` options and clearing the theme transients, or the active theme would have been orphaned), the admin menu heading class `dms-menu-heading` became `dmp-menu-heading` (PHP + all four stylesheets), and the `#dms-group-*` menu anchors became `#dmp-group-*`.
 - **Project naming.** The product was briefly named "DMSPress" during early development and was renamed to **DMPress**. The rename covers display strings, documentation, and all code identifiers: `$dmpress_version`, `dmpress_is_rest_request()`, `DMPRESS_REST_PREFIX`, `_dmpress_is_ctb_screen()`, the public `dmpress_comments_menu_label` filter, and `@package DMPress` tags.
 
 ### Database table prefix
