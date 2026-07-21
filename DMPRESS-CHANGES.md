@@ -10,8 +10,8 @@ This document logs everything that has been changed relative to stock WordPress 
 5. [Upstream WordPress fixes ported](#5-upstream-wordpress-fixes-ported)
 6. [Known consequences & decisions](#6-known-consequences--decisions)
 
-> **Baseline:** stock WordPress 7.0. **Product version:** DMPress 1.0.0-beta.2 (pre-release).
-> Internally `$wp_version` remains `7.0` for plugin/API compatibility; `$dmpress_version` (`1.0.0-beta.2`) is the product version shown to users.
+> **Baseline:** stock WordPress 7.0. **Product version:** DMPress 1.0.0-beta.3 (pre-release).
+> Internally `$wp_version` remains `7.0` for plugin/API compatibility; `$dmpress_version` (`1.0.0-beta.3`) is the product version shown to users.
 
 ---
 
@@ -89,6 +89,15 @@ The top-level **Comments** sidebar item was removed. Comments are now a per-post
 - Serves `front/index.html` if present (drop-in point for a headless SPA build), otherwise a minimal placeholder pointing at the REST API.
 - REST prefix overridable via the `DMPRESS_REST_PREFIX` constant.
 
+### Themes screen rewritten — `wp-admin/themes.php`
+Replaced WordPress's Backbone-driven theme grid (~1,330 lines of JS templates, details modal, feature filters and search) with a simple server-rendered list, since a metadata-only theme has nothing to preview:
+
+- Themes are **stacked vertically**, showing name, version, author, folder slug and description — all read from the theme's `theme.json`.
+- **No screenshots/thumbnails.**
+- **Activate is the only action.** The active theme shows an "Active" label; every other theme shows an Activate button. Activating one deactivates the previous theme (WordPress only ever has one active theme).
+- No Live Preview, Customize, Delete, auto-update toggles, details modal or theme search.
+- Activation still goes through core's nonce-checked (`switch-theme_<stylesheet>`) `switch_theme()` path, and network-disallowed themes are still filtered via `is_allowed()`.
+
 ### `theme.json` theme system
 - **`wp-includes/class-wp-theme.php`** — new `parse_theme_json_headers()`; a theme is valid with only a `theme.json` manifest (`name`, `version`, optional `description`/`author`/…), no `style.css` or templates.
 - **`wp-includes/theme.php`** — `validate_current_theme()` accepts metadata-only themes.
@@ -109,7 +118,7 @@ Inert, no-op implementations of the public block API (`register_block_type`, `re
 
 ### Dual-version scheme — `wp-includes/version.php`
 - `$wp_version = '7.0'` (compatibility: plugin `Requires at least`, wordpress.org APIs, WP-CLI). **Never** set this to the DMPress version — doing so breaks plugin installation.
-- `$dmpress_version = '1.0.0-beta.2'` (product version shown in generator tags, admin footer, dashboard).
+- `$dmpress_version = '1.0.0-beta.3'` (product version shown in generator tags, admin footer, dashboard).
 
 **Release process:** bump `$dmpress_version` on every published release/push — `1.0.0-beta.1` → `1.0.0-beta.2` → … → `1.0.0` — and record what changed in this file.
 
