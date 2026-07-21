@@ -10,8 +10,8 @@ This document logs everything that has been changed relative to stock WordPress 
 5. [Upstream WordPress fixes ported](#5-upstream-wordpress-fixes-ported)
 6. [Known consequences & decisions](#6-known-consequences--decisions)
 
-> **Baseline:** stock WordPress 7.0. **Product version:** DMPress 1.0.0-beta.8 (pre-release).
-> Internally `$wp_version` remains `7.0` for plugin/API compatibility; `$dmpress_version` (`1.0.0-beta.8`) is the product version shown to users.
+> **Baseline:** stock WordPress 7.0. **Product version:** DMPress 1.0.0-beta.9 (pre-release).
+> Internally `$wp_version` remains `7.0` for plugin/API compatibility; `$dmpress_version` (`1.0.0-beta.9`) is the product version shown to users.
 
 ---
 
@@ -99,6 +99,9 @@ The top-level **Comments** sidebar item was removed. Comments are now a per-post
 ### Core self-update — disabled
 `wp_version_check()` is a no-op so the wordpress.org update channel can never overwrite the fork.
 
+### `readme.html` — replaced by `README.md`
+WordPress ships its root readme as HTML. GitHub does not render an HTML readme as a page — it shows the raw markup — so the file was rewritten as **`README.md`** and `readme.html` was deleted. The only core reference to it (`update-core.php`, a confidence check on a downloaded core-update archive) is unaffected: it inspects an unzipped WordPress package, not this repository, and core self-update is disabled anyway.
+
 ### Dead code — removed
 - `wp-includes/collaboration.php` + `collaboration/` (unwired real-time-collaboration feature; also removed upstream in WP 7.0.2).
 
@@ -141,7 +144,7 @@ Inert, no-op implementations of the public block API (`register_block_type`, `re
 
 ### Dual-version scheme — `wp-includes/version.php`
 - `$wp_version = '7.0'` (compatibility: plugin `Requires at least`, wordpress.org APIs, WP-CLI). **Never** set this to the DMPress version — doing so breaks plugin installation.
-- `$dmpress_version = '1.0.0-beta.8'` (product version shown in generator tags, admin footer, dashboard).
+- `$dmpress_version = '1.0.0-beta.9'` (product version shown in generator tags, admin footer, dashboard).
 
 **Release process:** bump `$dmpress_version` on every published release/push — `1.0.0-beta.1` → `1.0.0-beta.2` → … → `1.0.0` — and record what changed in this file.
 
@@ -175,7 +178,7 @@ Splitting `post` into a Content-Type Builder entry made it report `_builtin => f
 ## 4. Modified / rebranded core
 
 ### WordPress → DMPress branding
-- `readme.html` rewritten; login screen ("Powered by DMPress", logo links to the site home); admin `<title>` tags; admin footer; dashboard greeting; installer / upgrade / setup-config screens.
+- `readme.html` replaced by a Markdown `README.md` (GitHub renders HTML readmes as source, not as a page); login screen ("Powered by DMPress", logo links to the site home); admin `<title>` tags; admin footer; dashboard greeting; installer / upgrade / setup-config screens.
 - Generator meta + RSS tags → `DMPress <version>`.
 - HTTP User-Agent → `WordPress/7.0; DMPress/1.0; <url>` (keeps a WP-compatible token so services still recognise it).
 - Default outgoing-mail sender name → `DMPress`.
