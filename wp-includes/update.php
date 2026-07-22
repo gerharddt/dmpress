@@ -32,9 +32,13 @@ function wp_version_check( $extra_stats = array(), $force_check = false ) {
 	global $wpdb, $wp_local_package;
 
 	/*
-	 * DMPress: core updates from api.wordpress.org are disabled. The fork
-	 * reports version 1.0, so the wordpress.org channel would offer stock
-	 * WordPress as an "upgrade" and overwrite this codebase.
+	 * DMPress: core updates from api.wordpress.org are disabled.
+	 *
+	 * $wp_version deliberately reports 7.0 for plugin compatibility, so the
+	 * wordpress.org channel treats this as a stock WordPress install and would
+	 * offer the next core release as an "upgrade" — applying it would overwrite
+	 * the fork with stock WordPress. Returning here means no request is made
+	 * and no 'update_core' transient is ever written.
 	 */
 	return;
 
@@ -1094,9 +1098,12 @@ function _maybe_update_themes() {
  * @since 3.1.0
  */
 function wp_schedule_update_checks() {
-	if ( ! wp_next_scheduled( 'wp_version_check' ) && ! wp_installing() ) {
-		wp_schedule_event( time(), 'twicedaily', 'wp_version_check' );
-	}
+	/*
+	 * DMPress: the core version check is not scheduled. wp_version_check() is a
+	 * no-op here, so the event would only ever wake cron to do nothing. The
+	 * plugin and theme checks below are kept — that ecosystem still updates
+	 * normally.
+	 */
 
 	if ( ! wp_next_scheduled( 'wp_update_plugins' ) && ! wp_installing() ) {
 		wp_schedule_event( time(), 'twicedaily', 'wp_update_plugins' );

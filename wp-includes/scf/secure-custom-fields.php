@@ -206,9 +206,14 @@ if ( ! class_exists( 'ACF' ) ) {
 			acf_new_instance( 'SCF\Meta\User' );
 			acf_new_instance( 'SCF\Meta\Option' );
 
-			if ( class_exists( 'SCF\Site_Health\Site_Health' ) ) {
-				acf_new_instance( 'SCF\Site_Health\Site_Health' );
-			}
+			/*
+			 * DMPress: SCF's Site Health collector is not started. It exists to
+			 * fill WordPress's Site Health "Info" tab via the 'debug_information'
+			 * filter, and DMPress removed Site Health entirely — nothing applies
+			 * that filter, so the data it gathers into the 'acf_site_health'
+			 * option is never read. Skipping it also stops the weekly
+			 * 'acf_update_site_health_data' cron event from being scheduled.
+			 */
 
 			if ( class_exists( 'SCF\AI\AI' ) ) {
 				acf_new_instance( 'SCF\AI\AI' );

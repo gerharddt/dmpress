@@ -219,3 +219,53 @@ function dmpress_seed_default_content_types() {
 	update_option( DMPRESS_DEFAULT_CONTENT_TYPES_OPTION, 1 );
 }
 add_action( 'admin_init', 'dmpress_seed_default_content_types' );
+
+/**
+ * Name of the option recording that legacy leftovers have been cleaned up.
+ */
+const DMPRESS_CLEANUP_OPTION = 'dmpress_cleanup_done';
+
+/**
+ * Removes data left behind by features DMPress has since removed.
+ *
+ * Runs once per install. New installs never create these in the first place;
+ * this exists so sites created by an earlier build converge on the same state.
+ *
+ * @since DMPress 1.0.0
+ *
+ * @return void
+ */
+function dmpress_cleanup_removed_feature_data() {
+	if ( get_option( DMPRESS_CLEANUP_OPTION ) ) {
+		return;
+	}
+
+	/*
+	 * SCF's Site Health collector is no longer started (see
+	 * wp-includes/scf/secure-custom-fields.php). Drop the data it gathered for
+	 * the removed Site Health screen, and its weekly refresh event.
+	 */
+	delete_option( 'acf_site_health' );
+
+	$scheduled = wp_next_scheduled( 'acf_update_site_health_data' );
+	if ( $scheduled ) {
+		wp_unschedule_event( $scheduled, 'acf_update_site_health_data' );
+	}
+
+	/*
+	 * Core updates are disabled (wp_version_check() returns immediately), so an
+	 * 'update_core' transient can only be a leftover from before that change.
+	 * It holds a wordpress.org download URL for a release that must never be
+	 * applied to this fork. Drop it, and unschedule the check that can no
+	 * longer do anything.
+	 */
+	delete_site_transient( 'update_core' );
+
+	$version_check = wp_next_scheduled( 'wp_version_check' );
+	if ( $version_check ) {
+		wp_unschedule_event( $version_check, 'wp_version_check' );
+	}
+
+	update_option( DMPRESS_CLEANUP_OPTION, 1 );
+}
+add_action( 'admin_init', 'dmpress_cleanup_removed_feature_data' );
