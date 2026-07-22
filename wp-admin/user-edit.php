@@ -366,15 +366,13 @@ switch ( $action ) {
 					</tr>
 					<?php endif; ?>
 
-					<tr class="show-admin-bar user-admin-bar-front-wrap">
-						<th scope="row"><?php _e( 'Toolbar' ); ?></th>
-						<td>
-							<label for="admin_bar_front">
-								<input name="admin_bar_front" type="checkbox" id="admin_bar_front" value="1"<?php checked( _get_admin_bar_pref( 'front', $profile_user->ID ) ); ?> />
-								<?php _e( 'Show Toolbar when viewing site' ); ?>
-							</label><br />
-						</td>
-					</tr>
+					<?php
+					/*
+					 * DMPress: no "Show Toolbar when viewing site" row. The front end is
+					 * headless and never renders the admin bar, so the preference has
+					 * nothing to control.
+					 */
+					?>
 
 					<?php
 					$languages                = get_available_languages();
