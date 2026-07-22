@@ -42,6 +42,25 @@ function dmpress_is_rest_request() {
 	return $path === $prefix || str_starts_with( $path, $prefix . '/' );
 }
 
+/*
+ * Not configured yet? Hand off to WordPress.
+ *
+ * Without this, a site with no wp-config.php would be served the headless
+ * placeholder below and the installer would be unreachable from the site root.
+ * wp-load.php performs its own config lookup and redirects to
+ * wp-admin/setup-config.php, so the whole setup flow is delegated to it.
+ *
+ * The condition mirrors wp-load.php exactly: the config may sit in this
+ * directory, or one level up when that parent is not itself a WordPress root.
+ */
+$dmpress_has_config = file_exists( __DIR__ . '/wp-config.php' )
+	|| ( @file_exists( dirname( __DIR__ ) . '/wp-config.php' ) && ! @file_exists( dirname( __DIR__ ) . '/wp-settings.php' ) );
+
+if ( ! $dmpress_has_config ) {
+	require __DIR__ . '/wp-load.php';
+	return;
+}
+
 if ( dmpress_is_rest_request() ) {
 	/*
 	 * Boot the CMS only to serve the REST API. WP_USE_THEMES is false so the
