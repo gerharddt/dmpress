@@ -261,7 +261,7 @@ switch ( $step ) {
 		</tr>
 		<tr>
 			<th scope="row"><label for="prefix"><?php _e( 'Table Prefix' ); ?></label></th>
-			<td><input name="prefix" id="prefix" type="text" aria-describedby="prefix-desc" value="wp_" size="25" />
+			<td><input name="prefix" id="prefix" type="text" aria-describedby="prefix-desc" value="dmp_" size="25" />
 			<p id="prefix-desc"><?php _e( 'If you want to run multiple DMPress installations in a single database, change this.' ); ?></p></td>
 		</tr>
 	</table>
