@@ -102,21 +102,7 @@ wp_dropdown_categories(
 </td>
 </tr>
 <?php endif; ?>
-<?php
-$post_formats = get_post_format_strings();
-unset( $post_formats['standard'] );
-?>
-<tr>
-<th scope="row"><label for="default_post_format"><?php _e( 'Default Post Format' ); ?></label></th>
-<td>
-	<select name="default_post_format" id="default_post_format">
-		<option value="0"><?php echo get_post_format_string( 'standard' ); ?></option>
-<?php foreach ( $post_formats as $format_slug => $format_name ) : ?>
-		<option<?php selected( get_option( 'default_post_format' ), $format_slug ); ?> value="<?php echo esc_attr( $format_slug ); ?>"><?php echo esc_html( $format_name ); ?></option>
-<?php endforeach; ?>
-	</select>
-</td>
-</tr>
+<?php // DMPress: the 'Default Post Format' row is not shown. ?>
 <?php
 if ( get_option( 'link_manager_enabled' ) ) :
 	?>
@@ -190,22 +176,7 @@ if ( apply_filters( 'enable_post_by_email_configuration', true ) ) {
 		</span>
 	</td>
 </tr>
-<tr>
-<th scope="row"><label for="default_email_category"><?php _e( 'Default Mail Category' ); ?></label></th>
-<td>
-	<?php
-	wp_dropdown_categories(
-		array(
-			'hide_empty'   => 0,
-			'name'         => 'default_email_category',
-			'orderby'      => 'name',
-			'selected'     => get_option( 'default_email_category' ),
-			'hierarchical' => true,
-		)
-	);
-	?>
-</td>
-</tr>
+<?php // DMPress: the 'Default Mail Category' row is not shown. ?>
 	<?php do_settings_fields( 'writing', 'post_via_email' ); ?>
 </table>
 <?php } ?>

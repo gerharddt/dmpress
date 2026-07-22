@@ -2876,16 +2876,6 @@ function register_initial_settings() {
 	);
 
 	register_setting(
-		'writing',
-		'default_post_format',
-		array(
-			'show_in_rest' => true,
-			'type'         => 'string',
-			'description'  => __( 'Default post format.' ),
-		)
-	);
-
-	register_setting(
 		'reading',
 		'posts_per_page',
 		array(
