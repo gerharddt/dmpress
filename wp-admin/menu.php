@@ -278,11 +278,11 @@ if ( ! is_multisite() && defined( 'WP_ALLOW_MULTISITE' ) && WP_ALLOW_MULTISITE )
 	// Users.
 	$submenu['options-general.php'][69] = array( __( 'Users' ), 'read', 'users.php#dmp-group-users', '', 'dmp-menu-heading' );
 	$submenu['options-general.php'][70] = array( __( 'All Users' ), 'list_users', 'users.php' );
-if ( current_user_can( 'create_users' ) ) {
-	$submenu['options-general.php'][72] = array( __( 'Add User' ), 'create_users', 'user-new.php' );
-} elseif ( is_multisite() ) {
-	$submenu['options-general.php'][72] = array( __( 'Add User' ), 'promote_users', 'user-new.php' );
-}
+	/*
+	 * DMPress: no "Add User" item. user-new.php keeps working — it is reached
+	 * from the "Add New User" button on the Users screen and by direct URL, and
+	 * enforces its own capability checks.
+	 */
 	$submenu['options-general.php'][74] = array( __( 'Profile' ), 'read', 'profile.php' );
 
 // Appearance.
@@ -337,7 +337,11 @@ if ( ! is_multisite() && current_user_can( 'update_plugins' ) ) {
 	$submenu['options-general.php'][94] = array( sprintf( __( 'Installed Plugins %s' ), $count ), 'activate_plugins', 'plugins.php' );
 
 if ( ! is_multisite() ) {
-	$submenu['options-general.php'][95] = array( __( 'Add Plugin' ), 'install_plugins', 'plugin-install.php' );
+	/*
+	 * DMPress: no "Add Plugin" item. plugin-install.php keeps working — it is
+	 * reached from the "Add New Plugin" button on the Plugins screen and by
+	 * direct URL, and enforces its own capability checks.
+	 */
 	$submenu['options-general.php'][96] = array( __( 'Plugin File Editor' ), 'edit_plugins', 'plugin-editor.php' );
 }
 
