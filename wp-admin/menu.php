@@ -334,7 +334,8 @@ if ( ! is_multisite() && current_user_can( 'update_plugins' ) ) {
 
 	$submenu['options-general.php'][93] = array( __( 'Plugins' ), 'activate_plugins', 'plugins.php#dmp-group-plugins', '', 'dmp-menu-heading' );
 	/* translators: %s: Number of available plugin updates. */
-	$submenu['options-general.php'][94] = array( sprintf( __( 'Installed Plugins %s' ), $count ), 'activate_plugins', 'plugins.php' );
+	// DMPress: labelled "All Plugins", matching "All Users" in the group above.
+	$submenu['options-general.php'][94] = array( sprintf( __( 'All Plugins %s' ), $count ), 'activate_plugins', 'plugins.php' );
 
 if ( ! is_multisite() ) {
 	/*
