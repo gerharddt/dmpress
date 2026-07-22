@@ -10,8 +10,8 @@ This document logs everything that has been changed relative to stock WordPress 
 5. [Upstream WordPress fixes ported](#5-upstream-wordpress-fixes-ported)
 6. [Known consequences & decisions](#6-known-consequences--decisions)
 
-> **Baseline:** stock WordPress 7.0. **Product version:** DMPress 1.0.0-beta.10 (pre-release).
-> Internally `$wp_version` remains `7.0` for plugin/API compatibility; `$dmpress_version` (`1.0.0-beta.10`) is the product version shown to users.
+> **Baseline:** stock WordPress 7.0. **Product version:** DMPress 1.0.0-beta.11 (pre-release).
+> Internally `$wp_version` remains `7.0` for plugin/API compatibility; `$dmpress_version` (`1.0.0-beta.11`) is the product version shown to users.
 
 ---
 
@@ -144,7 +144,7 @@ Inert, no-op implementations of the public block API (`register_block_type`, `re
 
 ### Dual-version scheme — `wp-includes/version.php`
 - `$wp_version = '7.0'` (compatibility: plugin `Requires at least`, wordpress.org APIs, WP-CLI). **Never** set this to the DMPress version — doing so breaks plugin installation.
-- `$dmpress_version = '1.0.0-beta.10'` (product version shown in generator tags, admin footer, dashboard).
+- `$dmpress_version = '1.0.0-beta.11'` (product version shown in generator tags, admin footer, dashboard).
 
 **Release process:** bump `$dmpress_version` on every published release/push — `1.0.0-beta.1` → `1.0.0-beta.2` → … → `1.0.0` — and record what changed in this file.
 
@@ -169,6 +169,7 @@ Splitting `post` into a Content-Type Builder entry made it report `_builtin => f
 - **Location:** moved from `wp-content/plugins/secure-custom-fields/` into **`wp-includes/scf/`** (~25 MB) and loaded from `wp-settings.php` on every request — it is now a core component, not an optional plugin.
 - **Role in DMPress:** it *is* the **Content-Type Builder** — the UI for creating post types, taxonomies, options pages, and custom fields.
 - **Fork adjustments:** asset URL patched to `includes_url('scf/')`; `ACF_PATH`/`ACF_BASENAME` defined in `wp-settings.php`; uninstall hook removed; guards added where SCF's (inert) block layer called the removed block system.
+- **Presented as the Content-Type Builder, not as SCF:** the `name` setting (`secure-custom-fields.php`) is `Content-Type Builder`, which drives the `<h2>` heading on every builder screen. The hard-coded `SCF` group header in the "More" dropdown now echoes that same setting, the toolbar logo's `aria-label`/`alt` were reworded, and the two Tools tooltips that referenced "another SCF installation" / "an SCF JSON file" were rewritten. No SCF or ACF branding renders anywhere in the admin. **Attribution is unaffected** — it lives in `CREDITS.md`, and internal identifiers (`acf_*` functions, `acf-*` post types, the `secure-custom-fields` text domain, `ACF_*` constants) are deliberately untouched so SCF-aware plugins and existing field data keep working.
 - **"Beta Features" removed from the "More" menu:** `SCF_Admin_Beta_Features::admin_menu()` returns before `add_submenu_page()`, so the page is never registered — it drops out of the Content-Type Builder nav (which is built from `$submenu`) and a direct URL returns 403. The class, `scf_register_admin_beta_feature()` and `acf()->admin_beta_features` are left intact so nothing referencing them fatals. The only shipped beta feature (`editor_sidebar`) targets the block editor, which DMPress does not have.
 - **Copyright:** all original SCF/ACF and WordPress copyrights remain with their authors; DMPress ships under GPL as a derivative work.
 

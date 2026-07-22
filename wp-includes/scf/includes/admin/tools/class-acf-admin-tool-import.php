@@ -45,7 +45,7 @@ if ( ! class_exists( 'ACF_Admin_Tool_Import' ) ) :
 			?>
 			<div class="acf-postbox-header">
 				<h2 class="acf-postbox-title"><?php esc_html_e( 'Import', 'secure-custom-fields' ); ?></h2>
-				<div class="acf-tip"><i tabindex="0" class="acf-icon acf-icon-help acf-js-tooltip" title="<?php esc_attr_e( 'Choose an SCF JSON file to import. Use only files from trusted sources, then click Import.', 'secure-custom-fields' ); ?>">?</i></div>
+				<div class="acf-tip"><i tabindex="0" class="acf-icon acf-icon-help acf-js-tooltip" title="<?php esc_attr_e( 'Choose a Content-Type Builder JSON file to import. Use only files from trusted sources, then click Import.', 'secure-custom-fields' ); ?>">?</i></div>
 			</div>
 			<div class="acf-postbox-inner">
 				<div class="acf-fields">

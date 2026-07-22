@@ -131,7 +131,7 @@ if ( ! class_exists( 'ACF' ) ) {
 
 			// Define settings.
 			$this->settings = array(
-				'name'                    => 'Secure Custom Fields', // Will be updated in the init hook to i18n string.
+				'name'                    => 'Content-Type Builder', // DMPress: product name. Updated in the init hook to the i18n string.
 				'slug'                    => dirname( ACF_BASENAME ),
 				'version'                 => ACF_VERSION,
 				'basename'                => ACF_BASENAME,
@@ -343,8 +343,15 @@ if ( ! class_exists( 'ACF' ) ) {
 			// Load textdomain file.
 			acf_load_textdomain();
 
-			// Update the name setting now that we're in the init hook.
-			acf_update_setting( 'name', __( 'Secure Custom Fields', 'secure-custom-fields' ) );
+			/*
+			 * Update the name setting now that we're in the init hook.
+			 *
+			 * DMPress: SCF is not shipped as a separate product here — it is the
+			 * Content-Type Builder, a core feature. This setting drives the
+			 * heading on every builder screen, so it carries the fork's name.
+			 * Attribution to Secure Custom Fields lives in CREDITS.md.
+			 */
+			acf_update_setting( 'name', __( 'Content-Type Builder', 'secure-custom-fields' ) );
 
 			// Include 3rd party compatibility.
 			acf_include( 'includes/third-party.php' );

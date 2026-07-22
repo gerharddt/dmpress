@@ -140,8 +140,8 @@ function acf_print_menu_section( $menu_items, $section = '' ) {
 <div class="acf-admin-toolbar">
 	<div class="acf-admin-toolbar-inner">
 		<div class="acf-nav-wrap">
-			<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=acf-field-group' ) ); ?>" class="acf-logo" aria-label="<?php esc_attr_e( 'Edit SCF Field Groups', 'secure-custom-fields' ); ?>">
-				<img src="<?php echo esc_url( acf_get_url( 'assets/images/scf-logo.svg' ) ); ?>" alt="<?php esc_attr_e( 'Secure Custom Fields logo', 'secure-custom-fields' ); ?>">
+			<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=acf-field-group' ) ); ?>" class="acf-logo" aria-label="<?php esc_attr_e( 'Edit Content-Type Builder Field Groups', 'secure-custom-fields' ); ?>">
+				<img src="<?php echo esc_url( acf_get_url( 'assets/images/scf-logo.svg' ) ); ?>" alt="<?php esc_attr_e( 'Content-Type Builder logo', 'secure-custom-fields' ); ?>">
 			</a>
 
 			<h2><?php echo esc_html( acf_get_setting( 'name' ) ); ?></h2>
@@ -153,7 +153,8 @@ function acf_print_menu_section( $menu_items, $section = '' ) {
 						<?php
 						if ( $acf_more_items ) {
 							if ( $more_items ) {
-								echo '<li class="acf-more-section-header"><span class="acf-tab acf-tab-header">SCF</span></li>';
+								// DMPress: label this group with the product name rather than "SCF".
+								echo '<li class="acf-more-section-header"><span class="acf-tab acf-tab-header">' . esc_html( acf_get_setting( 'name' ) ) . '</span></li>';
 							}
 							acf_print_menu_section( $acf_more_items, 'acf' );
 						}

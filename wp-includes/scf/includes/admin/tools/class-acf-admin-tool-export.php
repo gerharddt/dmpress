@@ -330,7 +330,7 @@ if ( ! class_exists( 'ACF_Admin_Tool_Export' ) ) :
 			?>
 			<div class="acf-postbox-header">
 				<h2 class="acf-postbox-title"><?php esc_html_e( 'Export', 'secure-custom-fields' ); ?></h2>
-				<div class="acf-tip"><i tabindex="0" class="acf-icon acf-icon-help acf-js-tooltip" title="<?php esc_attr_e( 'Select the items you would like to export and then select your export method. Export As JSON to export to a .json file which you can then import to another SCF installation. Generate PHP to export to PHP code which you can place in your theme.', 'secure-custom-fields' ); ?>">?</i></div>
+				<div class="acf-tip"><i tabindex="0" class="acf-icon acf-icon-help acf-js-tooltip" title="<?php esc_attr_e( 'Select the items you would like to export and then select your export method. Export As JSON to export to a .json file which you can then import into another DMPress site. Generate PHP to export to PHP code which you can place in your theme.', 'secure-custom-fields' ); ?>">?</i></div>
 			</div>
 			<div class="acf-postbox-inner">
 				<div class="acf-fields">
