@@ -43,22 +43,15 @@ require_once ABSPATH . 'wp-admin/admin-header.php';
 <?php settings_fields( 'discussion' ); ?>
 
 <table class="form-table indent-children" role="presentation">
-<?php $default_post_settings_title = __( 'Default post settings' ); ?>
+<?php /* DMPress: the former 'Default post settings' row is merged into 'Comment settings' below. */ ?>
+<?php $comment_settings_title = __( 'Comment settings' ); ?>
 <tr>
-<th scope="row"><?php echo $default_post_settings_title; ?></th>
-<td><fieldset><legend class="screen-reader-text"><span><?php echo $default_post_settings_title; ?></span></legend>
-<?php // DMPress: the pingback/trackback checkboxes are not shown. ?>
+<th scope="row"><?php echo $comment_settings_title; ?></th>
+<td><fieldset><legend class="screen-reader-text"><span><?php echo $comment_settings_title; ?></span></legend>
 <label for="default_comment_status">
 <input name="default_comment_status" type="checkbox" id="default_comment_status" value="open" <?php checked( 'open', get_option( 'default_comment_status' ) ); ?> />
 <?php _e( 'Allow people to submit comments on new posts' ); ?></label>
-<br />
 <p class="description"><?php _e( 'Individual posts may override these settings. Changes here will only be applied to new posts.' ); ?></p>
-</fieldset></td>
-</tr>
-<?php $other_comment_settings_title = __( 'Other comment settings' ); ?>
-<tr>
-<th scope="row"><?php echo $other_comment_settings_title; ?></th>
-<td><fieldset><legend class="screen-reader-text"><span><?php echo $other_comment_settings_title; ?></span></legend>
 <label for="require_name_email"><input type="checkbox" name="require_name_email" id="require_name_email" value="1" <?php checked( '1', get_option( 'require_name_email' ) ); ?> /> <?php _e( 'Comment author must fill out name and email' ); ?></label>
 <br />
 <label for="comment_registration">
