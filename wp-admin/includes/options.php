@@ -35,8 +35,8 @@ function options_general_add_js() {
 	?>
 <script>
 	jQuery( function($) {
+		// DMPress: no site-icon preview to keep in sync; the row was removed.
 		var $siteName = $( '#wp-admin-bar-site-name' ).children( 'a' ).first(),
-			$siteIconPreview = $('#site-icon-preview-site-title'),
 			homeURL = ( <?php echo wp_json_encode( get_home_url(), JSON_HEX_TAG | JSON_UNESCAPED_SLASHES ); ?> || '' ).replace( /^(https?:\/\/)?(www\.)?/, '' );
 
 		$( '#blogname' ).on( 'input', function() {
@@ -48,7 +48,6 @@ function options_general_add_js() {
 			}
 
 			$siteName.text( title );
-			$siteIconPreview.text( title );
 		});
 
 		$( 'input[name="date_format"]' ).on( 'click', function() {

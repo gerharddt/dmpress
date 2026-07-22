@@ -91,7 +91,8 @@ $allowed_options            = array(
 	'general'    => array(
 		'blogname',
 		'blogdescription',
-		'site_icon',
+		// DMPress: 'site_icon' has no field on the General screen; options.php
+		// nulls any allow-listed setting missing from the POST.
 		'gmt_offset',
 		'date_format',
 		'time_format',

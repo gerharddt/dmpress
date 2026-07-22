@@ -4,7 +4,7 @@
 
 DMPress is a fork of **WordPress 7.0**, re-focused as a **headless, data-management CMS**. The block editor (Gutenberg) has been removed entirely in favour of a leaner core built around structured content and data.
 
-> **Status:** `1.0.0-beta.28` — pre-release. Not yet recommended for production.
+> **Status:** `1.0.0-beta.29` — pre-release. Not yet recommended for production.
 
 ---
 
@@ -30,7 +30,7 @@ The full, itemised record of every change relative to stock WordPress 7.0 is in 
 DMPress keeps the `wp` namespace throughout — internally, in hooks, and on the REST API — so the existing plugin ecosystem continues to work. Core carries two version numbers:
 
 - `$wp_version` stays at **`7.0`** — what plugins check via `Requires at least`, and what wordpress.org APIs and WP-CLI see.
-- `$dmpress_version` (**`1.0.0-beta.28`**) is the product version shown to users.
+- `$dmpress_version` (**`1.0.0-beta.29`**) is the product version shown to users.
 
 Plugins that depend on the block editor will not function, but they load without fatal errors: an inert block API shim (`wp-includes/block-compat.php`) keeps `register_block_type()`, `has_blocks()`, `parse_blocks()` and friends callable as no-ops.
 
