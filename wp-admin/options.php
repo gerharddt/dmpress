@@ -101,8 +101,10 @@ $allowed_options            = array(
 		'new_admin_email',
 	),
 	'discussion' => array(
-		'default_pingback_flag',
-		'default_ping_status',
+		// DMPress: 'default_pingback_flag', 'default_ping_status' and the four
+		// comment-pagination settings have no field on the Discussion screen.
+		// options.php nulls any allow-listed setting absent from the POST, so
+		// they must not be listed here.
 		'default_comment_status',
 		'comments_notify',
 		'moderation_notify',
@@ -119,10 +121,6 @@ $allowed_options            = array(
 		'close_comments_days_old',
 		'thread_comments',
 		'thread_comments_depth',
-		'page_comments',
-		'comments_per_page',
-		'default_comments_page',
-		'comment_order',
 		'comment_registration',
 		'show_comments_cookies_opt_in',
 		'wp_notes_notify',

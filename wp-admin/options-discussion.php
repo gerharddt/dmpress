@@ -47,14 +47,7 @@ require_once ABSPATH . 'wp-admin/admin-header.php';
 <tr>
 <th scope="row"><?php echo $default_post_settings_title; ?></th>
 <td><fieldset><legend class="screen-reader-text"><span><?php echo $default_post_settings_title; ?></span></legend>
-<label for="default_pingback_flag">
-<input name="default_pingback_flag" type="checkbox" id="default_pingback_flag" value="1" <?php checked( '1', get_option( 'default_pingback_flag' ) ); ?> />
-<?php _e( 'Attempt to notify any blogs linked to from the post' ); ?></label>
-<br />
-<label for="default_ping_status">
-<input name="default_ping_status" type="checkbox" id="default_ping_status" value="open" <?php checked( 'open', get_option( 'default_ping_status' ) ); ?> />
-<?php _e( 'Allow link notifications from other blogs (pingbacks and trackbacks) on new posts' ); ?></label>
-<br />
+<?php // DMPress: the pingback/trackback checkboxes are not shown. ?>
 <label for="default_comment_status">
 <input name="default_comment_status" type="checkbox" id="default_comment_status" value="open" <?php checked( 'open', get_option( 'default_comment_status' ) ); ?> />
 <?php _e( 'Allow people to submit comments on new posts' ); ?></label>
@@ -121,34 +114,7 @@ $thread_comments_depth .= '</select>';
 </fieldset></td>
 </tr>
 
-<?php $comment_pagination_title = __( 'Comment Pagination' ); ?>
-<tr>
-<th scope="row"><?php echo $comment_pagination_title; ?></th>
-<td><fieldset><legend class="screen-reader-text"><span><?php echo $comment_pagination_title; ?></span></legend>
-<input name="page_comments" type="checkbox" id="page_comments" value="1" <?php checked( '1', get_option( 'page_comments' ) ); ?> />
-<label for="page_comments"><?php _e( 'Break comments into pages' ); ?></label>
-<ul>
-	<li>
-		<label for="comments_per_page"><?php _e( 'Top level comments per page' ); ?></label>
-		<input name="comments_per_page" type="number" step="1" min="0" id="comments_per_page" value="<?php echo esc_attr( get_option( 'comments_per_page' ) ); ?>" class="small-text" />
-	</li>
-	<li>
-		<label for="default_comments_page"><?php _e( 'Comments page to display by default' ); ?></label>
-		<select name="default_comments_page" id="default_comments_page">
-			<option value="newest" <?php selected( 'newest', get_option( 'default_comments_page' ) ); ?>><?php _e( 'last page' ); ?></option>
-			<option value="oldest" <?php selected( 'oldest', get_option( 'default_comments_page' ) ); ?>><?php _e( 'first page' ); ?></option>
-		</select>
-	</li>
-	<li>
-		<label for="comment_order"><?php _e( 'Comments to display at the top of each page' ); ?></label>
-		<select name="comment_order" id="comment_order">
-			<option value="asc" <?php selected( 'asc', get_option( 'comment_order' ) ); ?>><?php _e( 'older' ); ?></option>
-			<option value="desc" <?php selected( 'desc', get_option( 'comment_order' ) ); ?>><?php _e( 'newer' ); ?></option>
-		</select>
-	</li>
-</ul>
-</fieldset></td>
-</tr>
+<?php // DMPress: the 'Comment Pagination' row is not shown. ?>
 <?php $email_me_whenever_title = __( 'Email me whenever' ); ?>
 <tr>
 <th scope="row"><?php echo $email_me_whenever_title; ?></th>

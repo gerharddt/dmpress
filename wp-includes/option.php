@@ -2921,20 +2921,6 @@ function register_initial_settings() {
 
 	register_setting(
 		'discussion',
-		'default_ping_status',
-		array(
-			'show_in_rest' => array(
-				'schema' => array(
-					'enum' => array( 'open', 'closed' ),
-				),
-			),
-			'type'         => 'string',
-			'description'  => __( 'Allow link notifications from other blogs (pingbacks and trackbacks) on new articles.' ),
-		)
-	);
-
-	register_setting(
-		'discussion',
 		'default_comment_status',
 		array(
 			'show_in_rest' => array(
