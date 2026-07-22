@@ -1,4 +1,4 @@
-/* DMP Starter — minimal styles. Light and dark, no dependencies. */
+/* DMP Starter — minimal styles. Light theme, no dependencies. */
 
 :root {
 	--bg: #ffffff;
@@ -7,17 +7,6 @@
 	--rule: #e4e6e8;
 	--accent: #254469;
 	--card: #fbfbfc;
-}
-
-@media ( prefers-color-scheme: dark ) {
-	:root {
-		--bg: #14171a;
-		--fg: #e8eaed;
-		--muted: #9aa1a8;
-		--rule: #2a2f34;
-		--accent: #d3b059;
-		--card: #191d21;
-	}
 }
 
 * {
