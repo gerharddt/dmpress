@@ -64,6 +64,15 @@ function dmpress_refresh_front_pointer() {
 add_action( 'switch_theme', 'dmpress_refresh_front_pointer' );
 
 /*
+ * Write the pointer as part of installation.
+ *
+ * Without this the file first appears on the initial admin request, so a
+ * freshly installed site served the built-in placeholder to visitors until
+ * someone happened to open wp-admin.
+ */
+add_action( 'wp_install', 'dmpress_refresh_front_pointer' );
+
+/*
  * The pointer also carries the search-engine visibility setting, so rewrite it
  * whenever that changes rather than waiting for a theme switch.
  */

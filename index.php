@@ -43,6 +43,21 @@ function dmpress_is_rest_request() {
 }
 
 /**
+ * Prevents caching of the front-end document.
+ *
+ * Which document is served is a server-side decision — the active theme's
+ * entry file, a deployed build, or the placeholder — and it changes when the
+ * theme does. Without this a browser could keep showing whatever it saw first,
+ * most visibly the placeholder from before a theme was resolved. Static assets
+ * are unaffected: they are served by the web server under their own URLs.
+ *
+ * @return void
+ */
+function dmpress_send_no_cache() {
+	header( 'Cache-Control: no-cache, must-revalidate, max-age=0' );
+}
+
+/**
  * Serves robots.txt.
  *
  * WordPress builds this in do_robots(), which never runs here because
@@ -53,6 +68,7 @@ function dmpress_is_rest_request() {
  */
 function dmpress_serve_robots() {
 	header( 'Content-Type: text/plain; charset=utf-8' );
+	dmpress_send_no_cache();
 
 	echo "User-agent: *\n";
 
@@ -196,6 +212,7 @@ if ( $dmpress_theme_entry ) {
 
 	header( 'Content-Type: text/html; charset=UTF-8' );
 	header( 'X-DMPress: headless' );
+	dmpress_send_no_cache();
 
 	if ( ! dmpress_is_public() ) {
 		header( 'X-Robots-Tag: noindex, nofollow', true );
@@ -213,6 +230,7 @@ $dmpress_front_entry = __DIR__ . '/front/index.html';
 if ( is_readable( $dmpress_front_entry ) ) {
 	header( 'Content-Type: text/html; charset=UTF-8' );
 	header( 'X-DMPress: headless' );
+	dmpress_send_no_cache();
 
 	if ( ! dmpress_is_public() ) {
 		header( 'X-Robots-Tag: noindex, nofollow', true );
@@ -224,6 +242,7 @@ if ( is_readable( $dmpress_front_entry ) ) {
 
 header( 'Content-Type: text/html; charset=UTF-8' );
 header( 'X-DMPress: headless' );
+dmpress_send_no_cache();
 header( 'X-Robots-Tag: noindex, nofollow', true );
 ?><!DOCTYPE html>
 <html lang="en">
