@@ -42,6 +42,29 @@ function dmpress_is_rest_request() {
 	return $path === $prefix || str_starts_with( $path, $prefix . '/' );
 }
 
+/**
+ * Serves robots.txt.
+ *
+ * WordPress builds this in do_robots(), which never runs here because
+ * front-end requests do not boot the CMS — so without this the path fell
+ * through and returned the front-end document as text/html.
+ *
+ * @return void
+ */
+function dmpress_serve_robots() {
+	header( 'Content-Type: text/plain; charset=utf-8' );
+
+	echo "User-agent: *\n";
+
+	if ( dmpress_is_public() ) {
+		echo "Disallow: /wp-admin/\n";
+		echo "Allow: /wp-admin/admin-ajax.php\n";
+	} else {
+		// Settings → Reading: discourage search engines from indexing this site.
+		echo "Disallow: /\n";
+	}
+}
+
 /*
  * Not configured yet? Hand off to WordPress.
  *
@@ -58,6 +81,13 @@ $dmpress_has_config = file_exists( __DIR__ . '/wp-config.php' )
 
 if ( ! $dmpress_has_config ) {
 	require __DIR__ . '/wp-load.php';
+	return;
+}
+
+$dmpress_path = '/' . ltrim( (string) parse_url( (string) ( $_SERVER['REQUEST_URI'] ?? '/' ), PHP_URL_PATH ), '/' );
+
+if ( '/robots.txt' === $dmpress_path ) {
+	dmpress_serve_robots();
 	return;
 }
 
@@ -83,16 +113,45 @@ if ( dmpress_is_rest_request() ) {
  *
  * @return string|false Absolute path to the entry file, or false.
  */
-function dmpress_theme_front_entry() {
-	$pointer = __DIR__ . '/wp-content/dmpress-front.json';
+function dmpress_front_pointer() {
+	static $data = null;
 
-	if ( ! is_readable( $pointer ) ) {
-		return false;
+	if ( null !== $data ) {
+		return $data;
 	}
 
-	$data = json_decode( (string) file_get_contents( $pointer ), true );
+	$pointer = __DIR__ . '/wp-content/dmpress-front.json';
+	$data    = array();
 
-	if ( ! is_array( $data ) || empty( $data['directory'] ) ) {
+	if ( is_readable( $pointer ) ) {
+		$decoded = json_decode( (string) file_get_contents( $pointer ), true );
+
+		if ( is_array( $decoded ) ) {
+			$data = $decoded;
+		}
+	}
+
+	return $data;
+}
+
+/**
+ * Whether search engines are welcome, per Settings → Reading.
+ *
+ * Defaults to true when unknown, so a missing pointer never silently
+ * de-indexes a live site.
+ *
+ * @return bool
+ */
+function dmpress_is_public() {
+	$data = dmpress_front_pointer();
+
+	return ! array_key_exists( 'public', $data ) || (bool) $data['public'];
+}
+
+function dmpress_theme_front_entry() {
+	$data = dmpress_front_pointer();
+
+	if ( empty( $data['directory'] ) ) {
 		return false;
 	}
 
@@ -137,6 +196,11 @@ if ( $dmpress_theme_entry ) {
 
 	header( 'Content-Type: text/html; charset=UTF-8' );
 	header( 'X-DMPress: headless' );
+
+	if ( ! dmpress_is_public() ) {
+		header( 'X-Robots-Tag: noindex, nofollow', true );
+	}
+
 	echo str_replace(
 		array( '{{THEME_URI}}', '{{SITE_PATH}}' ),
 		array( $dmpress_theme_uri, $dmpress_site_path ),
@@ -149,6 +213,11 @@ $dmpress_front_entry = __DIR__ . '/front/index.html';
 if ( is_readable( $dmpress_front_entry ) ) {
 	header( 'Content-Type: text/html; charset=UTF-8' );
 	header( 'X-DMPress: headless' );
+
+	if ( ! dmpress_is_public() ) {
+		header( 'X-Robots-Tag: noindex, nofollow', true );
+	}
+
 	readfile( $dmpress_front_entry );
 	return;
 }

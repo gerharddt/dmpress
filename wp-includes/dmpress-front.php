@@ -37,6 +37,9 @@ function dmpress_write_front_pointer() {
 		array(
 			'theme'     => get_stylesheet(),
 			'directory' => $directory,
+			// Whether search engines are welcome; index.php cannot read options.
+			'public'    => (int) ( '1' === (string) get_option( 'blog_public' ) ),
+			'site_path' => wp_parse_url( home_url( '/' ), PHP_URL_PATH ),
 			'updated'   => time(),
 		)
 	);
@@ -60,6 +63,13 @@ function dmpress_refresh_front_pointer() {
 }
 add_action( 'switch_theme', 'dmpress_refresh_front_pointer' );
 
+/*
+ * The pointer also carries the search-engine visibility setting, so rewrite it
+ * whenever that changes rather than waiting for a theme switch.
+ */
+add_action( 'update_option_blog_public', 'dmpress_refresh_front_pointer' );
+add_action( 'add_option_blog_public', 'dmpress_refresh_front_pointer' );
+
 /**
  * Writes the pointer on the first admin request that finds it missing.
  *
@@ -72,6 +82,17 @@ add_action( 'switch_theme', 'dmpress_refresh_front_pointer' );
  */
 function dmpress_maybe_write_front_pointer() {
 	if ( ! file_exists( DMPRESS_FRONT_POINTER ) ) {
+		dmpress_write_front_pointer();
+		return;
+	}
+
+	/*
+	 * Refresh a pointer written before 'public' was recorded, so an existing
+	 * install starts honouring the setting without needing a theme switch.
+	 */
+	$data = json_decode( (string) @file_get_contents( DMPRESS_FRONT_POINTER ), true );
+
+	if ( ! is_array( $data ) || ! array_key_exists( 'public', $data ) ) {
 		dmpress_write_front_pointer();
 	}
 }
