@@ -216,6 +216,21 @@ require_once ABSPATH . 'wp-admin/admin-header.php';
 <div class="wrap">
 <h1><?php echo esc_html( $title ); ?></h1>
 
+<?php
+/*
+ * DMPress: explain what this screen actually governs in a headless CMS, since
+ * core renders no pages and the structure is consumed by the front end instead.
+ */
+?>
+<div class="notice notice-info inline">
+	<p>
+		<?php _e( 'DMPress does not render pages, so this structure is not about what visitors are served &mdash; it is the <strong>URL contract with your front end</strong>. Whatever you choose is published in every REST API <code>link</code> field, and your theme routes on those URLs.' ); ?>
+	</p>
+	<p>
+		<?php _e( '<strong>Plain</strong> is supported: the front end then routes on query strings instead of paths, and the REST API is available at <code>?rest_route=</code>. Any other structure additionally enables <code>/wp-json/</code> and lets the front end use readable URLs.' ); ?>
+	</p>
+</div>
+
 <form name="form" action="options-permalink.php" method="post">
 <?php wp_nonce_field( 'update-permalink' ); ?>
 

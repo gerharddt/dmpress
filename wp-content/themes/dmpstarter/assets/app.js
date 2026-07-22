@@ -168,7 +168,11 @@
 			var node = el( disabled ? 'span' : 'a', 'pagination__link' + ( disabled ? ' is-disabled' : '' ), label );
 
 			if ( ! disabled ) {
-				node.href = targetPage > 1 ? BASE + 'page/' + targetPage + '/' : BASE;
+				if ( restRoot === 'plain' ) {
+					node.href = targetPage > 1 ? BASE + '?page=' + targetPage : BASE;
+				} else {
+					node.href = targetPage > 1 ? BASE + 'page/' + targetPage + '/' : BASE;
+				}
 			}
 
 			return node;
@@ -183,17 +187,28 @@
 
 	/* -------------------------------------------------------------- single */
 
-	function renderPost( slug ) {
+	function renderPost( identifier ) {
 		showState( 'Loading…' );
 
-		api( '/wp/v2/posts', { slug: slug, _fields: 'id,date,title,content' } )
+		/*
+		 * Posts are looked up by slug when the URL carries one, and by ID when
+		 * the site is on plain permalinks (where the canonical URL is ?p=<id>).
+		 */
+		var byId = /^\d+$/.test( String( identifier ) );
+		var request = byId
+			? api( '/wp/v2/posts/' + encodeURIComponent( identifier ), { _fields: 'id,date,title,content' } )
+			: api( '/wp/v2/posts', { slug: identifier, _fields: 'id,date,title,content' } );
+
+		request
 			.then( function ( result ) {
-				if ( ! result.body.length ) {
+				var found = byId ? result.body : ( result.body.length ? result.body[ 0 ] : null );
+
+				if ( ! found ) {
 					renderNotFound();
 					return;
 				}
 
-				var post = result.body[ 0 ];
+				var post = found;
 				var article = el( 'article', 'post' );
 				var back = el( 'a', 'back-link', '← All posts' );
 
@@ -209,6 +224,13 @@
 				window.scrollTo( 0, 0 );
 			} )
 			.catch( function ( error ) {
+				// Looking a post up by ID 404s when it does not exist; that is a
+				// missing page, not a failure worth showing an error for.
+				if ( /\(404\)/.test( error.message ) ) {
+					renderNotFound();
+					return;
+				}
+
 				showState( error.message, true );
 			} );
 	}
@@ -238,7 +260,7 @@
 	 * and /post/hello-world/ resolve the same way, because the slug is what the
 	 * REST query actually needs.
 	 */
-	function route() {
+	function routeByPath() {
 		var path = window.location.pathname;
 
 		if ( BASE !== '/' && path.indexOf( BASE ) === 0 ) {
@@ -262,6 +284,43 @@
 		}
 
 		renderPost( segments[ segments.length - 1 ] );
+	}
+
+	/*
+	 * With the "Plain" permalink structure there are no rewrite rules, so every
+	 * URL is the site root plus a query string — including the canonical post
+	 * URLs the CMS reports, which look like ?post_type=post&p=12. Routing then
+	 * has to read the query string instead of the path.
+	 */
+	function routeByQuery() {
+		var params = new URLSearchParams( window.location.search );
+		var id = params.get( 'p' );
+
+		if ( id ) {
+			renderPost( id );
+			return;
+		}
+
+		var slug = params.get( 'name' );
+
+		if ( slug ) {
+			renderPost( slug );
+			return;
+		}
+
+		var page = parseInt( params.get( 'page' ), 10 );
+		renderList( page > 0 ? page : 1 );
+	}
+
+	function route() {
+		// The mode is known only once the REST root has been probed.
+		detectRestRoot().then( function ( root ) {
+			if ( root === 'plain' ) {
+				routeByQuery();
+			} else {
+				routeByPath();
+			}
+		} );
 	}
 
 	/* Intercept same-origin links so navigation stays client-side. */
