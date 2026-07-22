@@ -4500,7 +4500,6 @@ html[dir=rtl] .acf-table > tbody > tr > td.order + td {
   display: flex;
   align-items: center;
   position: relative;
-  padding-left: 72px;
 }
 
 @media screen and (max-width: 1250px) {
@@ -4522,9 +4521,6 @@ html[dir=rtl] .acf-table > tbody > tr > td.order + td {
   display: flex;
   margin-right: 24px;
   text-decoration: none;
-  position: absolute;
-  top: 0;
-  left: 0;
 }
 
 .acf-admin-toolbar .acf-logo img {
@@ -7279,30 +7275,18 @@ h3.acf-sub-field-list-title:before,
 /*---------------------------------------------------------------------------------------------
 *
 *  DMPress: the admin toolbar shows the product name as text instead of a logo mark.
-*  Overrides the absolutely-positioned 40px logo gutter that SCF's build sets above.
+*  The 72px logo gutter and the absolute positioning it needed are removed above.
 *
 *---------------------------------------------------------------------------------------------*/
-.acf-admin-toolbar .acf-admin-toolbar-inner .acf-nav-wrap {
-  padding-left: 16px;
-}
-
 .acf-admin-toolbar .acf-logo {
-  position: static;
   align-items: center;
-  margin-right: 24px;
-  color: #F9FAFB;
-  font-size: 15px;
+  color: #FFFFFF;
+  font-size: 20px;
   font-weight: 600;
   white-space: nowrap;
-  text-decoration: none;
 }
 
 .acf-admin-toolbar .acf-logo:hover,
 .acf-admin-toolbar .acf-logo:focus {
   color: #FFFFFF;
-}
-
-.rtl .acf-admin-toolbar .acf-admin-toolbar-inner .acf-nav-wrap {
-  padding-left: 0;
-  padding-right: 16px;
 }
