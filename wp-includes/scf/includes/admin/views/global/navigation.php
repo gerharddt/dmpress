@@ -141,7 +141,7 @@ function acf_print_menu_section( $menu_items, $section = '' ) {
 	<div class="acf-admin-toolbar-inner">
 		<div class="acf-nav-wrap">
 			<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=acf-field-group' ) ); ?>" class="acf-logo" aria-label="<?php esc_attr_e( 'Edit Content-Type Builder Field Groups', 'secure-custom-fields' ); ?>">
-				<img src="<?php echo esc_url( acf_get_url( 'assets/images/scf-logo.svg' ) ); ?>" alt="<?php esc_attr_e( 'Content-Type Builder logo', 'secure-custom-fields' ); ?>">
+				<img src="<?php echo esc_url( acf_get_url( 'assets/images/dmp-logo.svg' ) ); ?>" alt="<?php esc_attr_e( 'Content-Type Builder logo', 'secure-custom-fields' ); ?>">
 			</a>
 
 			<h2><?php echo esc_html( acf_get_setting( 'name' ) ); ?></h2>
