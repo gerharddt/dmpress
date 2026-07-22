@@ -7276,3 +7276,33 @@ h3.acf-sub-field-list-title:before,
 }
 
 /*# sourceMappingURL=acf-global.css.map*/
+/*---------------------------------------------------------------------------------------------
+*
+*  DMPress: the admin toolbar shows the product name as text instead of a logo mark.
+*  Overrides the absolutely-positioned 40px logo gutter that SCF's build sets above.
+*
+*---------------------------------------------------------------------------------------------*/
+.acf-admin-toolbar .acf-admin-toolbar-inner .acf-nav-wrap {
+  padding-left: 16px;
+}
+
+.acf-admin-toolbar .acf-logo {
+  position: static;
+  align-items: center;
+  margin-right: 24px;
+  color: #F9FAFB;
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.acf-admin-toolbar .acf-logo:hover,
+.acf-admin-toolbar .acf-logo:focus {
+  color: #FFFFFF;
+}
+
+.rtl .acf-admin-toolbar .acf-admin-toolbar-inner .acf-nav-wrap {
+  padding-left: 0;
+  padding-right: 16px;
+}
