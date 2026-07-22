@@ -253,37 +253,53 @@ $menu[59] = array( '', 'read', 'separator2', '', 'wp-menu-separator' );
 $menu[70] = array( __( 'Admin' ), 'read', 'options-general.php', '', 'menu-top menu-icon-settings', 'menu-admin', 'dashicons-admin-generic' );
 
 	// Settings.
-	$submenu['options-general.php'][9]  = array( __( 'Settings' ), 'manage_options', 'options-general.php', '', 'dmp-menu-heading' );
-	$submenu['options-general.php'][10] = array( _x( 'General', 'settings screen' ), 'manage_options', 'options-general.php' );
-	$submenu['options-general.php'][15] = array( __( 'Writing' ), 'manage_options', 'options-writing.php' );
-	$submenu['options-general.php'][20] = array( __( 'Reading' ), 'manage_options', 'options-reading.php' );
-	$submenu['options-general.php'][25] = array( __( 'Discussion' ), 'manage_options', 'options-discussion.php' );
-	$submenu['options-general.php'][30] = array( __( 'Media' ), 'manage_options', 'options-media.php' );
-	$submenu['options-general.php'][40] = array( __( 'Permalinks' ), 'manage_options', 'options-permalink.php' );
+	/*
+	 * DMPress: this hidden first row exists only to pin the parent slug.
+	 *
+	 * wp-admin/includes/menu.php re-parents a top-level menu onto its FIRST
+	 * submenu item whenever the two slugs differ, moving the whole submenu to a
+	 * new key and orphaning anything added later (such as the Content-Type
+	 * Builder, registered on admin_menu at priority 11). Keeping an anchor row
+	 * with slug 'options-general.php' at index 0 means the groups below can be
+	 * reordered freely without tripping that.
+	 */
+	$submenu['options-general.php'][0] = array( '', 'read', 'options-general.php', '', 'dmp-menu-anchor' );
+
+	// Content Types (see the late admin_menu hook below for the builder item).
+	$submenu['options-general.php'][2] = array( __( 'Content Types' ), 'read', 'edit.php?post_type=acf-field-group#dmp-group-content-types', '', 'dmp-menu-heading' );
+
+	// Settings.
+	$submenu['options-general.php'][40] = array( __( 'Settings' ), 'manage_options', 'options-general.php#dmp-group-settings', '', 'dmp-menu-heading' );
+	$submenu['options-general.php'][41] = array( _x( 'General', 'settings screen' ), 'manage_options', 'options-general.php' );
+	$submenu['options-general.php'][42] = array( __( 'Writing' ), 'manage_options', 'options-writing.php' );
+	$submenu['options-general.php'][43] = array( __( 'Reading' ), 'manage_options', 'options-reading.php' );
+	$submenu['options-general.php'][44] = array( __( 'Discussion' ), 'manage_options', 'options-discussion.php' );
+	$submenu['options-general.php'][45] = array( __( 'Media' ), 'manage_options', 'options-media.php' );
+	$submenu['options-general.php'][46] = array( __( 'Permalinks' ), 'manage_options', 'options-permalink.php' );
 
 // Tools.
-	$submenu['options-general.php'][49] = array( __( 'Tools' ), 'edit_posts', 'tools.php#dmp-group-tools', '', 'dmp-menu-heading' );
-	$submenu['options-general.php'][50] = array( __( 'Available Tools' ), 'edit_posts', 'tools.php' );
+	$submenu['options-general.php'][50] = array( __( 'Tools' ), 'edit_posts', 'tools.php#dmp-group-tools', '', 'dmp-menu-heading' );
+	$submenu['options-general.php'][51] = array( __( 'Available Tools' ), 'edit_posts', 'tools.php' );
 	$submenu['options-general.php'][52] = array( __( 'Import' ), 'import', 'import.php' );
-	$submenu['options-general.php'][54] = array( __( 'Export' ), 'export', 'export.php' );
-	$submenu['options-general.php'][58] = array( __( 'Export Personal Data' ), 'export_others_personal_data', 'export-personal-data.php' );
-	$submenu['options-general.php'][60] = array( __( 'Erase Personal Data' ), 'erase_others_personal_data', 'erase-personal-data.php' );
+	$submenu['options-general.php'][53] = array( __( 'Export' ), 'export', 'export.php' );
+	$submenu['options-general.php'][54] = array( __( 'Export Personal Data' ), 'export_others_personal_data', 'export-personal-data.php' );
+	$submenu['options-general.php'][55] = array( __( 'Erase Personal Data' ), 'erase_others_personal_data', 'erase-personal-data.php' );
 if ( is_multisite() && ! is_main_site() && '1' !== get_site()->deleted ) {
-	$submenu['options-general.php'][62] = array( __( 'Delete Site' ), 'delete_site', 'ms-delete-site.php' );
+	$submenu['options-general.php'][56] = array( __( 'Delete Site' ), 'delete_site', 'ms-delete-site.php' );
 }
 if ( ! is_multisite() && defined( 'WP_ALLOW_MULTISITE' ) && WP_ALLOW_MULTISITE ) {
-	$submenu['options-general.php'][64] = array( __( 'Network Setup' ), 'setup_network', 'network.php' );
+	$submenu['options-general.php'][57] = array( __( 'Network Setup' ), 'setup_network', 'network.php' );
 }
 
 	// Users.
-	$submenu['options-general.php'][69] = array( __( 'Users' ), 'read', 'users.php#dmp-group-users', '', 'dmp-menu-heading' );
-	$submenu['options-general.php'][70] = array( __( 'All Users' ), 'list_users', 'users.php' );
+	$submenu['options-general.php'][30] = array( __( 'Users' ), 'read', 'users.php#dmp-group-users', '', 'dmp-menu-heading' );
+	$submenu['options-general.php'][31] = array( __( 'All Users' ), 'list_users', 'users.php' );
 	/*
 	 * DMPress: no "Add User" item. user-new.php keeps working — it is reached
 	 * from the "Add New User" button on the Users screen and by direct URL, and
 	 * enforces its own capability checks.
 	 */
-	$submenu['options-general.php'][74] = array( __( 'Profile' ), 'read', 'profile.php' );
+	$submenu['options-general.php'][32] = array( __( 'Profile' ), 'read', 'profile.php' );
 
 // Appearance.
 $appearance_capability = current_user_can( 'switch_themes' ) ? 'switch_themes' : 'edit_theme_options';
@@ -301,9 +317,9 @@ if ( ! is_multisite() && current_user_can( 'update_themes' ) ) {
 	);
 }
 
-	$submenu['options-general.php'][83] = array( __( 'Appearance' ), $appearance_capability, 'themes.php#dmp-group-appearance', '', 'dmp-menu-heading' );
+	$submenu['options-general.php'][10] = array( __( 'Appearance' ), $appearance_capability, 'themes.php#dmp-group-appearance', '', 'dmp-menu-heading' );
 	/* translators: %s: Number of available theme updates. */
-	$submenu['options-general.php'][84] = array( sprintf( __( 'Themes %s' ), $count ), $appearance_capability, 'themes.php' );
+	$submenu['options-general.php'][11] = array( sprintf( __( 'Themes %s' ), $count ), $appearance_capability, 'themes.php' );
 
 /*
  * DMPress: the Customizer and the Theme File Editor are not listed under
@@ -314,7 +330,7 @@ if ( ! is_multisite() && current_user_can( 'update_themes' ) ) {
  */
 
 if ( current_theme_supports( 'menus' ) || current_theme_supports( 'widgets' ) ) {
-	$submenu['options-general.php'][86] = array( __( 'Menus' ), 'edit_theme_options', 'nav-menus.php' );
+	$submenu['options-general.php'][12] = array( __( 'Menus' ), 'edit_theme_options', 'nav-menus.php' );
 }
 
 unset( $appearance_capability );
@@ -332,10 +348,10 @@ if ( ! is_multisite() && current_user_can( 'update_plugins' ) ) {
 	);
 }
 
-	$submenu['options-general.php'][93] = array( __( 'Plugins' ), 'activate_plugins', 'plugins.php#dmp-group-plugins', '', 'dmp-menu-heading' );
+	$submenu['options-general.php'][20] = array( __( 'Plugins' ), 'activate_plugins', 'plugins.php#dmp-group-plugins', '', 'dmp-menu-heading' );
 	/* translators: %s: Number of available plugin updates. */
 	// DMPress: labelled "All Plugins", matching "All Users" in the group above.
-	$submenu['options-general.php'][94] = array( sprintf( __( 'All Plugins %s' ), $count ), 'activate_plugins', 'plugins.php' );
+	$submenu['options-general.php'][21] = array( sprintf( __( 'All Plugins %s' ), $count ), 'activate_plugins', 'plugins.php' );
 
 if ( ! is_multisite() ) {
 	/*
@@ -343,7 +359,7 @@ if ( ! is_multisite() ) {
 	 * reached from the "Add New Plugin" button on the Plugins screen and by
 	 * direct URL, and enforces its own capability checks.
 	 */
-	$submenu['options-general.php'][96] = array( __( 'Plugin File Editor' ), 'edit_plugins', 'plugin-editor.php' );
+	$submenu['options-general.php'][22] = array( __( 'Plugin File Editor' ), 'edit_plugins', 'plugin-editor.php' );
 }
 
 unset( $update_data );
@@ -374,8 +390,13 @@ add_action(
 
 		remove_menu_page( 'edit.php?post_type=acf-field-group' );
 
-		$submenu['options-general.php'][119] = array( __( 'Content Types' ), acf_get_setting( 'capability' ), 'edit.php?post_type=acf-field-group#dmp-group-content-types', '', 'dmp-menu-heading' );
-		$submenu['options-general.php'][120] = array( __( 'Content-Type Builder' ), acf_get_setting( 'capability' ), 'edit.php?post_type=acf-field-group' );
+		/*
+		 * The group heading is registered up front so the ordering does not
+		 * depend on this late hook; only the builder link is added here, and
+		 * the heading is re-registered with the builder's own capability.
+		 */
+		$submenu['options-general.php'][2] = array( __( 'Content Types' ), acf_get_setting( 'capability' ), 'edit.php?post_type=acf-field-group#dmp-group-content-types', '', 'dmp-menu-heading' );
+		$submenu['options-general.php'][3] = array( __( 'Content-Type Builder' ), acf_get_setting( 'capability' ), 'edit.php?post_type=acf-field-group' );
 	},
 	11
 );
@@ -462,6 +483,32 @@ add_action(
 		}
 	},
 	9999
+);
+
+/*
+ * DMPress: order the Admin submenu by its index keys.
+ *
+ * WordPress never sorts submenu arrays — the uksort() in
+ * wp-admin/includes/menu.php applies to top-level menus only, so submenu items
+ * render in the order they happen to be registered. That leaves anything added
+ * on a later hook (the Content-Type Builder, third-party pages) stuck at the
+ * end regardless of its index. Sorting once, after every hook has run, makes
+ * the index numbers assigned above mean what they appear to mean.
+ *
+ * This is safe with respect to the parent-slug re-parenting described at the
+ * anchor row: that loop runs before 'admin_menu' fires, so it has already seen
+ * the anchor as the first item.
+ */
+add_action(
+	'admin_menu',
+	static function () {
+		global $submenu;
+
+		if ( ! empty( $submenu['options-general.php'] ) ) {
+			ksort( $submenu['options-general.php'], SORT_NUMERIC );
+		}
+	},
+	99999
 );
 
 add_filter(

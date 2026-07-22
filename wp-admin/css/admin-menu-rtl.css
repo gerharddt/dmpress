@@ -882,3 +882,8 @@ li#wp-admin-bar-menu-toggle {
 	color: rgba(240, 246, 252, 0.45);
 	font-weight: 600;
 }
+
+/* DMPress: the anchor row exists only to pin the submenu's parent slug. */
+#adminmenu .wp-submenu li.dmp-menu-anchor {
+	display: none;
+}
