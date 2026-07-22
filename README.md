@@ -4,7 +4,7 @@
 
 DMPress is a fork of **WordPress 7.0**, re-focused as a **headless, data-management CMS**. The block editor (Gutenberg) has been removed entirely in favour of a leaner core built around structured content and data.
 
-> **Status:** `1.0.0-beta.44` — pre-release. Not yet recommended for production.
+> **Status:** `1.0.0-beta.45` — pre-release. Not yet recommended for production.
 
 ---
 
@@ -25,12 +25,25 @@ Also removed: Site Health, the Settings → Privacy and Connectors sections, the
 
 The full, itemised record of every change relative to stock WordPress 7.0 is in **[DMPRESS-CHANGES.md](DMPRESS-CHANGES.md)**.
 
+## Scope and release policy
+
+DMPress aims to be **boring to upgrade**. WordPress ships major releases several times a year, each one broadening what the platform does. DMPress deliberately does the opposite: the scope — a headless CMS for structured content and data — is settled, and staying inside it is the point.
+
+In practice:
+
+- **Security and stability come first.** Security fixes and real bugs are the reason a release happens, and they ship as soon as they can be verified.
+- **Releases are infrequent by design.** Fewer and smaller releases mean fewer regressions, less to re-test, and less reason to postpone an update. An upgrade you can apply without studying the changelog is the goal.
+- **New features are the exception, not the rhythm.** Capabilities outside the project's scope will usually be declined even when they are good ideas — good ideas are not scarce, but a small and predictable surface is. Anything specific to one site belongs in a plugin, and the plugin API is kept intact precisely so that remains a real option.
+- **Nothing is ripped out casually either.** Churn in either direction costs the people running the software.
+
+This is a default, not a doctrine. If the ground genuinely moves — a shift in the market, a change in PHP or the browser platform, a new technology that changes what a CMS has to be — the scope gets reconsidered openly rather than quietly extended. The bar for that is "this changes what the software needs to be", not "this would be nice to have".
+
 ## Plugin compatibility
 
 DMPress keeps the `wp` namespace throughout — internally, in hooks, and on the REST API — so the existing plugin ecosystem continues to work. Core carries two version numbers:
 
 - `$wp_version` stays at **`7.0`** — what plugins check via `Requires at least`, and what wordpress.org APIs and WP-CLI see.
-- `$dmpress_version` (**`1.0.0-beta.44`**) is the product version shown to users.
+- `$dmpress_version` (**`1.0.0-beta.45`**) is the product version shown to users.
 
 Plugins that depend on the block editor will not function, but they load without fatal errors: an inert block API shim (`wp-includes/block-compat.php`) keeps `register_block_type()`, `has_blocks()`, `parse_blocks()` and friends callable as no-ops.
 
