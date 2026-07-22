@@ -51,7 +51,7 @@ get_current_screen()->add_help_tab(
 	array(
 		'id'      => 'custom-structures',
 		'title'   => __( 'Custom Structures' ),
-		'content' => '<p>' . __( 'The Optional fields let you customize the &#8220;category&#8221; and &#8220;tag&#8221; base names that will appear in archive URLs. For example, the page listing all posts in the &#8220;Uncategorized&#8221; category could be <code>/topics/uncategorized</code> instead of <code>/category/uncategorized</code>.' ) . '</p>' .
+		'content' => '<p>' . __( 'A taxonomy&#8217;s URL base is set on its own Content-Type Builder entry, as its rewrite slug.' ) . '</p>' .
 			'<p>' . __( 'You must click the Save Changes button at the bottom of the screen for new settings to take effect.' ) . '</p>',
 	)
 );
@@ -92,13 +92,10 @@ if ( is_multisite() && ! is_subdomain_install() && is_main_site()
 	$blog_prefix = '/blog';
 }
 
-$category_base = get_option( 'category_base' );
-$tag_base      = get_option( 'tag_base' );
-
 $structure_updated        = false;
 $htaccess_update_required = false;
 
-if ( isset( $_POST['permalink_structure'] ) || isset( $_POST['category_base'] ) ) {
+if ( isset( $_POST['permalink_structure'] ) ) {
 	check_admin_referer( 'update-permalink' );
 
 	if ( isset( $_POST['permalink_structure'] ) ) {
@@ -125,25 +122,7 @@ if ( isset( $_POST['permalink_structure'] ) || isset( $_POST['category_base'] ) 
 		$structure_updated = true;
 	}
 
-	if ( isset( $_POST['category_base'] ) ) {
-		$category_base = $_POST['category_base'];
-
-		if ( ! empty( $category_base ) ) {
-			$category_base = $blog_prefix . preg_replace( '#/+#', '/', '/' . str_replace( '#', '', $category_base ) );
-		}
-
-		$wp_rewrite->set_category_base( $category_base );
-	}
-
-	if ( isset( $_POST['tag_base'] ) ) {
-		$tag_base = $_POST['tag_base'];
-
-		if ( ! empty( $tag_base ) ) {
-			$tag_base = $blog_prefix . preg_replace( '#/+#', '/', '/' . str_replace( '#', '', $tag_base ) );
-		}
-
-		$wp_rewrite->set_tag_base( $tag_base );
-	}
+	// DMPress: the category and tag base fields are gone; nothing read them.
 }
 
 if ( $iis7_permalinks ) {
@@ -229,6 +208,9 @@ require_once ABSPATH . 'wp-admin/admin-header.php';
 	<p>
 		<?php _e( '<strong>Plain</strong> is supported: the front end then routes on query strings instead of paths, and the REST API is available at <code>?rest_route=</code>. Any other structure additionally enables <code>/wp-json/</code> and lets the front end use readable URLs.' ); ?>
 	</p>
+	<p>
+		<?php _e( 'This screen sets the structure for content URLs. A <strong>taxonomy&#8217;s</strong> URL base is set on its own entry in the Content-Type Builder, as its rewrite slug.' ); ?>
+	</p>
 </div>
 
 <form name="form" action="options-permalink.php" method="post">
@@ -249,8 +231,6 @@ if ( is_multisite() && ! is_subdomain_install() && is_main_site()
 	&& str_starts_with( $permalink_structure, '/blog/' )
 ) {
 	$permalink_structure = preg_replace( '|^/?blog|', '', $permalink_structure );
-	$category_base       = preg_replace( '|^/?blog|', '', $category_base );
-	$tag_base            = preg_replace( '|^/?blog|', '', $tag_base );
 }
 
 $url_base = home_url( $blog_prefix . $index_php_prefix );
@@ -422,80 +402,17 @@ printf(
 
 <?php
 /*
- * DMPress: 'category' and 'post_tag' are Content-Type Builder entries and may be
- * deactivated or deleted. These two fields set the URL base for their term
- * archives — published to the front end in each term's REST 'link' field — so
- * each is shown only while its taxonomy is registered, and the whole section is
- * skipped when neither is. Any other taxonomy sets its own rewrite slug in the
- * Content-Type Builder; these fields exist only for the two defaults.
+ * DMPress: there is no "Optional" section for category and tag URL bases.
  *
- * The save handlers below are already guarded with isset(), so a field that is
- * not rendered is simply not submitted and its option is left untouched.
+ * Those fields wrote the 'category_base' and 'tag_base' options, which were
+ * only ever read by core's create_initial_taxonomies(). DMPress does not
+ * register these taxonomies in core — they are Content-Type Builder entries
+ * like any other — so the options had no effect at all and the fields were
+ * dead controls. Every taxonomy, including these two, sets its URL base as the
+ * rewrite slug on its own Content-Type Builder entry.
  */
-$dmpress_has_category = taxonomy_exists( 'category' );
-$dmpress_has_post_tag = taxonomy_exists( 'post_tag' );
-
-if ( $dmpress_has_category || $dmpress_has_post_tag ) :
-	?>
-<h2 class="title"><?php _e( 'Optional' ); ?></h2>
-<p class="permalink-structure-optional-description">
-<?php
-printf(
-	/* translators: %s: Placeholder that must come at the start of the URL. */
-	__( 'If you like, you may enter custom structures for your category and tag URLs here. For example, using <code>topics</code> as your category base would make your category links like <code>%s/topics/uncategorized/</code>. If you leave these blank the defaults will be used.' ),
-	$url_base
-);
 ?>
-</p>
-
-<table class="form-table" role="presentation">
-	<?php if ( $dmpress_has_category ) : ?>
-	<tr>
-		<th>
-			<label for="category_base">
-				<?php /* translators: Prefix for category permalinks. */ _e( 'Category base' ); ?>
-			</label>
-		</th>
-		<td>
-		<?php if ( '' === $blog_prefix ) : ?>
-			<input name="category_base" id="category_base" type="text"
-				value="<?php echo esc_attr( $category_base ); ?>" class="regular-text code"
-			/>
-		<?php else : ?>
-			<span class="code permalink-structure-has-blog-prefix">
-				<code class="no-break"><?php echo $blog_prefix; ?></code>
-				<input name="category_base" id="category_base" type="text"
-					value="<?php echo esc_attr( $category_base ); ?>" class="regular-text code"
-				/>
-			</span>
-		<?php endif; ?>
-		</td>
-	</tr>
-	<?php endif; ?>
-	<?php if ( $dmpress_has_post_tag ) : ?>
-	<tr>
-		<th>
-			<label for="tag_base"><?php _e( 'Tag base' ); ?></label>
-		</th>
-		<td>
-		<?php if ( '' === $blog_prefix ) : ?>
-			<input name="tag_base" id="tag_base" type="text"
-				value="<?php echo esc_attr( $tag_base ); ?>" class="regular-text code"
-			/>
-		<?php else : ?>
-			<span class="code permalink-structure-has-blog-prefix">
-				<code class="no-break"><?php echo $blog_prefix; ?></code>
-				<input name="tag_base" id="tag_base" type="text"
-					value="<?php echo esc_attr( $tag_base ); ?>" class="regular-text code"
-				/>
-			</span>
-		<?php endif; ?>
-		</td>
-	</tr>
-	<?php endif; ?>
-	<?php do_settings_fields( 'permalink', 'optional' ); ?>
-</table>
-<?php endif; // category or post_tag registered ?>
+<?php do_settings_fields( 'permalink', 'optional' ); ?>
 
 <?php do_settings_sections( 'permalink' ); ?>
 
