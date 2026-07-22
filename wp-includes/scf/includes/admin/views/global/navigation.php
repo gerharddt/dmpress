@@ -13,6 +13,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 global $submenu, $submenu_file, $plugin_page, $acf_page_title;
 
+/*
+ * DMPress: work out the active tab from the current screen rather than from
+ * $submenu_file. DMPress pins $submenu_file to the Content-Type Builder's own
+ * entry (see the 'submenu_file' filter in wp-admin/menu.php) so the left-hand
+ * Admin menu highlights the right item — but SCF reads the same global here,
+ * which made "Field Groups" the active tab on every builder screen.
+ *
+ * $typenow covers the list/edit/add-new screens of each builder post type;
+ * $plugin_page covers slug-based pages such as Tools.
+ */
+global $typenow;
+
+$dmp_active_slug = '';
+if ( ! empty( $plugin_page ) ) {
+	$dmp_active_slug = $plugin_page;
+} elseif ( ! empty( $typenow ) ) {
+	$dmp_active_slug = 'edit.php?post_type=' . $typenow;
+}
+
 // Setup default vars and generate array of navigation items.
 $parent_slug    = 'edit.php?post_type=acf-field-group';
 $core_tabs      = array();
@@ -46,13 +65,8 @@ if ( isset( $submenu[ $parent_slug ] ) ) {
 			$menu_item['class'] = str_replace( 'edit.php?post_type=', '', $sub_item[2] );
 		}
 
-		// Detect active state.
-		if ( $submenu_file === $sub_item[2] || $plugin_page === $sub_item[2] ) {
-			$menu_item['is_active'] = true;
-		}
-
-		// Handle "Add New" versions of edit page.
-		if ( str_replace( 'edit', 'post-new', $sub_item[2] ) === $submenu_file ) {
+		// Detect active state. DMPress: matched against the current screen, not $submenu_file.
+		if ( '' !== $dmp_active_slug && $dmp_active_slug === $sub_item[2] ) {
 			$menu_item['is_active'] = true;
 		}
 

@@ -173,6 +173,16 @@ if ( ! class_exists( 'ACF_Assets' ) ) :
 			$suffix  = defined( 'SCF_DEVELOPMENT_MODE' ) && SCF_DEVELOPMENT_MODE ? '' : '.min';
 			$version = acf_get_setting( 'version' );
 
+			/*
+			 * DMPress: SCF's own version never moves while the fork patches its
+			 * built CSS/JS in place, so browsers keep serving a cached copy.
+			 * Fold the DMPress version into the cache-busting string — every
+			 * release bumps $dmpress_version, so patched assets are picked up.
+			 */
+			if ( ! empty( $GLOBALS['dmpress_version'] ) ) {
+				$version .= '-dmp' . $GLOBALS['dmpress_version'];
+			}
+
 			$this->register_react_jsx_runtime_polyfill( $version );
 
 			// Define path patterns.
