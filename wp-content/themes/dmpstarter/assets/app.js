@@ -87,6 +87,83 @@
 		} );
 	}
 
+	/* ------------------------------------------------------------ categories */
+
+	var categoriesPromise = null;
+
+	/**
+	 * Fetches the category list once and reuses it.
+	 *
+	 * Categories are a Content-Type Builder taxonomy and may be deactivated or
+	 * deleted, in which case the route 404s — resolve to an empty list so the
+	 * rest of the theme simply omits anything category-related.
+	 */
+	function loadCategories() {
+		if ( ! categoriesPromise ) {
+			categoriesPromise = api( '/wp/v2/categories', { per_page: 100, orderby: 'name', _fields: 'id,name,slug,link,count' } )
+				.then( function ( result ) {
+					return result.body;
+				} )
+				.catch( function () {
+					return [];
+				} );
+		}
+
+		return categoriesPromise;
+	}
+
+	/**
+	 * Derives the archive URL prefix from a term's canonical link.
+	 *
+	 * Avoids hard-coding "/category/": the base is whatever the Content-Type
+	 * Builder's rewrite slug produces, and this reads it back from the data.
+	 */
+	function categoryBasePath( categories ) {
+		if ( ! categories.length ) {
+			return null;
+		}
+
+		var path = new URL( categories[ 0 ].link, window.location.origin ).pathname;
+		var parts = path.split( '/' ).filter( function ( part ) {
+			return part.length > 0;
+		} );
+
+		parts.pop(); // Drop the term slug, leaving the base.
+
+		return parts.length ? '/' + parts.join( '/' ) + '/' : null;
+	}
+
+	function renderCategoryNav( categories, activeId ) {
+		var nav = document.getElementById( 'category-nav' );
+
+		if ( ! nav ) {
+			return;
+		}
+
+		if ( ! categories.length ) {
+			nav.hidden = true;
+			nav.replaceChildren();
+			return;
+		}
+
+		var nodes = [ el( 'span', 'site-nav__label', 'Categories' ) ];
+
+		categories.forEach( function ( term ) {
+			var link = el( 'a', null, term.name + ' (' + term.count + ')' );
+
+			link.href = term.link;
+
+			if ( activeId && term.id === activeId ) {
+				link.setAttribute( 'aria-current', 'page' );
+			}
+
+			nodes.push( link );
+		} );
+
+		nav.replaceChildren.apply( nav, nodes );
+		nav.hidden = false;
+	}
+
 	function formatDate( iso ) {
 		var date = new Date( iso );
 
@@ -117,19 +194,41 @@
 
 	/* ---------------------------------------------------------------- list */
 
-	function renderList( page ) {
+	/**
+	 * Renders the post list. Passing a term renders that category's archive.
+	 */
+	function renderList( page, term ) {
 		showState( 'Loading…' );
 
-		api( '/wp/v2/posts', { page: page, per_page: PER_PAGE, _fields: 'id,date,link,title,excerpt' } )
-			.then( function ( result ) {
+		var params = { page: page, per_page: PER_PAGE, _fields: 'id,date,link,title,excerpt,categories' };
+
+		if ( term ) {
+			params.categories = term.id;
+		}
+
+		Promise.all( [ api( '/wp/v2/posts', params ), loadCategories() ] )
+			.then( function ( results ) {
+				var result = results[ 0 ];
+				var categories = results[ 1 ];
 				var posts = result.body;
 
+				renderCategoryNav( categories, term ? term.id : null );
+
 				if ( ! posts.length ) {
-					showState( 'No posts yet. Create one in the admin and it will appear here.' );
+					showState( term
+						? 'No posts in this category yet.'
+						: 'No posts yet. Create one in the admin and it will appear here.' );
 					return;
 				}
 
 				var list = el( 'div', 'posts' );
+
+				if ( term ) {
+					var header = el( 'header', 'archive-header' );
+					header.appendChild( el( 'p', 'archive-header__kicker', 'Category' ) );
+					header.appendChild( el( 'h1', 'archive-header__title', term.name ) );
+					list.appendChild( header );
+				}
 
 				posts.forEach( function ( post ) {
 					var article = el( 'article', 'post-card' );
@@ -144,35 +243,73 @@
 					article.appendChild( heading );
 					article.appendChild( el( 'p', 'post-card__meta', formatDate( post.date ) ) );
 					article.appendChild( el( 'div', 'post-card__excerpt', post.excerpt.rendered ) );
+
+					// Categories, resolved against the list already fetched.
+					var terms = ( post.categories || [] ).map( function ( id ) {
+						return categories.filter( function ( c ) {
+							return c.id === id;
+						} )[ 0 ];
+					} ).filter( Boolean );
+
+					if ( terms.length ) {
+						var meta = el( 'p', 'post-card__terms' );
+						meta.appendChild( document.createTextNode( 'In ' ) );
+
+						terms.forEach( function ( t, index ) {
+							if ( index ) {
+								meta.appendChild( document.createTextNode( ', ' ) );
+							}
+
+							var termLink = el( 'a', null, t.name );
+							termLink.href = t.link;
+							meta.appendChild( termLink );
+						} );
+
+						article.appendChild( meta );
+					}
+
 					list.appendChild( article );
 				} );
 
 				app.replaceChildren( list );
 
 				if ( result.totalPages > 1 ) {
-					app.appendChild( renderPagination( page, result.totalPages, result.total ) );
+					app.appendChild( renderPagination( page, result.totalPages, result.total, term ) );
 				}
 
-				document.title = page > 1 ? 'Page ' + page + ' — DMPress' : 'DMPress';
+				var base = term ? term.name + ' — DMPress' : 'DMPress';
+				document.title = page > 1 ? 'Page ' + page + ' — ' + base : base;
 			} )
 			.catch( function ( error ) {
 				showState( error.message, true );
 			} );
 	}
 
-	function renderPagination( page, totalPages, total ) {
+	function renderPagination( page, totalPages, total, term ) {
 		var nav = el( 'nav', 'pagination' );
 		nav.setAttribute( 'aria-label', 'Posts' );
+
+		function hrefFor( targetPage ) {
+			if ( restRoot === 'plain' ) {
+				var root = term ? BASE + '?cat=' + term.id : BASE;
+
+				if ( targetPage <= 1 ) {
+					return root;
+				}
+
+				return root + ( term ? '&' : '?' ) + 'page=' + targetPage;
+			}
+
+			var prefix = term ? new URL( term.link, window.location.origin ).pathname : BASE;
+
+			return targetPage > 1 ? prefix + 'page/' + targetPage + '/' : prefix;
+		}
 
 		function pageLink( targetPage, label, disabled ) {
 			var node = el( disabled ? 'span' : 'a', 'pagination__link' + ( disabled ? ' is-disabled' : '' ), label );
 
 			if ( ! disabled ) {
-				if ( restRoot === 'plain' ) {
-					node.href = targetPage > 1 ? BASE + '?page=' + targetPage : BASE;
-				} else {
-					node.href = targetPage > 1 ? BASE + 'page/' + targetPage + '/' : BASE;
-				}
+				node.href = hrefFor( targetPage );
 			}
 
 			return node;
@@ -220,6 +357,9 @@
 				article.appendChild( el( 'div', 'post__content', post.content.rendered ) );
 
 				app.replaceChildren( article );
+				loadCategories().then( function ( categories ) {
+					renderCategoryNav( categories, null );
+				} );
 				document.title = ( post.title.rendered || 'Post' ) + ' — DMPress';
 				window.scrollTo( 0, 0 );
 			} )
@@ -260,7 +400,7 @@
 	 * and /post/hello-world/ resolve the same way, because the slug is what the
 	 * REST query actually needs.
 	 */
-	function routeByPath() {
+	function routeByPath( categories ) {
 		var path = window.location.pathname;
 
 		if ( BASE !== '/' && path.indexOf( BASE ) === 0 ) {
@@ -271,16 +411,42 @@
 			return part.length > 0;
 		} );
 
+		// Trailing /page/N applies to whichever listing precedes it.
+		var page = 1;
+
+		if ( segments.length >= 2 && segments[ segments.length - 2 ] === 'page' ) {
+			page = parseInt( segments[ segments.length - 1 ], 10 ) || 1;
+			segments = segments.slice( 0, -2 );
+		}
+
 		if ( ! segments.length ) {
-			renderList( 1 );
+			renderList( page );
 			return;
 		}
 
-		// .../page/N — pagination, wherever it appears in the structure.
-		if ( segments.length >= 2 && segments[ segments.length - 2 ] === 'page' ) {
-			var page = parseInt( segments[ segments.length - 1 ], 10 );
-			renderList( page > 0 ? page : 1 );
-			return;
+		// A category archive, matched against the base read from the term links.
+		var base = categoryBasePath( categories );
+
+		if ( base ) {
+			var prefix = base.split( '/' ).filter( function ( part ) {
+				return part.length > 0;
+			} );
+
+			if ( segments.length === prefix.length + 1
+				&& segments.slice( 0, prefix.length ).join( '/' ) === prefix.join( '/' ) ) {
+				var slug = segments[ segments.length - 1 ];
+				var term = categories.filter( function ( c ) {
+					return c.slug === slug;
+				} )[ 0 ];
+
+				if ( term ) {
+					renderList( page, term );
+					return;
+				}
+
+				renderNotFound();
+				return;
+			}
 		}
 
 		renderPost( segments[ segments.length - 1 ] );
@@ -292,8 +458,11 @@
 	 * URLs the CMS reports, which look like ?post_type=post&p=12. Routing then
 	 * has to read the query string instead of the path.
 	 */
-	function routeByQuery() {
+	function routeByQuery( categories ) {
 		var params = new URLSearchParams( window.location.search );
+		var page = parseInt( params.get( 'page' ), 10 );
+		page = page > 0 ? page : 1;
+
 		var id = params.get( 'p' );
 
 		if ( id ) {
@@ -308,19 +477,41 @@
 			return;
 		}
 
-		var page = parseInt( params.get( 'page' ), 10 );
-		renderList( page > 0 ? page : 1 );
+		// Category archives are ?cat=<id> without rewrite rules.
+		var cat = parseInt( params.get( 'cat' ), 10 );
+
+		if ( cat > 0 ) {
+			var term = categories.filter( function ( c ) {
+				return c.id === cat;
+			} )[ 0 ];
+
+			if ( term ) {
+				renderList( page, term );
+				return;
+			}
+
+			renderNotFound();
+			return;
+		}
+
+		renderList( page );
 	}
 
 	function route() {
-		// The mode is known only once the REST root has been probed.
-		detectRestRoot().then( function ( root ) {
-			if ( root === 'plain' ) {
-				routeByQuery();
-			} else {
-				routeByPath();
-			}
-		} );
+		/*
+		 * Both the permalink mode and the category list are needed before a URL
+		 * can be interpreted: the mode decides whether to read the path or the
+		 * query string, and the categories supply the archive base and slugs.
+		 */
+		detectRestRoot()
+			.then( loadCategories )
+			.then( function ( categories ) {
+				if ( restRoot === 'plain' ) {
+					routeByQuery( categories );
+				} else {
+					routeByPath( categories );
+				}
+			} );
 	}
 
 	/* Intercept same-origin links so navigation stays client-side. */

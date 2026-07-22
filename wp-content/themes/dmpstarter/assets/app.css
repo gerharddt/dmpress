@@ -188,3 +188,65 @@ main {
 .not-found .back-link {
 	margin: 1rem 0 0;
 }
+
+/* Category navigation and archive headings */
+
+.site-nav {
+	margin-top: 1rem;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem 1rem;
+	align-items: baseline;
+}
+
+.site-nav__label {
+	color: var( --muted );
+	font-size: 0.8rem;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+}
+
+.site-nav a {
+	color: var( --accent );
+	font-size: 0.9rem;
+	text-decoration: none;
+}
+
+.site-nav a:hover,
+.site-nav a[aria-current="page"] {
+	text-decoration: underline;
+}
+
+.archive-header {
+	margin-bottom: 1.75rem;
+	padding-bottom: 1rem;
+	border-bottom: 1px solid var( --rule );
+}
+
+.archive-header__kicker {
+	margin: 0;
+	color: var( --muted );
+	font-size: 0.8rem;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+}
+
+.archive-header__title {
+	margin: 0.15rem 0 0;
+	font-size: 1.6rem;
+	line-height: 1.2;
+}
+
+.post-card__terms {
+	margin: 0.5rem 0 0;
+	font-size: 0.85rem;
+}
+
+.post-card__terms a {
+	color: var( --accent );
+	text-decoration: none;
+}
+
+.post-card__terms a:hover {
+	text-decoration: underline;
+}
