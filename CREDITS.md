@@ -38,6 +38,14 @@ project. References to "WordPress" in this project are factual references to the
 upstream software (nominative use) and do not imply any endorsement. The WordPress
 name and logo are not used as the branding of this project.
 
+**Project artwork.** The DMPress logo (`wp-admin/images/dmpress-logo.svg`) is the
+project's own mark, supplied by the DMPress authors. It replaces the WordPress logo
+on the login, registration, lost-password, setup and install screens. The unused
+WordPress logo files (`w-logo-gray.png`, `wordpress-logo.png`, `wordpress-logo.svg`,
+`wordpress-logo-gray.svg`, `about-release-logo.svg`) were removed from the tree
+rather than shipped unused, so that no WordPress trademark artwork is distributed as
+part of DMPress branding.
+
 ---
 
 ## Third-party component integrated into core
