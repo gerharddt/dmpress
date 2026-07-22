@@ -36,7 +36,6 @@ function export_add_js() {
 			switch ( $(this).val() ) {
 				case 'attachment': $('#attachment-filters').slideDown(); break;
 				case 'posts': $('#post-filters').slideDown(); break;
-				case 'pages': $('#page-filters').slideDown(); break;
 			}
 		});
 	} );
@@ -49,7 +48,7 @@ get_current_screen()->add_help_tab(
 	array(
 		'id'      => 'overview',
 		'title'   => __( 'Overview' ),
-		'content' => '<p>' . __( 'You can export a file of your site&#8217;s content in order to import it into another installation or platform. The export file will be an XML file format called WXR. Posts, pages, comments, custom fields, categories, and tags can be included. You can choose for the WXR file to include only certain posts or pages by setting the dropdown filters to limit the export by category, author, date range by month, or publishing status.' ) . '</p>' .
+		'content' => '<p>' . __( 'You can export a file of your site&#8217;s content in order to import it into another installation or platform. The export file will be an XML file format called WXR. Your content, comments, custom fields and terms can be included. You can narrow the export with the dropdown filters, limiting it by author, date range by month, or publishing status.' ) . '</p>' .
 			'<p>' . __( 'Once generated, your WXR file can be imported by another DMPress site or by another blogging platform able to access this format.' ) . '</p>',
 	)
 );
@@ -84,21 +83,6 @@ if ( isset( $_GET['download'] ) ) {
 
 		if ( $_GET['post_status'] ) {
 			$args['status'] = $_GET['post_status'];
-		}
-	} elseif ( 'pages' === $_GET['content'] ) {
-		$args['content'] = 'page';
-
-		if ( $_GET['page_author'] ) {
-			$args['author'] = (int) $_GET['page_author'];
-		}
-
-		if ( $_GET['page_start_date'] || $_GET['page_end_date'] ) {
-			$args['start_date'] = $_GET['page_start_date'];
-			$args['end_date']   = $_GET['page_end_date'];
-		}
-
-		if ( $_GET['page_status'] ) {
-			$args['status'] = $_GET['page_status'];
 		}
 	} elseif ( 'attachment' === $_GET['content'] ) {
 		$args['content'] = 'attachment';
@@ -174,7 +158,7 @@ function export_date_options( $post_type = 'post' ) {
 <h1><?php echo esc_html( $title ); ?></h1>
 
 <p><?php _e( 'When you click the button below DMPress will create an XML file for you to save to your computer.' ); ?></p>
-<p><?php _e( 'This format, which is called DMPress eXtended RSS or WXR, will contain your posts, pages, comments, custom fields, categories, and tags.' ); ?></p>
+<p><?php _e( 'This format, which is called DMPress eXtended RSS or WXR, will contain your content, comments, custom fields and terms.' ); ?></p>
 <p><?php _e( 'Once you&#8217;ve saved the download file, you can use the Import function in another DMPress installation to import the content from this site.' ); ?></p>
 
 <h2><?php _e( 'Choose what to export' ); ?></h2>
@@ -188,15 +172,27 @@ function export_date_options( $post_type = 'post' ) {
 </legend>
 <input type="hidden" name="download" value="true" />
 <p><label><input type="radio" name="content" value="all" checked="checked" aria-describedby="all-content-desc" /> <?php _e( 'All content' ); ?></label></p>
-<p class="description" id="all-content-desc"><?php _e( 'This will contain all of your posts, pages, comments, custom fields, terms, navigation menus, and custom posts.' ); ?></p>
+<p class="description" id="all-content-desc"><?php _e( 'This will contain all of your content, comments, custom fields, terms and navigation menus.' ); ?></p>
 
+<?php
+/*
+ * DMPress: 'post' is a deletable Content-Type Builder entry, so this block —
+ * which offers the richer category/author/date/status filters — only renders
+ * while the type exists. The loop over custom post types below skips 'post' so
+ * it is not offered twice.
+ */
+if ( post_type_exists( 'post' ) ) :
+	?>
 <p><label><input type="radio" name="content" value="posts" /> <?php _ex( 'Posts', 'post type general name' ); ?></label></p>
 <ul id="post-filters" class="export-filters">
+	<?php // DMPress: the category taxonomy is optional and may be deactivated. ?>
+	<?php if ( taxonomy_exists( 'category' ) ) : ?>
 	<li>
 		<label><span class="label-responsive"><?php _e( 'Categories:' ); ?></span>
 		<?php wp_dropdown_categories( array( 'show_option_all' => __( 'All' ) ) ); ?>
 		</label>
 	</li>
+	<?php endif; ?>
 	<li>
 		<label><span class="label-responsive"><?php _e( 'Authors:' ); ?></span>
 		<?php
@@ -247,56 +243,14 @@ function export_date_options( $post_type = 'post' ) {
 	</li>
 </ul>
 
-<p><label><input type="radio" name="content" value="pages" /> <?php _e( 'Pages' ); ?></label></p>
-<ul id="page-filters" class="export-filters">
-	<li>
-		<label><span class="label-responsive"><?php _e( 'Authors:' ); ?></span>
-		<?php
-		$authors = $wpdb->get_col( "SELECT DISTINCT post_author FROM {$wpdb->posts} WHERE post_type = 'page'" );
-		wp_dropdown_users(
-			array(
-				'include'         => $authors,
-				'name'            => 'page_author',
-				'multi'           => true,
-				'show_option_all' => __( 'All' ),
-				'show'            => 'display_name_with_login',
-			)
-		);
-		?>
-		</label>
-	</li>
-	<li>
-		<fieldset>
-		<legend class="screen-reader-text">
-			<?php
-			/* translators: Hidden accessibility text. */
-			_e( 'Date range:' );
-			?>
-		</legend>
-		<label for="page-start-date" class="label-responsive"><?php _e( 'Start date:' ); ?></label>
-		<select name="page_start_date" id="page-start-date">
-			<option value="0"><?php _e( '&mdash; Select &mdash;' ); ?></option>
-			<?php export_date_options( 'page' ); ?>
-		</select>
-		<label for="page-end-date" class="label-responsive"><?php _e( 'End date:' ); ?></label>
-		<select name="page_end_date" id="page-end-date">
-			<option value="0"><?php _e( '&mdash; Select &mdash;' ); ?></option>
-			<?php export_date_options( 'page' ); ?>
-		</select>
-		</fieldset>
-	</li>
-	<li>
-		<label for="page-status" class="label-responsive"><?php _e( 'Status:' ); ?></label>
-		<select name="page_status" id="page-status">
-			<option value="0"><?php _e( 'All' ); ?></option>
-			<?php foreach ( $post_statuses as $status ) : ?>
-			<option value="<?php echo esc_attr( $status->name ); ?>"><?php echo esc_html( $status->label ); ?></option>
-			<?php endforeach; ?>
-		</select>
-	</li>
-</ul>
+<?php endif; // post_type_exists( 'post' ) ?>
 
 <?php
+/*
+ * DMPress: there is no hard-coded Pages block — the 'page' type was removed
+ * from core. If an administrator recreates it in the Content-Type Builder it
+ * appears in the list below like any other content type.
+ */
 foreach ( get_post_types(
 	array(
 		'_builtin'   => false,
@@ -304,6 +258,10 @@ foreach ( get_post_types(
 	),
 	'objects'
 ) as $post_type ) :
+	// DMPress: 'post' has its own block above, with filters; do not repeat it.
+	if ( 'post' === $post_type->name ) {
+		continue;
+	}
 	?>
 <p><label><input type="radio" name="content" value="<?php echo esc_attr( $post_type->name ); ?>" /> <?php echo esc_html( $post_type->label ); ?></label></p>
 <?php endforeach; ?>
