@@ -1,0 +1,5 @@
+{
+	"name": "DMP Starter",
+	"version": "1.0.0",
+	"description": "A minimal headless starter that lists posts from the REST API with pagination. No build step — plain HTML, CSS and JavaScript."
+}

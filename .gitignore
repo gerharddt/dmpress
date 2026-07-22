@@ -35,3 +35,6 @@ Thumbs.db
 
 # Dependency directories that should be installed, not committed
 node_modules/
+
+# Generated: caches the active theme so index.php can serve it without booting WP.
+wp-content/dmpress-front.json

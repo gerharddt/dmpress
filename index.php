@@ -72,13 +72,62 @@ if ( dmpress_is_rest_request() ) {
 	return;
 }
 
+/**
+ * Resolves the active theme's front-end entry file.
+ *
+ * The active theme is read from the pointer file written by
+ * wp-includes/dmpress-front.php, so no database connection (and therefore no
+ * WordPress boot) is needed here. The resolved path is confirmed to sit inside
+ * the themes directory before it is served, so a tampered pointer cannot be
+ * used to read files elsewhere on disk.
+ *
+ * @return string|false Absolute path to the entry file, or false.
+ */
+function dmpress_theme_front_entry() {
+	$pointer = __DIR__ . '/wp-content/dmpress-front.json';
+
+	if ( ! is_readable( $pointer ) ) {
+		return false;
+	}
+
+	$data = json_decode( (string) file_get_contents( $pointer ), true );
+
+	if ( ! is_array( $data ) || empty( $data['directory'] ) ) {
+		return false;
+	}
+
+	$entry       = realpath( $data['directory'] . '/index.html' );
+	$themes_root = realpath( __DIR__ . '/wp-content/themes' );
+
+	if ( ! $entry || ! $themes_root || ! str_starts_with( $entry, $themes_root . DIRECTORY_SEPARATOR ) ) {
+		return false;
+	}
+
+	return $entry;
+}
+
 /*
  * Headless front end. No WordPress is loaded.
  *
- * If a headless application build is present at `front/index.html`, serve it as
- * the entry point (its static assets are served directly by the web server).
- * Otherwise return a minimal placeholder that points at the REST API.
+ * Entry file resolution, in order:
+ *   1. The active theme's index.html — themes own the front end, so switching
+ *      a theme in the admin switches what visitors see.
+ *   2. `front/index.html` — a deployed application build, for setups that do
+ *      not express the front end as a theme.
+ *   3. A minimal placeholder pointing at the REST API.
+ *
+ * `{{THEME_URI}}` in a theme's index.html is replaced with the theme's public
+ * URL, so its own assets can be referenced without hard-coding the theme slug.
  */
+$dmpress_theme_entry = dmpress_theme_front_entry();
+if ( $dmpress_theme_entry ) {
+	$dmpress_theme_uri = '/wp-content/themes/' . rawurlencode( basename( dirname( $dmpress_theme_entry ) ) );
+
+	header( 'Content-Type: text/html; charset=UTF-8' );
+	echo str_replace( '{{THEME_URI}}', $dmpress_theme_uri, (string) file_get_contents( $dmpress_theme_entry ) );
+	return;
+}
+
 $dmpress_front_entry = __DIR__ . '/front/index.html';
 if ( is_readable( $dmpress_front_entry ) ) {
 	header( 'Content-Type: text/html; charset=UTF-8' );
