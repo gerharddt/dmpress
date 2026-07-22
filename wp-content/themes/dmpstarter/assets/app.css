@@ -184,3 +184,7 @@ main {
 	background: var( --card );
 	border: 1px solid var( --rule );
 }
+
+.not-found .back-link {
+	margin: 1rem 0 0;
+}

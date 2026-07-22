@@ -116,26 +116,45 @@ function dmpress_theme_front_entry() {
  *      not express the front end as a theme.
  *   3. A minimal placeholder pointing at the REST API.
  *
- * `{{THEME_URI}}` in a theme's index.html is replaced with the theme's public
- * URL, so its own assets can be referenced without hard-coding the theme slug.
+ * The entry file is served for EVERY front-end path, not just "/". WordPress's
+ * rewrite rules send any request that is not a real file or directory to this
+ * script, so `/some/post/` and `/page/2/` both arrive here and receive the same
+ * document. That is the single-page-application fallback: the theme owns
+ * routing, and renders its own "not found" view for paths it does not know.
+ * A consequence is that unknown URLs answer 200 rather than 404 — the CMS
+ * cannot know which paths the front end considers valid.
+ *
+ * Placeholders replaced when serving a theme's index.html:
+ *   {{THEME_URI}}  the theme's public URL, so assets need no hard-coded slug.
+ *   {{SITE_PATH}}  the install's base path, so routing works in a subdirectory.
  */
 $dmpress_theme_entry = dmpress_theme_front_entry();
 if ( $dmpress_theme_entry ) {
 	$dmpress_theme_uri = '/wp-content/themes/' . rawurlencode( basename( dirname( $dmpress_theme_entry ) ) );
 
+	// Base path of the install, so a theme can route correctly in a subdirectory.
+	$dmpress_site_path = rtrim( str_replace( '\\', '/', dirname( (string) ( $_SERVER['SCRIPT_NAME'] ?? '/index.php' ) ) ), '/' ) . '/';
+
 	header( 'Content-Type: text/html; charset=UTF-8' );
-	echo str_replace( '{{THEME_URI}}', $dmpress_theme_uri, (string) file_get_contents( $dmpress_theme_entry ) );
+	header( 'X-DMPress: headless' );
+	echo str_replace(
+		array( '{{THEME_URI}}', '{{SITE_PATH}}' ),
+		array( $dmpress_theme_uri, $dmpress_site_path ),
+		(string) file_get_contents( $dmpress_theme_entry )
+	);
 	return;
 }
 
 $dmpress_front_entry = __DIR__ . '/front/index.html';
 if ( is_readable( $dmpress_front_entry ) ) {
 	header( 'Content-Type: text/html; charset=UTF-8' );
+	header( 'X-DMPress: headless' );
 	readfile( $dmpress_front_entry );
 	return;
 }
 
 header( 'Content-Type: text/html; charset=UTF-8' );
+header( 'X-DMPress: headless' );
 header( 'X-Robots-Tag: noindex, nofollow', true );
 ?><!DOCTYPE html>
 <html lang="en">

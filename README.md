@@ -4,7 +4,7 @@
 
 DMPress is a fork of **WordPress 7.0**, re-focused as a **headless, data-management CMS**. The block editor (Gutenberg) has been removed entirely in favour of a leaner core built around structured content and data.
 
-> **Status:** `1.0.0-beta.34` — pre-release. Not yet recommended for production.
+> **Status:** `1.0.0-beta.35` — pre-release. Not yet recommended for production.
 
 ---
 
@@ -30,9 +30,25 @@ The full, itemised record of every change relative to stock WordPress 7.0 is in 
 DMPress keeps the `wp` namespace throughout — internally, in hooks, and on the REST API — so the existing plugin ecosystem continues to work. Core carries two version numbers:
 
 - `$wp_version` stays at **`7.0`** — what plugins check via `Requires at least`, and what wordpress.org APIs and WP-CLI see.
-- `$dmpress_version` (**`1.0.0-beta.34`**) is the product version shown to users.
+- `$dmpress_version` (**`1.0.0-beta.35`**) is the product version shown to users.
 
 Plugins that depend on the block editor will not function, but they load without fatal errors: an inert block API shim (`wp-includes/block-compat.php`) keeps `register_block_type()`, `has_blocks()`, `parse_blocks()` and friends callable as no-ops.
+
+## Permalinks and the front end
+
+DMPress renders no HTML, so the permalink structure is not about page rendering — it is the **URL contract** between the CMS and your front end. The structure is published in every REST `link` field; your theme routes on those URLs.
+
+Any path that is not a real file is served the active theme's `index.html`, so the front end can use real URLs and own its routing. Unknown paths answer `200` with the app shell, and the front end renders its own "not found".
+
+A fresh install sets `/%postname%/` after verifying the web server routes unknown paths to `index.php`. Apache is configured automatically via `.htaccess`. **Nginx needs this manually:**
+
+```nginx
+location / {
+    try_files $uri $uri/ /index.php?$args;
+}
+```
+
+Without it, only `/` resolves and `/wp-json/` will 404 (REST still works at `?rest_route=`).
 
 ## Requirements
 

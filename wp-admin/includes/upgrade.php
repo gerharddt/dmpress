@@ -461,16 +461,23 @@ function wp_install_maybe_enable_pretty_permalinks() {
 	}
 
 	/*
-	 * The Permalink structures to attempt.
+	 * DMPress: this probe differs from WordPress's.
 	 *
-	 * The first is designed for mod_rewrite or nginx rewriting.
+	 * WordPress requests the first post's permalink and looks for an
+	 * 'X-Pingback' header. DMPress is headless — front-end requests never boot
+	 * WordPress, so that header is never sent and the probe could only ever
+	 * fail, leaving every install on plain permalinks. The first post is also
+	 * not registered yet at this point, because content types are seeded on the
+	 * first admin request.
 	 *
-	 * The second is PATHINFO-based permalinks for web server configurations
-	 * without a true rewrite module enabled.
+	 * What actually matters here is narrower: does the web server route a
+	 * request for a path that is not a real file to index.php? Any path will do,
+	 * and the headless front controller answers with an 'X-DMPress' header.
 	 */
 	$permalink_structures = array(
-		'/%year%/%monthnum%/%day%/%postname%/',
-		'/index.php/%year%/%monthnum%/%day%/%postname%/',
+		'/%postname%/',
+		// PATHINFO fallback for servers with no rewrite module.
+		'/index.php/%postname%/',
 	);
 
 	foreach ( (array) $permalink_structures as $permalink_structure ) {
@@ -482,24 +489,21 @@ function wp_install_maybe_enable_pretty_permalinks() {
 		 */
 		$wp_rewrite->flush_rules( true );
 
-		$test_url = '';
+		$test_url = home_url( '/dmpress-rewrite-test/' );
 
-		// Test against a real WordPress post.
-		$first_post = get_page_by_path( sanitize_title( _x( 'hello-world', 'Default post slug' ) ), OBJECT, 'post' );
-		if ( $first_post ) {
-			$test_url = get_permalink( $first_post->ID );
+		if ( str_starts_with( $permalink_structure, '/index.php' ) ) {
+			$test_url = home_url( '/index.php/dmpress-rewrite-test/' );
 		}
 
-		/*
-		 * Send a request to the site, and check whether
-		 * the 'X-Pingback' header is returned as expected.
-		 *
-		 * Uses wp_remote_get() instead of wp_remote_head() because web servers
-		 * can block head requests.
-		 */
-		$response          = wp_remote_get( $test_url, array( 'timeout' => 5 ) );
-		$x_pingback_header = wp_remote_retrieve_header( $response, 'X-Pingback' );
-		$pretty_permalinks = $x_pingback_header && get_bloginfo( 'pingback_url' ) === $x_pingback_header;
+		$response = wp_remote_get(
+			$test_url,
+			array(
+				'timeout'   => 5,
+				'sslverify' => false,
+			)
+		);
+
+		$pretty_permalinks = 'headless' === wp_remote_retrieve_header( $response, 'X-DMPress' );
 
 		if ( $pretty_permalinks ) {
 			return true;

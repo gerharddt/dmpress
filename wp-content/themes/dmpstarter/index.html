@@ -20,6 +20,11 @@
 	<p>Served by DMPress. Content fetched from <code id="rest-base">the REST API</code>.</p>
 </footer>
 
+<script>
+	/* Substituted by DMPress when this theme is served. Lets the app route
+	   correctly when the install lives in a subdirectory. */
+	window.DMPRESS = { base: '{{SITE_PATH}}' };
+</script>
 <script src="{{THEME_URI}}/assets/app.js"></script>
 </body>
 </html>

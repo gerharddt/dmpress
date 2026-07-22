@@ -3,11 +3,26 @@
  *
  * Everything on the page comes from the built-in REST API. There is no build
  * step and no dependencies; this file is meant to be read as a reference.
+ *
+ * Routing uses real URLs via the History API. DMPress serves this document for
+ * every front-end path (see index.php), so the app is free to own the URL space
+ * — including rendering its own "not found" view.
  */
 ( function () {
 	'use strict';
 
 	var PER_PAGE = 5;
+
+	/*
+	 * Base path of the install. This file is served statically, so it is never
+	 * token-substituted — the value is published by index.html, which DMPress
+	 * does process when serving the theme.
+	 */
+	var BASE = ( window.DMPRESS && window.DMPRESS.base ) || '/';
+
+	if ( BASE.indexOf( '{{' ) === 0 ) {
+		BASE = '/'; // Opened directly, outside DMPress.
+	}
 
 	var app = document.getElementById( 'app' );
 	var restBaseLabel = document.getElementById( 'rest-base' );
@@ -25,10 +40,10 @@
 		} );
 
 		if ( root === 'pretty' ) {
-			return '/wp-json' + path + ( query.length ? '?' + query.join( '&' ) : '' );
+			return BASE + 'wp-json' + path + ( query.length ? '?' + query.join( '&' ) : '' );
 		}
 
-		return '/?rest_route=' + encodeURIComponent( path ) + ( query.length ? '&' + query.join( '&' ) : '' );
+		return BASE + '?rest_route=' + encodeURIComponent( path ) + ( query.length ? '&' + query.join( '&' ) : '' );
 	}
 
 	function detectRestRoot() {
@@ -36,7 +51,7 @@
 			return Promise.resolve( restRoot );
 		}
 
-		return fetch( '/wp-json/wp/v2/types', { headers: { Accept: 'application/json' } } )
+		return fetch( BASE + 'wp-json/wp/v2/types', { headers: { Accept: 'application/json' } } )
 			.then( function ( response ) {
 				restRoot = response.ok ? 'pretty' : 'plain';
 				return restRoot;
@@ -105,7 +120,7 @@
 	function renderList( page ) {
 		showState( 'Loading…' );
 
-		api( '/wp/v2/posts', { page: page, per_page: PER_PAGE, _fields: 'id,date,title,excerpt' } )
+		api( '/wp/v2/posts', { page: page, per_page: PER_PAGE, _fields: 'id,date,link,title,excerpt' } )
 			.then( function ( result ) {
 				var posts = result.body;
 
@@ -121,7 +136,9 @@
 					var heading = el( 'h2', 'post-card__title' );
 					var link = el( 'a', null, post.title.rendered || '(no title)' );
 
-					link.href = '#/post/' + post.id;
+					// Use the canonical URL the CMS reports, so the permalink
+					// structure stays the single source of truth.
+					link.href = post.link;
 					heading.appendChild( link );
 
 					article.appendChild( heading );
@@ -135,6 +152,8 @@
 				if ( result.totalPages > 1 ) {
 					app.appendChild( renderPagination( page, result.totalPages, result.total ) );
 				}
+
+				document.title = page > 1 ? 'Page ' + page + ' — DMPress' : 'DMPress';
 			} )
 			.catch( function ( error ) {
 				showState( error.message, true );
@@ -149,7 +168,7 @@
 			var node = el( disabled ? 'span' : 'a', 'pagination__link' + ( disabled ? ' is-disabled' : '' ), label );
 
 			if ( ! disabled ) {
-				node.href = '#/page/' + targetPage;
+				node.href = targetPage > 1 ? BASE + 'page/' + targetPage + '/' : BASE;
 			}
 
 			return node;
@@ -164,16 +183,21 @@
 
 	/* -------------------------------------------------------------- single */
 
-	function renderPost( id ) {
+	function renderPost( slug ) {
 		showState( 'Loading…' );
 
-		api( '/wp/v2/posts/' + encodeURIComponent( id ), { _fields: 'id,date,title,content' } )
+		api( '/wp/v2/posts', { slug: slug, _fields: 'id,date,title,content' } )
 			.then( function ( result ) {
-				var post = result.body;
+				if ( ! result.body.length ) {
+					renderNotFound();
+					return;
+				}
+
+				var post = result.body[ 0 ];
 				var article = el( 'article', 'post' );
 				var back = el( 'a', 'back-link', '← All posts' );
 
-				back.href = '#/';
+				back.href = BASE;
 
 				article.appendChild( back );
 				article.appendChild( el( 'h1', 'post__title', post.title.rendered || '(no title)' ) );
@@ -181,6 +205,7 @@
 				article.appendChild( el( 'div', 'post__content', post.content.rendered ) );
 
 				app.replaceChildren( article );
+				document.title = ( post.title.rendered || 'Post' ) + ' — DMPress';
 				window.scrollTo( 0, 0 );
 			} )
 			.catch( function ( error ) {
@@ -188,25 +213,86 @@
 			} );
 	}
 
+	function renderNotFound() {
+		var wrap = el( 'div', 'not-found' );
+		var back = el( 'a', 'back-link', '← All posts' );
+
+		back.href = BASE;
+
+		wrap.appendChild( el( 'h1', 'post__title', 'Not found' ) );
+		wrap.appendChild( el( 'p', 'state', 'Nothing exists at this address.' ) );
+		wrap.appendChild( back );
+
+		app.replaceChildren( wrap );
+		document.title = 'Not found — DMPress';
+	}
+
 	/* ------------------------------------------------------------- routing */
 
 	/*
-	 * Hash routing keeps every view on the single entry file. The server only
-	 * serves this document at "/", so real paths would not resolve.
+	 * DMPress serves this document for any path, so routing is read straight
+	 * from location.pathname.
+	 *
+	 * The last path segment is treated as the post slug, which keeps the app
+	 * working whatever permalink structure is configured: both /hello-world/
+	 * and /post/hello-world/ resolve the same way, because the slug is what the
+	 * REST query actually needs.
 	 */
 	function route() {
-		var hash = window.location.hash.replace( /^#\/?/, '' );
-		var single = hash.match( /^post\/(\d+)$/ );
+		var path = window.location.pathname;
 
-		if ( single ) {
-			renderPost( single[ 1 ] );
+		if ( BASE !== '/' && path.indexOf( BASE ) === 0 ) {
+			path = '/' + path.slice( BASE.length );
+		}
+
+		var segments = path.split( '/' ).filter( function ( part ) {
+			return part.length > 0;
+		} );
+
+		if ( ! segments.length ) {
+			renderList( 1 );
 			return;
 		}
 
-		var paged = hash.match( /^page\/(\d+)$/ );
-		renderList( paged ? parseInt( paged[ 1 ], 10 ) : 1 );
+		// .../page/N — pagination, wherever it appears in the structure.
+		if ( segments.length >= 2 && segments[ segments.length - 2 ] === 'page' ) {
+			var page = parseInt( segments[ segments.length - 1 ], 10 );
+			renderList( page > 0 ? page : 1 );
+			return;
+		}
+
+		renderPost( segments[ segments.length - 1 ] );
 	}
 
-	window.addEventListener( 'hashchange', route );
+	/* Intercept same-origin links so navigation stays client-side. */
+	document.addEventListener( 'click', function ( event ) {
+		var link = event.target.closest ? event.target.closest( 'a' ) : null;
+
+		if ( ! link || event.defaultPrevented || event.button !== 0 ) {
+			return;
+		}
+
+		if ( event.metaKey || event.ctrlKey || event.shiftKey || event.altKey ) {
+			return;
+		}
+
+		if ( link.target || link.hasAttribute( 'download' ) || link.origin !== window.location.origin ) {
+			return;
+		}
+
+		// Leave the admin and the REST API to the server.
+		if ( /\/wp-(admin|login|json)/.test( link.pathname ) ) {
+			return;
+		}
+
+		event.preventDefault();
+
+		if ( link.href !== window.location.href ) {
+			window.history.pushState( {}, '', link.href );
+			route();
+		}
+	} );
+
+	window.addEventListener( 'popstate', route );
 	route();
 }() );
