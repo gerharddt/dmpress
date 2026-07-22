@@ -161,9 +161,13 @@ function wp_clean_themes_cache( $clear_update_cache = true ) {
  * @return bool True if a child theme is in use, false otherwise.
  */
 function is_child_theme() {
-	global $wp_stylesheet_path, $wp_template_path;
-
-	return $wp_stylesheet_path !== $wp_template_path;
+	/*
+	 * DMPress: child themes do not exist. A theme is a single directory holding
+	 * a theme.json manifest, with no parent to inherit from. The function is
+	 * retained because it is public API that plugins call, but it is always
+	 * false, and get_template*() always resolves to the active theme.
+	 */
+	return false;
 }
 
 /**
@@ -322,7 +326,8 @@ function get_template() {
 	 *
 	 * @param string $template active theme's directory name.
 	 */
-	return apply_filters( 'template', get_option( 'template' ) );
+	// DMPress: no child themes, so the template is always the active theme.
+	return apply_filters( 'template', get_stylesheet() );
 }
 
 /**
@@ -791,12 +796,16 @@ function switch_theme( $stylesheet ) {
 
 	$old_theme = wp_get_theme();
 	$new_theme = wp_get_theme( $stylesheet );
-	$template  = $new_theme->get_template();
+
+	/*
+	 * DMPress: with no child themes the template is always the stylesheet. The
+	 * 'template' and 'template_root' options are still written, kept identical
+	 * to their stylesheet counterparts, because plugins read them directly.
+	 */
+	$template = $stylesheet;
 
 	if ( wp_is_recovery_mode() ) {
-		$paused_themes = wp_paused_themes();
-		$paused_themes->delete( $old_theme->get_stylesheet() );
-		$paused_themes->delete( $old_theme->get_template() );
+		wp_paused_themes()->delete( $old_theme->get_stylesheet() );
 	}
 
 	update_option( 'template', $template );
@@ -922,8 +931,6 @@ function validate_current_theme() {
 	) {
 		// Invalid.
 	} elseif ( ! file_exists( get_template_directory() . '/style.css' ) ) {
-		// Invalid.
-	} elseif ( is_child_theme() && ! file_exists( get_stylesheet_directory() . '/style.css' ) ) {
 		// Invalid.
 	} else {
 		// Valid.
@@ -2252,18 +2259,7 @@ function get_editor_stylesheets() {
 			}
 		}
 
-		// Look in a parent theme first, that way child theme CSS overrides.
-		if ( is_child_theme() ) {
-			$template_uri = get_template_directory_uri();
-			$template_dir = get_template_directory();
-
-			foreach ( $editor_styles as $key => $file ) {
-				if ( $file && file_exists( "$template_dir/$file" ) ) {
-					$stylesheets[] = "$template_uri/$file";
-				}
-			}
-		}
-
+		// DMPress: no parent theme to look in first — child themes do not exist.
 		foreach ( $editor_styles as $file ) {
 			if ( $file && file_exists( "$style_dir/$file" ) ) {
 				$stylesheets[] = "$style_uri/$file";

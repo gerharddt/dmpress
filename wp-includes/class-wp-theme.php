@@ -386,163 +386,15 @@ final class WP_Theme implements ArrayAccess {
 			}
 		}
 
-		if ( ! $this->template && $this->stylesheet === $this->headers['Template'] ) {
-			$this->errors = new WP_Error(
-				'theme_child_invalid',
-				sprintf(
-					/* translators: %s: Template. */
-					__( 'The theme defines itself as its parent theme. Please check the %s header.' ),
-					'<code>Template</code>'
-				)
-			);
-			$this->cache_add(
-				'theme',
-				array(
-					'block_template_folders' => $this->get_block_template_folders(),
-					'block_theme'            => $this->is_block_theme(),
-					'headers'                => $this->headers,
-					'errors'                 => $this->errors,
-					'stylesheet'             => $this->stylesheet,
-				)
-			);
-
-			return;
-		}
-
-		// (If template is set from cache [and there are no errors], we know it's good.)
-		if ( ! $this->template ) {
-			$this->template = $this->headers['Template'];
-		}
-
-		if ( ! $this->template ) {
-			$this->template = $this->stylesheet;
-			$theme_path     = $this->theme_root . '/' . $this->stylesheet;
-
-			if ( ! $this->is_block_theme() && ! file_exists( $theme_path . '/index.php' ) ) {
-				$error_message = sprintf(
-					/* translators: 1: templates/index.html, 2: index.php, 3: Documentation URL, 4: Template, 5: style.css */
-					__( 'Template is missing. Standalone themes need to have a %1$s or %2$s template file. <a href="%3$s">Child themes</a> need to have a %4$s header in the %5$s stylesheet.' ),
-					'<code>templates/index.html</code>',
-					'<code>index.php</code>',
-					__( 'https://developer.wordpress.org/themes/advanced-topics/child-themes/' ),
-					'<code>Template</code>',
-					'<code>style.css</code>'
-				);
-				$this->errors = new WP_Error( 'theme_no_index', $error_message );
-				$this->cache_add(
-					'theme',
-					array(
-						'block_template_folders' => $this->get_block_template_folders(),
-						'block_theme'            => $this->block_theme,
-						'headers'                => $this->headers,
-						'errors'                 => $this->errors,
-						'stylesheet'             => $this->stylesheet,
-						'template'               => $this->template,
-					)
-				);
-				return;
-			}
-		}
-
-		// If we got our data from cache, we can assume that 'template' is pointing to the right place.
-		if ( ! is_array( $cache )
-			&& $this->template !== $this->stylesheet
-			&& ! file_exists( $this->theme_root . '/' . $this->template . '/index.php' )
-		) {
-			/*
-			 * If we're in a directory of themes inside /themes, look for the parent nearby.
-			 * wp-content/themes/directory-of-themes/*
-			 */
-			$parent_dir  = dirname( $this->stylesheet );
-			$directories = search_theme_directories();
-
-			if ( '.' !== $parent_dir
-				&& file_exists( $this->theme_root . '/' . $parent_dir . '/' . $this->template . '/index.php' )
-			) {
-				$this->template = $parent_dir . '/' . $this->template;
-			} elseif ( $directories && isset( $directories[ $this->template ] ) ) {
-				/*
-				 * Look for the template in the search_theme_directories() results, in case it is in another theme root.
-				 * We don't look into directories of themes, just the theme root.
-				 */
-				$theme_root_template = $directories[ $this->template ]['theme_root'];
-			} else {
-				// Parent theme is missing.
-				$this->errors = new WP_Error(
-					'theme_no_parent',
-					sprintf(
-						/* translators: %s: Theme directory name. */
-						__( 'The parent theme is missing. Please install the "%s" parent theme.' ),
-						esc_html( $this->template )
-					)
-				);
-				$this->cache_add(
-					'theme',
-					array(
-						'block_template_folders' => $this->get_block_template_folders(),
-						'block_theme'            => $this->is_block_theme(),
-						'headers'                => $this->headers,
-						'errors'                 => $this->errors,
-						'stylesheet'             => $this->stylesheet,
-						'template'               => $this->template,
-					)
-				);
-				$this->parent = new WP_Theme( $this->template, $this->theme_root, $this );
-				return;
-			}
-		}
-
-		// Set the parent, if we're a child theme.
-		if ( $this->template !== $this->stylesheet ) {
-			// If we are a parent, then there is a problem. Only two generations allowed! Cancel things out.
-			if ( $_child instanceof WP_Theme && $_child->template === $this->stylesheet ) {
-				$_child->parent = null;
-				$_child->errors = new WP_Error(
-					'theme_parent_invalid',
-					sprintf(
-						/* translators: %s: Theme directory name. */
-						__( 'The "%s" theme is not a valid parent theme.' ),
-						esc_html( $_child->template )
-					)
-				);
-				$_child->cache_add(
-					'theme',
-					array(
-						'block_template_folders' => $_child->get_block_template_folders(),
-						'block_theme'            => $_child->is_block_theme(),
-						'headers'                => $_child->headers,
-						'errors'                 => $_child->errors,
-						'stylesheet'             => $_child->stylesheet,
-						'template'               => $_child->template,
-					)
-				);
-				// The two themes actually reference each other with the Template header.
-				if ( $_child->stylesheet === $this->template ) {
-					$this->errors = new WP_Error(
-						'theme_parent_invalid',
-						sprintf(
-							/* translators: %s: Theme directory name. */
-							__( 'The "%s" theme is not a valid parent theme.' ),
-							esc_html( $this->template )
-						)
-					);
-					$this->cache_add(
-						'theme',
-						array(
-							'block_template_folders' => $this->get_block_template_folders(),
-							'block_theme'            => $this->is_block_theme(),
-							'headers'                => $this->headers,
-							'errors'                 => $this->errors,
-							'stylesheet'             => $this->stylesheet,
-							'template'               => $this->template,
-						)
-					);
-				}
-				return;
-			}
-			// Set the parent. Pass the current instance so we can do the checks above and assess errors.
-			$this->parent = new WP_Theme( $this->template, $theme_root_template ?? $this->theme_root, $this );
-		}
+		/*
+		 * DMPress: there are no child themes. A theme is a single directory
+		 * holding a theme.json manifest, so 'template' and 'stylesheet' always
+		 * name the same theme and there is never a parent to resolve. This
+		 * replaces WordPress's Template-header parent resolution, along with
+		 * its theme_child_invalid / theme_no_index / theme_no_parent /
+		 * theme_parent_invalid error paths, which can no longer occur.
+		 */
+		$this->template = $this->stylesheet;
 
 		if ( wp_paused_themes()->get( $this->stylesheet ) && ( ! is_wp_error( $this->errors ) || ! isset( $this->errors->errors['theme_paused'] ) ) ) {
 			$this->errors = new WP_Error( 'theme_paused', __( 'This theme failed to load properly and was paused within the admin backend.' ) );
@@ -802,7 +654,8 @@ final class WP_Theme implements ArrayAccess {
 	 * @return WP_Theme|false Parent theme, or false if the active theme is not a child theme.
 	 */
 	public function parent() {
-		return $this->parent ?? false;
+		// DMPress: child themes do not exist, so a theme never has a parent.
+		return false;
 	}
 
 	/**
@@ -1206,13 +1059,8 @@ final class WP_Theme implements ArrayAccess {
 	 * @return string Absolute path of the template directory.
 	 */
 	public function get_template_directory() {
-		if ( $this->parent() ) {
-			$theme_root = $this->parent()->theme_root;
-		} else {
-			$theme_root = $this->theme_root;
-		}
-
-		return $theme_root . '/' . $this->template;
+		// DMPress: no parent themes, so this is always the theme's own directory.
+		return $this->theme_root . '/' . $this->template;
 	}
 
 	/**
@@ -1240,13 +1088,8 @@ final class WP_Theme implements ArrayAccess {
 	 * @return string URL to the template directory.
 	 */
 	public function get_template_directory_uri() {
-		if ( $this->parent() ) {
-			$theme_root_uri = $this->parent()->get_theme_root_uri();
-		} else {
-			$theme_root_uri = $this->get_theme_root_uri();
-		}
-
-		return $theme_root_uri . '/' . str_replace( '%2F', '/', rawurlencode( $this->template ) );
+		// DMPress: no parent themes, so this is always the theme's own URI.
+		return $this->get_theme_root_uri() . '/' . str_replace( '%2F', '/', rawurlencode( $this->template ) );
 	}
 
 	/**

@@ -1102,11 +1102,8 @@ function wp_get_active_and_valid_themes() {
 		return $themes;
 	}
 
-	if ( is_child_theme() ) {
-		$themes[] = $wp_stylesheet_path;
-	}
-
-	$themes[] = $wp_template_path;
+	// DMPress: no child themes, so there is only ever the one active theme.
+	$themes[] = $wp_stylesheet_path;
 
 	/*
 	 * Remove themes from the list of active themes when we're on an endpoint

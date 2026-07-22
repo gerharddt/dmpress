@@ -839,10 +839,8 @@ function get_body_class( $css_class = '' ) {
 		}
 	}
 
+	// DMPress: no child themes, so there is no wp-child-theme-* body class.
 	$classes[] = 'wp-theme-' . sanitize_html_class( get_template() );
-	if ( is_child_theme() ) {
-		$classes[] = 'wp-child-theme-' . sanitize_html_class( get_stylesheet() );
-	}
 
 	if ( ! empty( $css_class ) ) {
 		if ( ! is_array( $css_class ) ) {

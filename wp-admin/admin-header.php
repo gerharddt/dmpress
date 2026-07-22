@@ -214,10 +214,8 @@ if ( $current_screen->is_block_editor() ) {
 	$admin_body_class .= ' block-editor-page wp-embed-responsive';
 }
 
+// DMPress: no child themes, so there is no wp-child-theme-* body class.
 $admin_body_class .= ' wp-theme-' . sanitize_html_class( get_template() );
-if ( is_child_theme() ) {
-	$admin_body_class .= ' wp-child-theme-' . sanitize_html_class( get_stylesheet() );
-}
 
 $error_get_last = error_get_last();
 

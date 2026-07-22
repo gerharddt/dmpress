@@ -692,8 +692,9 @@ function get_attachment_template() {
 function wp_set_template_globals() {
 	global $wp_stylesheet_path, $wp_template_path;
 
+	// DMPress: no child themes, so both globals name the same directory.
 	$wp_stylesheet_path = get_stylesheet_directory();
-	$wp_template_path   = get_template_directory();
+	$wp_template_path   = $wp_stylesheet_path;
 }
 
 /**
@@ -724,8 +725,6 @@ function locate_template( $template_names, $load = false, $load_once = true, $ar
 		wp_set_template_globals();
 	}
 
-	$is_child_theme = is_child_theme();
-
 	$located = '';
 	foreach ( (array) $template_names as $template_name ) {
 		if ( ! $template_name ) {
@@ -733,9 +732,6 @@ function locate_template( $template_names, $load = false, $load_once = true, $ar
 		}
 		if ( file_exists( $wp_stylesheet_path . '/' . $template_name ) ) {
 			$located = $wp_stylesheet_path . '/' . $template_name;
-			break;
-		} elseif ( $is_child_theme && file_exists( $wp_template_path . '/' . $template_name ) ) {
-			$located = $wp_template_path . '/' . $template_name;
 			break;
 		} elseif ( file_exists( ABSPATH . WPINC . '/theme-compat/' . $template_name ) ) {
 			$located = ABSPATH . WPINC . '/theme-compat/' . $template_name;
