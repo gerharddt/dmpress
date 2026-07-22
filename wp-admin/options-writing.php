@@ -78,6 +78,13 @@ require_once ABSPATH . 'wp-admin/admin-header.php';
 </fieldset></td>
 </tr>
 <?php endif; ?>
+<?php
+/*
+ * DMPress: the category taxonomy is a Content-Type Builder entry and may be
+ * deactivated or deleted, which would leave an empty drop-down here.
+ */
+if ( taxonomy_exists( 'category' ) ) :
+	?>
 <tr>
 <th scope="row"><label for="default_category"><?php _e( 'Default Post Category' ); ?></label></th>
 <td>
@@ -94,6 +101,7 @@ wp_dropdown_categories(
 ?>
 </td>
 </tr>
+<?php endif; ?>
 <?php
 $post_formats = get_post_format_strings();
 unset( $post_formats['standard'] );

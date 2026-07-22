@@ -29,8 +29,6 @@ function create_initial_taxonomies() {
 
 	if ( ! did_action( 'init' ) ) {
 		$rewrite = array(
-			'category'    => false,
-			'post_tag'    => false,
 			'post_format' => false,
 		);
 	} else {
@@ -44,67 +42,20 @@ function create_initial_taxonomies() {
 		 */
 		$post_format_base = apply_filters( 'post_format_rewrite_base', 'type' );
 		$rewrite          = array(
-			'category'    => array(
-				'hierarchical' => true,
-				'slug'         => get_option( 'category_base' ) ? get_option( 'category_base' ) : 'category',
-				'with_front'   => ! get_option( 'category_base' ) || $wp_rewrite->using_index_permalinks(),
-				'ep_mask'      => EP_CATEGORIES,
-			),
-			'post_tag'    => array(
-				'hierarchical' => false,
-				'slug'         => get_option( 'tag_base' ) ? get_option( 'tag_base' ) : 'tag',
-				'with_front'   => ! get_option( 'tag_base' ) || $wp_rewrite->using_index_permalinks(),
-				'ep_mask'      => EP_TAGS,
-			),
 			'post_format' => $post_format_base ? array( 'slug' => $post_format_base ) : false,
 		);
 	}
 
-	register_taxonomy(
-		'category',
-		'post',
-		array(
-			'hierarchical'          => true,
-			'query_var'             => 'category_name',
-			'rewrite'               => $rewrite['category'],
-			'public'                => true,
-			'show_ui'               => true,
-			'show_admin_column'     => true,
-			'_builtin'              => true,
-			'capabilities'          => array(
-				'manage_terms' => 'manage_categories',
-				'edit_terms'   => 'edit_categories',
-				'delete_terms' => 'delete_categories',
-				'assign_terms' => 'assign_categories',
-			),
-			'show_in_rest'          => true,
-			'rest_base'             => 'categories',
-			'rest_controller_class' => 'WP_REST_Terms_Controller',
-		)
-	);
-
-	register_taxonomy(
-		'post_tag',
-		'post',
-		array(
-			'hierarchical'          => false,
-			'query_var'             => 'tag',
-			'rewrite'               => $rewrite['post_tag'],
-			'public'                => true,
-			'show_ui'               => true,
-			'show_admin_column'     => true,
-			'_builtin'              => true,
-			'capabilities'          => array(
-				'manage_terms' => 'manage_post_tags',
-				'edit_terms'   => 'edit_post_tags',
-				'delete_terms' => 'delete_post_tags',
-				'assign_terms' => 'assign_post_tags',
-			),
-			'show_in_rest'          => true,
-			'rest_base'             => 'tags',
-			'rest_controller_class' => 'WP_REST_Terms_Controller',
-		)
-	);
+	/*
+	 * DMPress: 'category' and 'post_tag' are not registered by core.
+	 *
+	 * Like the 'post' type itself, they ship as default *Content-Type Builder*
+	 * entries (see wp-includes/dmpress-content-types.php) so administrators can
+	 * rename, deactivate or delete them. Core keeps the taxonomy API, the term
+	 * tables and the 'category'/'tag' query vars intact — only the hard-coded
+	 * registration is gone, so anything that asks for these taxonomies must
+	 * check taxonomy_exists() / is_object_in_taxonomy() first.
+	 */
 
 	register_taxonomy(
 		'nav_menu',

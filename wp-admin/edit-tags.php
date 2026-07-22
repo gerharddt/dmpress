@@ -9,14 +9,19 @@
 /** WordPress Administration Bootstrap */
 require_once __DIR__ . '/admin.php';
 
+/*
+ * DMPress: taxonomies are Content-Type Builder entries and may be deactivated
+ * or deleted, so a bookmarked URL can legitimately name one that no longer
+ * exists. Report that as 404 rather than a bare 500, matching edit.php.
+ */
 if ( ! $taxnow ) {
-	wp_die( __( 'Invalid taxonomy.' ) );
+	wp_die( __( 'Invalid taxonomy.' ), '', 404 );
 }
 
 $tax = get_taxonomy( $taxnow );
 
 if ( ! $tax ) {
-	wp_die( __( 'Invalid taxonomy.' ) );
+	wp_die( __( 'Invalid taxonomy.' ), '', 404 );
 }
 
 if ( ! in_array( $tax->name, get_taxonomies( array( 'show_ui' => true ) ), true ) ) {
