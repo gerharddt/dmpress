@@ -425,8 +425,16 @@ foreach ( (array) $options as $option ) :
 	} elseif ( str_starts_with( $option->option_name, 'connectors_' )
 		&& str_ends_with( $option->option_name, '_api_key' )
 	) {
-		// Mask connector API keys and prevent updates from this screen.
-		$value    = _wp_connectors_mask_api_key( $option->option_value );
+		/*
+		 * DMPress: the Connectors feature is removed, but an install that used
+		 * it may still hold these rows. Keep masking them here rather than
+		 * printing stored API keys in plain text on the all-settings screen.
+		 * Masking is inlined because _wp_connectors_mask_api_key() is gone.
+		 */
+		$key      = (string) $option->option_value;
+		$value    = strlen( $key ) <= 4
+			? $key
+			: str_repeat( "\u{2022}", min( strlen( $key ) - 4, 16 ) ) . substr( $key, -4 );
 		$disabled = true;
 	} else {
 		$value               = $option->option_value;

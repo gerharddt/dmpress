@@ -48,17 +48,6 @@
 		),
 		'version' => '54bb5a420026a61c7e4f',
 	),
-	'connectors/index.js' => array(
-		'dependencies' => array(
-			'react-jsx-runtime',
-			'wp-components',
-			'wp-data',
-			'wp-element',
-			'wp-i18n',
-			'wp-private-apis',
-		),
-		'version' => '274797868955a828dfdc',
-	),
 	'core-abilities/index.js' => array(
 		'dependencies' => array(
 			'wp-api-fetch',
