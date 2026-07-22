@@ -111,6 +111,34 @@ if ( isset( $_GET['download'] ) ) {
 require_once ABSPATH . 'wp-admin/admin-header.php';
 
 /**
+ * Returns post types that are hidden from the Export screen's type list.
+ *
+ * These are the Content-Type Builder's internal storage types: configuration
+ * rather than content. They remain part of an "All content" export.
+ *
+ * @since DMPress 1.0.0
+ *
+ * @return string[] Post type names to omit from the export options.
+ */
+function dmpress_non_exportable_post_types() {
+	$types = function_exists( 'acf_get_internal_post_types' )
+		? (array) acf_get_internal_post_types()
+		: array( 'acf-field-group', 'acf-post-type', 'acf-taxonomy', 'acf-ui-options-page' );
+
+	// Individual fields are stored separately but are not independently useful.
+	$types[] = 'acf-field';
+
+	/**
+	 * Filters the post types hidden from the Export screen.
+	 *
+	 * @since DMPress 1.0.0
+	 *
+	 * @param string[] $types Post type names to omit from the export options.
+	 */
+	return (array) apply_filters( 'dmpress_non_exportable_post_types', $types );
+}
+
+/**
  * Creates the date options fields for exporting a given post type.
  *
  * @since 3.1.0
@@ -260,6 +288,17 @@ foreach ( get_post_types(
 ) as $post_type ) :
 	// DMPress: 'post' has its own block above, with filters; do not repeat it.
 	if ( 'post' === $post_type->name ) {
+		continue;
+	}
+
+	/*
+	 * DMPress: hide the Content-Type Builder's own storage types. Field groups,
+	 * post types, taxonomies and options pages are configuration rather than
+	 * content, and the builder has its own JSON import/export that round-trips
+	 * them properly; 'acf-field' is meaningless on its own, since fields only
+	 * make sense inside their group. They are still covered by "All content".
+	 */
+	if ( in_array( $post_type->name, dmpress_non_exportable_post_types(), true ) ) {
 		continue;
 	}
 	?>
