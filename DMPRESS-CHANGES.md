@@ -10,8 +10,8 @@ This document logs everything that has been changed relative to stock WordPress 
 5. [Upstream WordPress fixes ported](#5-upstream-wordpress-fixes-ported)
 6. [Known consequences & decisions](#6-known-consequences--decisions)
 
-> **Baseline:** stock WordPress 7.0. **Product version:** DMPress 1.0.0-beta.31 (pre-release).
-> Internally `$wp_version` remains `7.0` for plugin/API compatibility; `$dmpress_version` (`1.0.0-beta.31`) is the product version shown to users.
+> **Baseline:** stock WordPress 7.0. **Product version:** DMPress 1.0.0-beta.32 (pre-release).
+> Internally `$wp_version` remains `7.0` for plugin/API compatibility; `$dmpress_version` (`1.0.0-beta.32`) is the product version shown to users.
 
 ---
 
@@ -61,7 +61,7 @@ DMPress has no parent/child theme relationship. A theme is a single directory ho
 **`is_child_theme()`, `get_template()`, `get_template_directory()`, `get_template_directory_uri()` and `WP_Theme::parent()` are all retained** — they are public API that plugins call. `is_child_theme()` and `parent()` simply always return `false`, and the `get_template*()` family always resolves to the active theme. Verified end to end, including a theme switch between two `theme.json` themes: both the `stylesheet` and `template` options track the active theme in step.
 
 ### Theme template system — reduced to metadata
-Themes no longer contain templates or `style.css`. The default `dmpone` theme was reduced to a single `theme.json` manifest. (Core's now-inert front-end template functions were left in place to avoid breaking plugins; they are never invoked.)
+Themes no longer contain templates or `style.css`. A theme is a `theme.json` manifest plus an optional `index.html` front end. (Core's now-inert front-end template functions were left in place to avoid breaking plugins; they are never invoked.)
 
 ### Dashboard widgets — removed
 The dashboard now ships with no content widgets at all:
@@ -238,6 +238,10 @@ Resolving the active theme would normally mean reading the `stylesheet` option, 
 `{{THEME_URI}}` in a theme's `index.html` is replaced with the theme's public URL when served, so a theme can reference its own assets without hard-coding its slug.
 
 ### Starter theme — `wp-content/themes/dmpstarter/`
+This is now the **default and only bundled theme**. `WP_DEFAULT_THEME` is `dmpstarter`, and the previous metadata-only `dmpone` theme was removed.
+
+Two things had to change for a fresh install to land on it. `WP_DEFAULT_THEME` was still WordPress's `twentytwentyfive`, which DMPress does not ship; the documented fallback, `WP_Theme::get_core_default_theme()`, scans `WP_Theme::$default_themes` — a list of WordPress's own bundled themes, none of which are shipped either. So `populate_options()` would have written a `stylesheet`/`template` naming a theme that does not exist. The constant now names `dmpstarter` and `$default_themes` lists only it, so the fallback resolves.
+
 A reference headless front end, built only from the REST API with no build step and no dependencies:
 
 - **Lists posts with pagination**, five per page, driving the pager from the `X-WP-Total` and `X-WP-TotalPages` response headers rather than counting client-side.
@@ -249,7 +253,7 @@ A reference headless front end, built only from the REST API with no build step 
 - **`wp-includes/class-wp-theme.php`** — new `parse_theme_json_headers()`; a theme is valid with only a `theme.json` manifest (`name`, `version`, optional `description`/`author`/…), no `style.css` or templates.
 - **`wp-includes/theme.php`** — `validate_current_theme()` accepts metadata-only themes.
 - Themes are just `theme.json` (+ optional `screenshot.png`) and remain selectable/switchable under **Appearance → Themes**.
-- **`wp-content/themes/dmpone/theme.json`** — the default theme, now metadata-only.
+- **`wp-content/themes/dmpstarter/`** — the default and only bundled theme (see the starter theme entry above).
 
 ### Block API compatibility shim — `wp-includes/block-compat.php` (new)
 Inert, no-op implementations of the public block API (`register_block_type`, `register_block_pattern`, `has_blocks`, `do_blocks`, `parse_blocks`, `WP_Block_Type`, `WP_Block_Type_Registry`, …) so third-party plugins that register blocks install and run without fatal errors.
@@ -265,7 +269,7 @@ Inert, no-op implementations of the public block API (`register_block_type`, `re
 
 ### Dual-version scheme — `wp-includes/version.php`
 - `$wp_version = '7.0'` (compatibility: plugin `Requires at least`, wordpress.org APIs, WP-CLI). **Never** set this to the DMPress version — doing so breaks plugin installation.
-- `$dmpress_version = '1.0.0-beta.31'` (product version shown in generator tags, admin footer, dashboard).
+- `$dmpress_version = '1.0.0-beta.32'` (product version shown in generator tags, admin footer, dashboard).
 
 **Release process:** bump `$dmpress_version` on every published release/push — `1.0.0-beta.1` → `1.0.0-beta.2` → … → `1.0.0` — and record what changed in this file.
 
@@ -296,7 +300,7 @@ Splitting `post` into a Content-Type Builder entry made it report `_builtin => f
 - **Logo removed:** `assets/images/scf-logo.svg` drew the letters **S C F** as vector paths — invisible to a text search, but the most prominent SCF branding on screen. There is now no logo mark at all: the toolbar renders the product name as plain text (`.acf-logo` is a text link carrying `acf_get_setting( 'name' )`), the decorative mark on the database-upgrade notice was dropped, and the SVG was deleted. Note that SCF's own stylesheet hides the toolbar `<h2>` (`display: none`), which is why the heading alone was never visible — the wordmark goes through `.acf-logo` instead. In `acf-global.css`/`.min.css` the 72px logo gutter (`.acf-nav-wrap { padding-left }`) and the `position: absolute; top: 0; left: 0` it existed to support were both removed from the base rules, and an appended block sets the wordmark to 20px, 600 weight, white. Both the readable and minified builds are patched — **the `.min` is the one actually enqueued**.
 - **Presented as the Content-Type Builder, not as SCF:** the `name` setting (`secure-custom-fields.php`) is `Content-Type Builder`, which drives the `<h2>` heading on every builder screen. The hard-coded `SCF` group header in the "More" dropdown now echoes that same setting, the toolbar logo's `aria-label`/`alt` were reworded, and the two Tools tooltips that referenced "another SCF installation" / "an SCF JSON file" were rewritten. No SCF or ACF branding renders anywhere in the admin. **Attribution is unaffected** — it lives in `CREDITS.md`, and internal identifiers (`acf_*` functions, `acf-*` post types, the `secure-custom-fields` text domain, `ACF_*` constants) are deliberately untouched so SCF-aware plugins and existing field data keep working.
 - **Toolbar active state fixed:** DMPress's `submenu_file` filter (`wp-admin/menu.php`) pins `$submenu_file` to `edit.php?post_type=acf-field-group` on every builder screen so the left-hand **Admin → Content-Type Builder** item highlights. SCF's toolbar read that same global to pick its active tab, so **Field Groups** appeared active everywhere. `views/global/navigation.php` now derives the active tab from `$typenow` (list/edit/add-new screens of each builder post type) and `$plugin_page` (slug pages such as Tools) instead. This also made SCF's separate "Add New" special case redundant.
-- **Asset cache-busting:** SCF's version never moves while the fork patches its built CSS/JS in place, so browsers kept serving stale copies of DMPress's changes. `includes/assets.php` folds `$dmpress_version` into the registered version string (`?ver=6.9.1-dmp1.0.0-beta.31`), so every release bumps the URL.
+- **Asset cache-busting:** SCF's version never moves while the fork patches its built CSS/JS in place, so browsers kept serving stale copies of DMPress's changes. `includes/assets.php` folds `$dmpress_version` into the registered version string (`?ver=6.9.1-dmp1.0.0-beta.32`), so every release bumps the URL.
 - **"Beta Features" removed from the "More" menu:** `SCF_Admin_Beta_Features::admin_menu()` returns before `add_submenu_page()`, so the page is never registered — it drops out of the Content-Type Builder nav (which is built from `$submenu`) and a direct URL returns 403. The class, `scf_register_admin_beta_feature()` and `acf()->admin_beta_features` are left intact so nothing referencing them fatals. The only shipped beta feature (`editor_sidebar`) targets the block editor, which DMPress does not have.
 - **Copyright:** all original SCF/ACF and WordPress copyrights remain with their authors; DMPress ships under GPL as a derivative work.
 
@@ -315,7 +319,7 @@ Splitting `post` into a Content-Type Builder entry made it report `_builtin => f
 
   Two categories of "WordPress" are **intentionally retained** because changing them would make the software lie: references to **wordpress.org services** (the plugin/theme directories, the salt-key service, update APIs) and **WordPress-version compatibility messages** (plugins declare `Requires at least` against a WordPress version — which is exactly what `$wp_version` reports).
 - **Default install content** (`wp-admin/includes/upgrade.php`) — the sample "Hello world!" post now reads "Welcome to DMPress…", and the accompanying sample comment is authored by "A DMPress Commenter" with a neutral e-mail and no author URL (was "A WordPress Commenter" linking to wordpress.org). The dormant sample-page copy was rebranded too. All of this default content was additionally **stripped of Gutenberg block markup** (`<!-- wp:paragraph -->` etc.), which would otherwise appear as literal comments in the classic editor now that the block editor is gone.
-- **`dms` → `dmp` identifiers.** Leftovers from the earlier "DMSPress" spelling were renamed for consistency: the default theme `dmsone` / "DMS One" became **`dmpone` / "DMP One"** (which also required migrating the `stylesheet`, `template` and `theme_mods_*` options and clearing the theme transients, or the active theme would have been orphaned), the admin menu heading class `dms-menu-heading` became `dmp-menu-heading` (PHP + all four stylesheets), and the `#dms-group-*` menu anchors became `#dmp-group-*`.
+- **`dms` → `dmp` identifiers.** Leftovers from the earlier "DMSPress" spelling were renamed for consistency: the default theme `dmsone` / "DMS One" became **`dmpone` / "DMP One"** (later replaced entirely by `dmpstarter`) (which also required migrating the `stylesheet`, `template` and `theme_mods_*` options and clearing the theme transients, or the active theme would have been orphaned), the admin menu heading class `dms-menu-heading` became `dmp-menu-heading` (PHP + all four stylesheets), and the `#dms-group-*` menu anchors became `#dmp-group-*`.
 - **Project naming.** The product was briefly named "DMSPress" during early development and was renamed to **DMPress**. The rename covers display strings, documentation, and all code identifiers: `$dmpress_version`, `dmpress_is_rest_request()`, `DMPRESS_REST_PREFIX`, `_dmpress_is_ctb_screen()`, the public `dmpress_comments_menu_label` filter, and `@package DMPress` tags.
 
 ### Database table prefix
