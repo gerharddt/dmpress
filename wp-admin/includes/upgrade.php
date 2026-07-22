@@ -546,7 +546,7 @@ if ( ! function_exists( 'wp_new_blog_notification' ) ) :
 		$message = sprintf(
 			/* translators: New site notification email. 1: New site URL, 2: User login, 3: User password or password reset link, 4: Login URL. */
 			__(
-				'Your new WordPress site has been successfully set up at:
+				'Your new DMPress site has been successfully set up at:
 
 %1$s
 
@@ -558,8 +558,7 @@ Log in here: %4$s
 
 We hope you enjoy your new site. Thanks!
 
---The WordPress Team
-https://wordpress.org/
+--The DMPress Team
 '
 			),
 			$blog_url,

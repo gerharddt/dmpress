@@ -33,7 +33,7 @@ $wp_version = '7.0';
  *
  * @global string $dmpress_version
  */
-$dmpress_version = '1.0.0-beta.33';
+$dmpress_version = '1.0.0-beta.34';
 
 /**
  * Holds the WordPress DB revision, increments when changes are made to the WordPress DB schema.
