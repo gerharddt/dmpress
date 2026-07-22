@@ -420,6 +420,23 @@ printf(
 </tbody>
 </table>
 
+<?php
+/*
+ * DMPress: 'category' and 'post_tag' are Content-Type Builder entries and may be
+ * deactivated or deleted. These two fields set the URL base for their term
+ * archives — published to the front end in each term's REST 'link' field — so
+ * each is shown only while its taxonomy is registered, and the whole section is
+ * skipped when neither is. Any other taxonomy sets its own rewrite slug in the
+ * Content-Type Builder; these fields exist only for the two defaults.
+ *
+ * The save handlers below are already guarded with isset(), so a field that is
+ * not rendered is simply not submitted and its option is left untouched.
+ */
+$dmpress_has_category = taxonomy_exists( 'category' );
+$dmpress_has_post_tag = taxonomy_exists( 'post_tag' );
+
+if ( $dmpress_has_category || $dmpress_has_post_tag ) :
+	?>
 <h2 class="title"><?php _e( 'Optional' ); ?></h2>
 <p class="permalink-structure-optional-description">
 <?php
@@ -432,6 +449,7 @@ printf(
 </p>
 
 <table class="form-table" role="presentation">
+	<?php if ( $dmpress_has_category ) : ?>
 	<tr>
 		<th>
 			<label for="category_base">
@@ -453,6 +471,8 @@ printf(
 		<?php endif; ?>
 		</td>
 	</tr>
+	<?php endif; ?>
+	<?php if ( $dmpress_has_post_tag ) : ?>
 	<tr>
 		<th>
 			<label for="tag_base"><?php _e( 'Tag base' ); ?></label>
@@ -472,8 +492,10 @@ printf(
 		<?php endif; ?>
 		</td>
 	</tr>
+	<?php endif; ?>
 	<?php do_settings_fields( 'permalink', 'optional' ); ?>
 </table>
+<?php endif; // category or post_tag registered ?>
 
 <?php do_settings_sections( 'permalink' ); ?>
 
