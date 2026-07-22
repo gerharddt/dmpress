@@ -4,7 +4,7 @@
 
 DMPress is a fork of **WordPress 7.0**, re-focused as a **headless, data-management CMS**. The block editor (Gutenberg) has been removed entirely in favour of a leaner core built around structured content and data.
 
-> **Status:** `1.0.0-beta.42` — pre-release. Not yet recommended for production.
+> **Status:** `1.0.0-beta.43` — pre-release. Not yet recommended for production.
 
 ---
 
@@ -30,7 +30,7 @@ The full, itemised record of every change relative to stock WordPress 7.0 is in 
 DMPress keeps the `wp` namespace throughout — internally, in hooks, and on the REST API — so the existing plugin ecosystem continues to work. Core carries two version numbers:
 
 - `$wp_version` stays at **`7.0`** — what plugins check via `Requires at least`, and what wordpress.org APIs and WP-CLI see.
-- `$dmpress_version` (**`1.0.0-beta.42`**) is the product version shown to users.
+- `$dmpress_version` (**`1.0.0-beta.43`**) is the product version shown to users.
 
 Plugins that depend on the block editor will not function, but they load without fatal errors: an inert block API shim (`wp-includes/block-compat.php`) keeps `register_block_type()`, `has_blocks()`, `parse_blocks()` and friends callable as no-ops.
 
@@ -89,3 +89,19 @@ DMPress is free software, released under the terms of the **GPL (GNU General Pub
 DMPress is a derivative work of [WordPress](https://wordpress.org/), which is itself the official continuation of b2/cafélog. All original WordPress copyrights remain with their respective authors. DMPress also bundles [Secure Custom Fields](https://wordpress.org/plugins/secure-custom-fields/) (GPL). Full attribution is in [CREDITS.md](CREDITS.md); the changes DMPress makes to WordPress are recorded in [DMPRESS-CHANGES.md](DMPRESS-CHANGES.md), as required by GPL §2(a).
 
 **Trademark notice:** "WordPress" is a registered trademark of the [WordPress Foundation](https://wordpressfoundation.org/). DMPress is an independent fork and is not affiliated with, sponsored by, or endorsed by the WordPress Foundation, Automattic, or the WordPress project.
+
+## No warranty and limitation of liability
+
+**DMPress is provided free of charge, "AS IS", without warranty of any kind.** This is not incidental — it is a condition of the GPL under which the software is distributed, and it applies to the original authors and to anyone who modifies or redistributes it.
+
+In the words of the licence itself ([LICENSE](LICENSE), sections 11 and 12):
+
+> BECAUSE THE PROGRAM IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. … THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU.
+
+> IN NO EVENT … WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR REDISTRIBUTE THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES …), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+In plain terms: **you run DMPress at your own risk.** Neither the authors nor any contributor is liable for lost data, downtime, lost revenue, or any other loss or harm arising from its use or from being unable to use it. Take your own backups, test before deploying, and satisfy yourself that it is fit for your purpose.
+
+Note the licence's own qualifier — *"to the extent permitted by applicable law"*. Some jurisdictions do not allow certain liabilities to be excluded, so the practical effect of these clauses depends on where you are. Nothing here is legal advice.
+
+This is a **pre-release** (see the status at the top of this file) and is not yet recommended for production use.

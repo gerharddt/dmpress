@@ -18,6 +18,12 @@ required by GPL-2.0 §2(a).
 
 DMPress fork © 2026 Ninjas For Hire. Licensed GPL-2.0-or-later.
 
+**No warranty.** DMPress is provided "AS IS", without warranty of any kind, and
+neither the authors nor any contributor is liable for any loss or harm arising
+from its use — see sections 11 and 12 of [`LICENSE`](LICENSE), and the summary in
+[`README.md`](README.md). Those clauses apply "to the extent permitted by
+applicable law"; nothing in this project is legal advice.
+
 ---
 
 ## Based on WordPress
