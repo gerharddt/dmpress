@@ -4,7 +4,7 @@
 
 DMPress is a fork of **WordPress 7.0**, re-focused as a **headless, data-management CMS**. The block editor (Gutenberg) has been removed entirely in favour of a leaner core built around structured content and data.
 
-> **Status:** `1.0.0-beta.48` — pre-release. Not yet recommended for production.
+> **Status:** `1.0.0-beta.49` — pre-release. Not yet recommended for production.
 
 ---
 
@@ -43,7 +43,7 @@ This is a default, not a doctrine. If the ground genuinely moves — a shift in 
 DMPress keeps the `wp` namespace throughout — internally, in hooks, and on the REST API — so the existing plugin ecosystem continues to work. Core carries two version numbers:
 
 - `$wp_version` stays at **`7.0`** — what plugins check via `Requires at least`, and what wordpress.org APIs and WP-CLI see.
-- `$dmpress_version` (**`1.0.0-beta.48`**) is the product version shown to users.
+- `$dmpress_version` (**`1.0.0-beta.49`**) is the product version shown to users.
 
 Plugins that depend on the block editor will not function, but they load without fatal errors: an inert block API shim (`wp-includes/block-compat.php`) keeps `register_block_type()`, `has_blocks()`, `parse_blocks()` and friends callable as no-ops.
 
@@ -80,39 +80,21 @@ configured** — it never offers an update it cannot verify.
 
 ### Publishing a release (maintainers)
 
-One-time setup:
+The full process — one-time key setup, the three-command release, key rotation,
+and the "test on a throwaway install first" rule — is in **[RELEASING.md](RELEASING.md)**.
 
-1. `php bin/dmpress-keygen.php` — generates a keypair. Paste the **public** key into
-   `DMPRESS_UPDATE_PUBLIC_KEY` in `wp-includes/dmpress-update.php`. Store the
-   **private** key in a secret vault; **never commit it**. Anyone holding it can push
-   code to every install.
-2. Make the GitHub repo (or its releases) public so installs can download assets
-   without authentication.
-
-3. Add the **private** key as a GitHub Actions secret named `DMPRESS_SIGNING_KEY`
-   (repo → Settings → Secrets and variables → Actions). It lives only there — not
-   on your machine, not in the repo.
-
-Each release is then just three git commands:
+In short: paste the public signing key into `DMPRESS_UPDATE_PUBLIC_KEY`, add the
+private key as the `DMPRESS_SIGNING_KEY` GitHub Actions secret, make the repo
+public, and thereafter each release is just:
 
 ```bash
-# 1. bump $dmpress_version in wp-includes/version.php, then commit
-git commit -am "Release 1.0.0-beta.48"
-# 2. tag it (must match $dmpress_version exactly)
-git tag v1.0.0-beta.48
-# 3. push the tag
-git push origin v1.0.0-beta.48
+# bump $dmpress_version in wp-includes/version.php, commit
+git tag v1.0.0-beta.49        # tag must match $dmpress_version
+git push origin v1.0.0-beta.49
 ```
 
-Pushing the tag triggers `.github/workflows/release.yml`, which packages the
-tagged commit, signs it with the secret key, and publishes a GitHub Release with
-the zip, its `.sig`, and `dmpress-update.json`. Installs pick it up on their next
-check. If the tag and `$dmpress_version` disagree, the workflow fails before
-building.
-
-Prefer to build by hand instead? `bin/build-release.sh` does the same locally
-(`DMPRESS_SIGNING_KEY="$(cat private.key)" bin/build-release.sh`); upload the three
-files from `build/` to a GitHub Release yourself.
+Pushing the tag triggers `.github/workflows/release.yml`, which builds, signs and
+publishes the GitHub Release. Installs pick it up on their next check.
 
 ## Requirements
 
@@ -143,6 +125,7 @@ files from `build/` to a GitHub Release yourself.
 
 - **[DMPRESS-CHANGES.md](DMPRESS-CHANGES.md)** — everything removed from WordPress, everything added by DMPress, third-party components, and the known consequences of each decision.
 - **[CREDITS.md](CREDITS.md)** — attribution for WordPress, Secure Custom Fields, and every bundled library.
+- **[RELEASING.md](RELEASING.md)** — maintainer runbook for cutting a signed release.
 
 ## License & credits
 
