@@ -266,7 +266,7 @@ $menu[70] = array( __( 'Admin' ), 'read', 'options-general.php', '', 'menu-top m
 	$submenu['options-general.php'][0] = array( '', 'read', 'options-general.php', '', 'dmp-menu-anchor' );
 
 	// Content Types (see the late admin_menu hook below for the builder item).
-	$submenu['options-general.php'][2] = array( __( 'Content Types' ), 'read', 'edit.php?post_type=acf-field-group#dmp-group-content-types', '', 'dmp-menu-heading' );
+	$submenu['options-general.php'][2] = array( __( 'Content' ), 'read', 'edit.php?post_type=acf-field-group#dmp-group-content-types', '', 'dmp-menu-heading' );
 
 	/*
 	 * DMPress: navigation menus live under Content Types, not Appearance. A menu
@@ -404,7 +404,7 @@ add_action(
 		 * depend on this late hook; only the builder link is added here, and
 		 * the heading is re-registered with the builder's own capability.
 		 */
-		$submenu['options-general.php'][2] = array( __( 'Content Types' ), acf_get_setting( 'capability' ), 'edit.php?post_type=acf-field-group#dmp-group-content-types', '', 'dmp-menu-heading' );
+		$submenu['options-general.php'][2] = array( __( 'Content' ), acf_get_setting( 'capability' ), 'edit.php?post_type=acf-field-group#dmp-group-content-types', '', 'dmp-menu-heading' );
 		$submenu['options-general.php'][3] = array( __( 'Content-Type Builder' ), acf_get_setting( 'capability' ), 'edit.php?post_type=acf-field-group' );
 	},
 	11
