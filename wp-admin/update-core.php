@@ -245,12 +245,16 @@ function dismissed_updates() {
 function core_upgrade_preamble() {
 	$updates = get_core_updates();
 
-	// Include an unmodified $wp_version.
+	// Include $wp_version (compatibility) and $dmpress_version (product).
 	require ABSPATH . WPINC . '/version.php';
 
-	$is_development_version = preg_match( '/alpha|beta|RC/', $wp_version );
+	/*
+	 * DMPress: this screen is the DMPress update channel, so it reasons about
+	 * the product version, not $wp_version (frozen at 7.0 for compatibility).
+	 */
+	$is_development_version = preg_match( '/alpha|beta|RC/', $dmpress_version );
 
-	if ( isset( $updates[0]->version ) && version_compare( $updates[0]->version, $wp_version, '>' ) ) {
+	if ( isset( $updates[0]->version ) && version_compare( $updates[0]->version, $dmpress_version, '>' ) ) {
 		echo '<h2 class="response">';
 		_e( 'An updated version of DMPress is available.' );
 		echo '</h2>';
@@ -1081,7 +1085,8 @@ if ( 'upgrade-core' === $action ) {
 
 	echo '<h2 class="wp-current-version">';
 	/* translators: Current version of WordPress. */
-	printf( __( 'Current version: %s' ), esc_html( wp_get_wp_version() ) );
+	// DMPress: show the product version, not the frozen compatibility version.
+	printf( __( 'Current version: %s' ), esc_html( $GLOBALS['dmpress_version'] ) );
 	echo '</h2>';
 
 	echo '<p class="update-last-checked">';

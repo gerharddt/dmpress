@@ -38,3 +38,10 @@ node_modules/
 
 # Generated: caches the active theme so index.php can serve it without booting WP.
 wp-content/dmpress-front.json
+
+# Release build output and signing material (never commit the private key).
+/build/
+*.zip
+*.sig
+dmpress-*.key
+private*.key

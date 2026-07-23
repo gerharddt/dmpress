@@ -4,7 +4,7 @@
 
 DMPress is a fork of **WordPress 7.0**, re-focused as a **headless, data-management CMS**. The block editor (Gutenberg) has been removed entirely in favour of a leaner core built around structured content and data.
 
-> **Status:** `1.0.0-beta.46` — pre-release. Not yet recommended for production.
+> **Status:** `1.0.0-beta.47` — pre-release. Not yet recommended for production.
 
 ---
 
@@ -43,7 +43,7 @@ This is a default, not a doctrine. If the ground genuinely moves — a shift in 
 DMPress keeps the `wp` namespace throughout — internally, in hooks, and on the REST API — so the existing plugin ecosystem continues to work. Core carries two version numbers:
 
 - `$wp_version` stays at **`7.0`** — what plugins check via `Requires at least`, and what wordpress.org APIs and WP-CLI see.
-- `$dmpress_version` (**`1.0.0-beta.46`**) is the product version shown to users.
+- `$dmpress_version` (**`1.0.0-beta.47`**) is the product version shown to users.
 
 Plugins that depend on the block editor will not function, but they load without fatal errors: an inert block API shim (`wp-includes/block-compat.php`) keeps `register_block_type()`, `has_blocks()`, `parse_blocks()` and friends callable as no-ops.
 
@@ -64,6 +64,40 @@ location / {
 Without it, only `/` resolves and `/wp-json/` will 404 (REST still works at `?rest_route=`).
 
 The **Plain** structure is supported too — the front end then routes on query strings rather than paths. The bundled starter theme handles both automatically.
+
+## Updates
+
+DMPress does **not** use the wordpress.org update channel — that would offer stock
+WordPress over the fork. It has its own channel, keyed on the product version and
+served from this repository's GitHub Releases. Installs check a signed manifest
+twice a day and show **Dashboard → Updates → "Update to version X"**; nothing
+installs until an admin clicks. WordPress's own updater does the download, verify,
+unpack, copy and rollback.
+
+Packages are **Ed25519-signed** and verified before they are applied, so a spoofed
+or tampered download is rejected. The channel is **dormant until a signing key is
+configured** — it never offers an update it cannot verify.
+
+### Publishing a release (maintainers)
+
+One-time setup:
+
+1. `php bin/dmpress-keygen.php` — generates a keypair. Paste the **public** key into
+   `DMPRESS_UPDATE_PUBLIC_KEY` in `wp-includes/dmpress-update.php`. Store the
+   **private** key in a secret vault; **never commit it**. Anyone holding it can push
+   code to every install.
+2. Make the GitHub repo (or its releases) public so installs can download assets
+   without authentication.
+
+Each release:
+
+1. Bump `$dmpress_version` in `wp-includes/version.php`.
+2. `DMPRESS_SIGNING_KEY="$(cat /path/to/private.key)" bin/build-release.sh` — builds
+   `build/dmpress-<version>.zip`, its `.sig`, and `dmpress-update.json`.
+3. Tag the release and create a GitHub Release, attaching all three files (the
+   manifest must be named `dmpress-update.json`).
+
+Installs pick it up on their next check.
 
 ## Requirements
 

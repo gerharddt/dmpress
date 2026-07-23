@@ -1125,11 +1125,20 @@ function update_core( $from, $to ) {
 
 	// Confidence check the unzipped distribution.
 	$distro = '';
-	$roots  = array( '/wordpress/', '/wordpress-mu/' );
+	/*
+	 * DMPress: release packages unpack under a '/dmpress/' directory. The marker
+	 * file is 'wp-includes/dmpress-update.php' rather than 'readme.html', which
+	 * DMPress replaced with README.md. The WordPress roots are kept so a stock
+	 * package is still recognised if one is ever fed in.
+	 */
+	$roots = array( '/dmpress/', '/wordpress/', '/wordpress-mu/' );
 
 	foreach ( $roots as $root ) {
-		if ( $wp_filesystem->exists( $from . $root . 'readme.html' )
-			&& $wp_filesystem->exists( $from . $root . 'wp-includes/version.php' )
+		if ( $wp_filesystem->exists( $from . $root . 'wp-includes/version.php' )
+			&& (
+				$wp_filesystem->exists( $from . $root . 'wp-includes/dmpress-update.php' )
+				|| $wp_filesystem->exists( $from . $root . 'readme.html' )
+			)
 		) {
 			$distro = $root;
 			break;

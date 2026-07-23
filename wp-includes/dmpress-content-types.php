@@ -253,14 +253,11 @@ function dmpress_cleanup_removed_feature_data() {
 	}
 
 	/*
-	 * Core updates are disabled (wp_version_check() returns immediately), so an
-	 * 'update_core' transient can only be a leftover from before that change.
-	 * It holds a wordpress.org download URL for a release that must never be
-	 * applied to this fork. Drop it, and unschedule the check that can no
-	 * longer do anything.
+	 * The wordpress.org core check stays unscheduled (wp_version_check() is a
+	 * no-op). The DMPress update channel now owns the 'update_core' transient
+	 * (see wp-includes/dmpress-update.php), so it is not deleted here — only the
+	 * stale wordpress.org version-check cron event is cleared.
 	 */
-	delete_site_transient( 'update_core' );
-
 	$version_check = wp_next_scheduled( 'wp_version_check' );
 	if ( $version_check ) {
 		wp_unschedule_event( $version_check, 'wp_version_check' );
