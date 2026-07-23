@@ -27,24 +27,11 @@ function create_initial_taxonomies() {
 
 	WP_Taxonomy::reset_default_labels();
 
-	if ( ! did_action( 'init' ) ) {
-		$rewrite = array(
-			'post_format' => false,
-		);
-	} else {
-
-		/**
-		 * Filters the post formats rewrite base.
-		 *
-		 * @since 3.1.0
-		 *
-		 * @param string $context Context of the rewrite base. Default 'type'.
-		 */
-		$post_format_base = apply_filters( 'post_format_rewrite_base', 'type' );
-		$rewrite          = array(
-			'post_format' => $post_format_base ? array( 'slug' => $post_format_base ) : false,
-		);
-	}
+	/*
+	 * DMPress: the rewrite-base computation here only ever fed the category,
+	 * post_tag and post_format taxonomies, none of which core registers now, so
+	 * it is gone.
+	 */
 
 	/*
 	 * DMPress: 'category' and 'post_tag' are not registered by core.
@@ -118,23 +105,14 @@ function create_initial_taxonomies() {
 		)
 	);
 
-	register_taxonomy(
-		'post_format',
-		'post',
-		array(
-			'public'            => true,
-			'hierarchical'      => false,
-			'labels'            => array(
-				'name'          => _x( 'Formats', 'post format' ),
-				'singular_name' => _x( 'Format', 'post format' ),
-			),
-			'query_var'         => true,
-			'rewrite'           => $rewrite['post_format'],
-			'show_ui'           => false,
-			'_builtin'          => true,
-			'show_in_nav_menus' => current_theme_supports( 'post-formats' ),
-		)
-	);
+	/*
+	 * DMPress: the 'post_format' taxonomy is not registered. Post formats are a
+	 * blog-presentation feature (aside, gallery, quote, …) that does not fit a
+	 * headless, structured-data CMS. The API remains — get_post_format() and
+	 * friends are guarded by post_type_supports( 'post-formats' ), which no post
+	 * type declares by default — so nothing errors; the taxonomy simply is not
+	 * there, and it no longer surfaces in the Content-Type Builder.
+	 */
 
 }
 

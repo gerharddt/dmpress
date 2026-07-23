@@ -63,7 +63,6 @@ function dmpress_default_post_content_type() {
 			'custom-fields',
 			'comments',
 			'revisions',
-			'post-formats',
 		),
 		'taxonomies'            => array( 'category', 'post_tag' ),
 		'labels'                => array(
