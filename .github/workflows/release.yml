@@ -1,0 +1,71 @@
+name: Release
+
+# Builds, signs and publishes a DMPress release when a version tag is pushed.
+#
+# Per release, the maintainer does only:
+#   1. bump $dmpress_version in wp-includes/version.php (and commit)
+#   2. git tag v<version>   (must match $dmpress_version exactly)
+#   3. git push origin v<version>
+#
+# This workflow then packages the tagged commit, signs it with the Ed25519
+# private key held in the DMPRESS_SIGNING_KEY repository secret, and creates a
+# GitHub Release with the zip, its .sig, and dmpress-update.json — the three
+# files installs need. The signing key never leaves GitHub's secret store.
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write   # needed to create the release
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the tagged commit
+        uses: actions/checkout@v4
+
+      - name: Ensure PHP has libsodium
+        run: |
+          php -v
+          php -r 'exit(function_exists("sodium_crypto_sign_detached") ? 0 : 1);' \
+            || { echo "::error::PHP on the runner has no libsodium; cannot sign."; exit 1; }
+
+      - name: Verify the tag matches $dmpress_version
+        run: |
+          VERSION="$(php -r 'require "wp-includes/version.php"; echo $dmpress_version;')"
+          TAG="${GITHUB_REF_NAME#v}"
+          echo "Tag: $TAG   \$dmpress_version: $VERSION"
+          if [ "$TAG" != "$VERSION" ]; then
+            echo "::error::Tag v$TAG does not match \$dmpress_version ($VERSION). Bump the version before tagging."
+            exit 1
+          fi
+
+      - name: Refuse to release without a signing key
+        env:
+          DMPRESS_SIGNING_KEY: ${{ secrets.DMPRESS_SIGNING_KEY }}
+        run: |
+          if [ -z "$DMPRESS_SIGNING_KEY" ]; then
+            echo "::error::The DMPRESS_SIGNING_KEY secret is not set. Add it under Settings → Secrets and variables → Actions."
+            exit 1
+          fi
+
+      - name: Build and sign the package
+        env:
+          DMPRESS_SIGNING_KEY: ${{ secrets.DMPRESS_SIGNING_KEY }}
+        run: bash bin/build-release.sh
+
+      - name: Publish the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          gh release create "$GITHUB_REF_NAME" \
+            --title "DMPress $VERSION" \
+            --notes "DMPress $VERSION. See DMPRESS-CHANGES.md for details." \
+            "build/dmpress-$VERSION.zip" \
+            "build/dmpress-$VERSION.zip.sig" \
+            "build/dmpress-update.json"
