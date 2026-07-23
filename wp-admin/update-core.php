@@ -930,11 +930,43 @@ function do_core_upgrade( $reinstall = false ) {
 	}
 
 	show_message( __( 'DMPress updated successfully.' ) );
+
+	/*
+	 * DMPress: update_core() returns $wp_version, which is frozen at 7.0 for
+	 * plugin compatibility — so it would announce "Welcome to DMPress 7.0".
+	 * Re-read the freshly installed version file to report the product version
+	 * the administrator actually updated to. version.php only assigns
+	 * variables, so re-requiring it is safe.
+	 */
+	$new_version = $result;
+
+	if ( is_readable( ABSPATH . WPINC . '/version.php' ) ) {
+		require ABSPATH . WPINC . '/version.php';
+
+		if ( ! empty( $dmpress_version ) ) {
+			$new_version = $dmpress_version;
+		}
+	}
+
 	show_message(
 		sprintf(
 			/* translators: %s: DMPress version. */
 			__( 'Welcome to DMPress %s.' ),
-			$result
+			$new_version
+		)
+	);
+
+	/*
+	 * DMPress: WordPress would send the administrator to the About screen here,
+	 * which DMPress removed — leaving the page with no way forward. Offer an
+	 * explicit link back to the updates screen instead, where the newly
+	 * installed version is shown.
+	 */
+	show_message(
+		sprintf(
+			'<a href="%1$s">%2$s</a>',
+			esc_url( self_admin_url( 'update-core.php' ) ),
+			esc_html__( 'Return to Updates' )
 		)
 	);
 	?>
