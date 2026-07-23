@@ -266,3 +266,24 @@ function dmpress_cleanup_removed_feature_data() {
 	update_option( DMPRESS_CLEANUP_OPTION, 1 );
 }
 add_action( 'admin_init', 'dmpress_cleanup_removed_feature_data' );
+
+/**
+ * Enables navigation menu support.
+ *
+ * Menus are a structured content object in DMPress — the `nav_menu` taxonomy
+ * and its items, exposed over REST (`wp/v2/menus`, `wp/v2/menu-items`) for a
+ * headless front end to consume. The admin screen `nav-menus.php` hard-requires
+ * `current_theme_supports( 'menus' )`, so it is enabled here rather than left to
+ * a theme — DMPress themes are metadata-only and declare nothing.
+ *
+ * This registers menu *management*, not theme menu *locations*: there is no
+ * rendered site, so menus are addressed by id or slug through the API.
+ *
+ * @since DMPress 1.0.0
+ *
+ * @return void
+ */
+function dmpress_enable_menu_support() {
+	add_theme_support( 'menus' );
+}
+add_action( 'after_setup_theme', 'dmpress_enable_menu_support' );

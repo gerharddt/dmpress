@@ -268,6 +268,17 @@ $menu[70] = array( __( 'Admin' ), 'read', 'options-general.php', '', 'menu-top m
 	// Content Types (see the late admin_menu hook below for the builder item).
 	$submenu['options-general.php'][2] = array( __( 'Content Types' ), 'read', 'edit.php?post_type=acf-field-group#dmp-group-content-types', '', 'dmp-menu-heading' );
 
+	/*
+	 * DMPress: navigation menus live under Content Types, not Appearance. A menu
+	 * is a structured content object (the nav_menu taxonomy plus its items),
+	 * exposed over REST at wp/v2/menus and wp/v2/menu-items for a headless front
+	 * end to consume — it is data, not theming. Menu support is enabled in
+	 * wp-includes/dmpress-content-types.php so nav-menus.php loads (it otherwise
+	 * hard-requires theme menu support). There are no theme menu *locations* on
+	 * a headless install; menus are addressed by id/slug through the API.
+	 */
+	$submenu['options-general.php'][4] = array( __( 'Menus' ), 'edit_theme_options', 'nav-menus.php' );
+
 	// Settings.
 	$submenu['options-general.php'][40] = array( __( 'Settings' ), 'manage_options', 'options-general.php#dmp-group-settings', '', 'dmp-menu-heading' );
 	$submenu['options-general.php'][41] = array( _x( 'General', 'settings screen' ), 'manage_options', 'options-general.php' );
@@ -329,9 +340,7 @@ if ( ! is_multisite() && current_user_can( 'update_themes' ) ) {
  * Customizer entry points and are omitted for the same reason.
  */
 
-if ( current_theme_supports( 'menus' ) || current_theme_supports( 'widgets' ) ) {
-	$submenu['options-general.php'][12] = array( __( 'Menus' ), 'edit_theme_options', 'nav-menus.php' );
-}
+// DMPress: Menus moved to the Content Types group above.
 
 unset( $appearance_capability );
 
