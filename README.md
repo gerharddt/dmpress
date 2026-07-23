@@ -4,7 +4,7 @@
 
 DMPress is a fork of **WordPress 7.0**, re-focused as a **headless, data-management CMS**. The block editor (Gutenberg) has been removed entirely in favour of a leaner core built around structured content and data.
 
-> **Status:** `1.0.0-beta.54` — pre-release. Not yet recommended for production.
+> **Status:** `1.0.0-beta.55` — pre-release. Not yet recommended for production.
 
 ---
 
@@ -43,7 +43,7 @@ This is a default, not a doctrine. If the ground genuinely moves — a shift in 
 DMPress keeps the `wp` namespace throughout — internally, in hooks, and on the REST API — so the existing plugin ecosystem continues to work. Core carries two version numbers:
 
 - `$wp_version` stays at **`7.0`** — what plugins check via `Requires at least`, and what wordpress.org APIs and WP-CLI see.
-- `$dmpress_version` (**`1.0.0-beta.54`**) is the product version shown to users.
+- `$dmpress_version` (**`1.0.0-beta.55`**) is the product version shown to users.
 
 Plugins that depend on the block editor will not function, but they load without fatal errors: an inert block API shim (`wp-includes/block-compat.php`) keeps `register_block_type()`, `has_blocks()`, `parse_blocks()` and friends callable as no-ops.
 
@@ -89,8 +89,8 @@ public, and thereafter each release is just:
 
 ```bash
 # bump $dmpress_version in wp-includes/version.php, commit
-git tag v1.0.0-beta.54        # tag must match $dmpress_version
-git push origin v1.0.0-beta.54
+git tag v1.0.0-beta.55        # tag must match $dmpress_version
+git push origin v1.0.0-beta.55
 ```
 
 Pushing the tag triggers `.github/workflows/release.yml`, which builds, signs and
@@ -109,6 +109,27 @@ publishes the GitHub Release. Installs pick it up on their next check.
 - MySQL 8.0+ or MariaDB 10.6+
 - The Apache [`mod_rewrite`](https://httpd.apache.org/docs/2.2/mod/mod_rewrite.html) module
 - HTTPS
+
+## Download
+
+Get the latest release from **[github.com/gerharddt/dmpress/releases/latest](https://github.com/gerharddt/dmpress/releases/latest)** and download the
+**`dmpress-<version>.zip`** asset.
+
+Each release also ships `dmpress-<version>.zip.sig`, an Ed25519 signature over the
+package. To verify a download before installing it:
+
+```bash
+php -r '
+$pub  = base64_decode("w4oXQvCY1Y+t1iK7ppdJ8G0vqfq1IsugTK9N1bdw/uA=");
+$sig  = base64_decode(trim(file_get_contents("dmpress-VERSION.zip.sig")));
+$hash = hash_file("sha384", "dmpress-VERSION.zip", true);
+echo sodium_crypto_sign_verify_detached($sig, $hash, $pub) ? "OK\n" : "FAILED\n";
+'
+```
+
+> GitHub also auto-attaches "Source code (zip)" to every release. That is the raw
+> repository — it includes build tooling and is unsigned. Use the
+> `dmpress-<version>.zip` asset instead.
 
 ## Installation
 
