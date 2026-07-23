@@ -25,9 +25,9 @@ get_current_screen()->add_help_tab(
 		'title'   => __( 'Overview' ),
 		'content' => '<p>' . __( 'This screen contains the settings that affect the display of your content.' ) . '</p>' .
 			'<p>' . sprintf(
-				/* translators: %s: URL to create a new page. */
-				__( 'You can choose what&#8217;s displayed on the homepage of your site. It can be posts in reverse chronological order (classic blog), or a fixed/static page. To set a static homepage, you first need to create two <a href="%s">Pages</a>. One will become the homepage, and the other will be where your posts are displayed.' ),
-				'post-new.php?post_type=page'
+				/* translators: %s: URL to the Content-Type Builder. */
+				__( 'You can choose what&#8217;s displayed on the homepage of your site: your latest posts, or a fixed entry from any content type. The choice is published to your front end over the REST API. Create and publish entries in the <a href="%s">Content-Type Builder</a> to make them selectable.' ),
+				esc_url( admin_url( 'edit.php?post_type=acf-field-group' ) )
 			) . '</p>' .
 			'<p>' . sprintf(
 				/* translators: %s: Documentation URL. */
@@ -69,21 +69,78 @@ if ( ! is_utf8_charset() ) {
 }
 ?>
 
-<?php if ( ! get_pages() ) : ?>
-<input name="show_on_front" type="hidden" value="posts" />
-<table class="form-table" role="presentation">
-	<?php
-	if ( 'posts' !== get_option( 'show_on_front' ) ) :
-		update_option( 'show_on_front', 'posts' );
-	endif;
+<?php
+/*
+ * DMPress: the homepage selector is not tied to the (removed) 'page' post type.
+ * It offers any published entry from a public content type, and the choice is
+ * published to the headless front end over REST at dmpress/v1/front-page (see
+ * wp-includes/dmpress-front.php). show_on_front keeps its core values — 'posts'
+ * for the latest-posts listing, 'page' for a fixed entry — so anything that
+ * already checks those keeps working; only the pool of selectable entries
+ * differs. The two IDs are stored in the same page_on_front / page_for_posts
+ * options as before.
+ */
+$dmpress_front_entries = get_posts(
+	array(
+		'post_type'   => array_values(
+			array_diff(
+				get_post_types( array( 'public' => true ), 'names' ),
+				array( 'attachment' )
+			)
+		),
+		'post_status' => 'publish',
+		'numberposts' => 200,
+		'orderby'     => 'title',
+		'order'       => 'ASC',
+	)
+);
 
-else :
-	if ( 'page' === get_option( 'show_on_front' ) && ! get_option( 'page_on_front' ) && ! get_option( 'page_for_posts' ) ) {
-		update_option( 'show_on_front', 'posts' );
+// Show the content-type name alongside each entry only when more than one type
+// can appear, so a single-type site stays uncluttered.
+$dmpress_front_show_type = count(
+	array_diff( get_post_types( array( 'public' => true ), 'names' ), array( 'attachment' ) )
+) > 1;
+
+/**
+ * Builds a <select> of eligible front-page entries.
+ *
+ * @param string $name      Field name.
+ * @param int    $selected  Currently selected entry ID.
+ * @param array  $entries   Eligible WP_Post objects.
+ * @param bool   $show_type Whether to append the content type to each label.
+ * @return string Select HTML.
+ */
+$dmpress_front_dropdown = static function ( $name, $selected, $entries, $show_type ) {
+	$html  = '<select name="' . esc_attr( $name ) . '" id="' . esc_attr( $name ) . '">';
+	$html .= '<option value="0">' . esc_html__( '&mdash; Select &mdash;' ) . '</option>';
+
+	foreach ( $entries as $entry ) {
+		$label = '' !== $entry->post_title ? $entry->post_title : sprintf( __( '(no title) #%d' ), $entry->ID );
+		$type  = get_post_type_object( $entry->post_type );
+
+		if ( $show_type && $type ) {
+			$label .= ' — ' . $type->labels->singular_name;
+		}
+
+		$html .= sprintf(
+			'<option value="%d"%s>%s</option>',
+			$entry->ID,
+			selected( (int) $selected, $entry->ID, false ),
+			esc_html( $label )
+		);
 	}
 
-	$your_homepage_displays_title = __( 'Your homepage displays' );
-	?>
+	$html .= '</select>';
+	return $html;
+};
+
+// A fixed-entry homepage with no chosen entry falls back to the posts listing.
+if ( 'page' === get_option( 'show_on_front' ) && ! get_option( 'page_on_front' ) && ! get_option( 'page_for_posts' ) ) {
+	update_option( 'show_on_front', 'posts' );
+}
+
+$your_homepage_displays_title = __( 'Your homepage displays' );
+?>
 <table class="form-table" role="presentation">
 <tr>
 <th scope="row"><?php echo $your_homepage_displays_title; ?></th>
@@ -95,58 +152,48 @@ else :
 	</label>
 	</p>
 	<p><label>
-		<input name="show_on_front" type="radio" value="page" <?php checked( 'page', get_option( 'show_on_front' ) ); ?> />
-		<?php
-		printf(
-			/* translators: %s: URL to Pages screen. */
-			__( 'A <a href="%s">static page</a> (select below)' ),
-			'edit.php?post_type=page'
-		);
-		?>
+		<input name="show_on_front" type="radio" value="page" <?php checked( 'page', get_option( 'show_on_front' ) ); ?> <?php disabled( empty( $dmpress_front_entries ) ); ?> />
+		<?php _e( 'A fixed entry (select below)' ); ?>
 	</label>
 	</p>
+<?php if ( empty( $dmpress_front_entries ) ) : ?>
+	<p class="description">
+		<?php
+		printf(
+			/* translators: %s: URL to the Content-Type Builder. */
+			__( 'No published entries yet. Create a content type and publish an entry in the <a href="%s">Content-Type Builder</a>, then it can be set as your homepage.' ),
+			esc_url( admin_url( 'edit.php?post_type=acf-field-group' ) )
+		);
+		?>
+	</p>
+<?php else : ?>
 <ul>
 	<li><label for="page_on_front">
 	<?php
 	printf(
 		/* translators: %s: Select field to choose the front page. */
 		__( 'Homepage: %s' ),
-		wp_dropdown_pages(
-			array(
-				'name'              => 'page_on_front',
-				'echo'              => 0,
-				'show_option_none'  => __( '&mdash; Select &mdash;' ),
-				'option_none_value' => '0',
-				'selected'          => get_option( 'page_on_front' ),
-			)
-		)
+		$dmpress_front_dropdown( 'page_on_front', (int) get_option( 'page_on_front' ), $dmpress_front_entries, $dmpress_front_show_type )
 	);
 	?>
 </label></li>
 	<li><label for="page_for_posts">
 	<?php
 	printf(
-		/* translators: %s: Select field to choose the page for posts. */
+		/* translators: %s: Select field to choose the entry whose route lists posts. */
 		__( 'Posts page: %s' ),
-		wp_dropdown_pages(
-			array(
-				'name'              => 'page_for_posts',
-				'echo'              => 0,
-				'show_option_none'  => __( '&mdash; Select &mdash;' ),
-				'option_none_value' => '0',
-				'selected'          => get_option( 'page_for_posts' ),
-			)
-		)
+		$dmpress_front_dropdown( 'page_for_posts', (int) get_option( 'page_for_posts' ), $dmpress_front_entries, $dmpress_front_show_type )
 	);
 	?>
 </label></li>
 </ul>
 	<?php
 	if ( 'page' === get_option( 'show_on_front' )
+		&& get_option( 'page_for_posts' )
 		&& get_option( 'page_for_posts' ) === get_option( 'page_on_front' )
 	) :
 		wp_admin_notice(
-			__( '<strong>Warning:</strong> these pages should not be the same!' ),
+			__( '<strong>Warning:</strong> these should not be the same entry!' ),
 			array(
 				'type'               => 'warning',
 				'id'                 => 'front-page-warning',
@@ -154,26 +201,10 @@ else :
 			)
 		);
 	endif;
-
-	$privacy_policy_page = get_option( 'wp_page_for_privacy_policy' );
-
-	if ( $privacy_policy_page
-		&& ( get_option( 'page_for_posts' ) === $privacy_policy_page
-			|| get_option( 'page_on_front' ) === $privacy_policy_page )
-	) :
-		wp_admin_notice(
-			__( '<strong>Warning:</strong> these pages should not be the same as your Privacy Policy page!' ),
-			array(
-				'type'               => 'warning',
-				'id'                 => 'privacy-policy-page-warning',
-				'additional_classes' => array( 'inline' ),
-			)
-		);
-	endif;
 	?>
+<?php endif; ?>
 </fieldset></td>
 </tr>
-<?php endif; ?>
 <tr>
 <th scope="row"><label for="posts_per_page"><?php _e( 'Blog pages show at most' ); ?></label></th>
 <td>
