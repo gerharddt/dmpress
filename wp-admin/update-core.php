@@ -259,6 +259,23 @@ function core_upgrade_preamble() {
 		_e( 'An updated version of DMPress is available.' );
 		echo '</h2>';
 
+		/*
+		 * DMPress: link to the release notes for the offered version, so an
+		 * administrator can see what changed before deciding to apply it. The
+		 * URL comes from the release manifest (see wp-includes/dmpress-update.php).
+		 */
+		if ( ! empty( $updates[0]->dmpress_notes_url ) ) {
+			printf(
+				'<p><a href="%1$s" target="_blank" rel="noopener">%2$s</a></p>',
+				esc_url( $updates[0]->dmpress_notes_url ),
+				sprintf(
+					/* translators: %s: DMPress version number. */
+					esc_html__( 'Read the release notes for DMPress %s' ),
+					esc_html( $updates[0]->version )
+				)
+			);
+		}
+
 		$message = sprintf(
 			/* translators: 1: Documentation on WordPress backups, 2: Documentation on updating WordPress. */
 			__( '<strong>Important:</strong> Before updating, please <a href="%1$s">back up your database and files</a>. For help with updates, visit the <a href="%2$s">Updating DMPress</a> documentation page.' ),
