@@ -196,7 +196,17 @@ function dmpress_update_check( $force = false ) {
 
 	set_site_transient( 'update_core', $transient );
 }
-add_action( DMPRESS_UPDATE_CRON_HOOK, 'dmpress_update_check' );
+/*
+ * The scheduled check forces past the throttle: it is the authoritative
+ * twice-daily check, and running it against a ~12 hour throttle would let the
+ * two cadences drift into each other and silently skip checks.
+ */
+add_action(
+	DMPRESS_UPDATE_CRON_HOOK,
+	static function () {
+		dmpress_update_check( true );
+	}
+);
 
 /**
  * Runs an opportunistic, throttled check on admin page loads.
@@ -210,7 +220,14 @@ function dmpress_update_maybe_check() {
 		return;
 	}
 
-	dmpress_update_check();
+	/*
+	 * The "Check again" link on the updates screen sets force-check=1, which
+	 * core routes to wp_version_check() — a no-op in DMPress. Honour it here, or
+	 * the link would appear to work while the throttle silently ignored it.
+	 */
+	$force = ! empty( $_GET['force-check'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+	dmpress_update_check( $force );
 }
 add_action( 'admin_init', 'dmpress_update_maybe_check' );
 
