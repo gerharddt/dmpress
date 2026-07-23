@@ -47,7 +47,7 @@ if ( ! defined( 'DMPRESS_UPDATE_MANIFEST_URL' ) ) {
  * key here. While this is empty the update channel is dormant.
  */
 if ( ! defined( 'DMPRESS_UPDATE_PUBLIC_KEY' ) ) {
-	define( 'DMPRESS_UPDATE_PUBLIC_KEY', '' );
+	define( 'DMPRESS_UPDATE_PUBLIC_KEY', 'w4oXQvCY1Y+t1iK7ppdJ8G0vqfq1IsugTK9N1bdw/uA=' );
 }
 
 /**
