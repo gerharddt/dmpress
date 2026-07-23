@@ -159,8 +159,36 @@ class Core_Upgrader extends WP_Upgrader {
 			return $working_dir;
 		}
 
+		/*
+		 * DMPress: resolve the package root instead of assuming '/wordpress/'.
+		 *
+		 * DMPress release packages unpack under '/dmpress/'. Assuming the
+		 * WordPress root here made this copy silently look for a file that does
+		 * not exist, and the resulting failure was reported as a file-permission
+		 * problem — which it is not. The WordPress roots are kept so a stock
+		 * package is still handled. Mirrors the $roots check in update_core().
+		 */
+		$package_root = '';
+
+		foreach ( array( '/dmpress/', '/wordpress/', '/wordpress-mu/' ) as $candidate ) {
+			if ( $wp_filesystem->exists( $working_dir . $candidate . 'wp-admin/includes/update-core.php' ) ) {
+				$package_root = $candidate;
+				break;
+			}
+		}
+
+		if ( '' === $package_root ) {
+			$wp_filesystem->delete( $working_dir, true );
+			WP_Upgrader::release_lock( 'core_updater' );
+			return new WP_Error(
+				'dmpress_package_root_not_found',
+				__( 'The update package does not look like a DMPress release: its expected directory structure was not found.' ),
+				'wp-admin/includes/update-core.php'
+			);
+		}
+
 		// Copy update-core.php from the new version into place.
-		if ( ! $wp_filesystem->copy( $working_dir . '/wordpress/wp-admin/includes/update-core.php', $wp_dir . 'wp-admin/includes/update-core.php', true ) ) {
+		if ( ! $wp_filesystem->copy( $working_dir . $package_root . 'wp-admin/includes/update-core.php', $wp_dir . 'wp-admin/includes/update-core.php', true ) ) {
 			$wp_filesystem->delete( $working_dir, true );
 			WP_Upgrader::release_lock( 'core_updater' );
 			return new WP_Error( 'copy_failed_for_update_core_file', __( 'The update cannot be installed because some files could not be copied. This is usually due to inconsistent file permissions.' ), 'wp-admin/includes/update-core.php' );
