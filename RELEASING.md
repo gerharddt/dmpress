@@ -105,6 +105,36 @@ admin loads **Dashboard → Updates**.
 
 ---
 
+## After publishing: confirm it actually worked
+
+The workflow going green means the release was *built*, not that installs can
+*use* it. Two checks, straight after a release:
+
+```bash
+# 1. the manifest installs poll resolves, and advertises the new version
+curl -sL https://github.com/gerharddt/dmpress/releases/latest/download/dmpress-update.json
+```
+
+```bash
+# 2. the published package verifies against the shipped public key
+V=1.0.0-beta.62   # the version you just released
+B=https://github.com/gerharddt/dmpress/releases/download/v$V
+curl -sLo /tmp/p.zip "$B/dmpress-$V.zip" && curl -sLo /tmp/p.sig "$B/dmpress-$V.zip.sig"
+php -r '
+$pub  = base64_decode("w4oXQvCY1Y+t1iK7ppdJ8G0vqfq1IsugTK9N1bdw/uA=");
+$sig  = base64_decode(trim(file_get_contents("/tmp/p.sig")));
+$hash = hash_file("sha384", "/tmp/p.zip", true);
+echo sodium_crypto_sign_verify_detached($sig, $hash, $pub) ? "signature OK\n" : "SIGNATURE FAILED\n";
+'
+```
+
+If the manifest 404s, the repo or its releases are not public. If the signature
+fails, the `DMPRESS_SIGNING_KEY` secret does not match the public key in
+`wp-includes/dmpress-update.php` — installs will refuse the update, which is the
+gate doing its job.
+
+---
+
 ## Before you trust it: test on a throwaway install
 
 Signing stops a **tampered** package. It does **not** stop a **bad-but-validly
