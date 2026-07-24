@@ -138,9 +138,10 @@ function list_core_update( $update ) {
 				);
 			} else {
 				$message = sprintf(
-					/* translators: 1: Installed WordPress version number, 2: URL to WordPress release notes, 3: New WordPress version number, including locale if necessary. */
-					__( 'You can update from WordPress %1$s to <a href="%2$s">WordPress %3$s</a> manually:' ),
-					$wp_version,
+					/* translators: 1: Installed DMPress version number, 2: URL to release notes, 3: New DMPress version number, including locale if necessary. */
+					__( 'You can update from DMPress %1$s to <a href="%2$s">DMPress %3$s</a> manually:' ),
+					// DMPress: the product version, not $wp_version (frozen at 7.0).
+					$GLOBALS['dmpress_version'],
 					$version_url,
 					$version_string
 				);
@@ -184,8 +185,8 @@ function list_core_update( $update ) {
 	} elseif ( 'en_US' === $update->locale && 'en_US' !== get_locale() && ( ! $update->packages->partial && $wp_version === $update->partial_version ) ) {
 		// Partial builds don't need language-specific warnings.
 		echo '<p class="hint">' . sprintf(
-			/* translators: %s: WordPress version. */
-			__( 'You are about to install WordPress %s <strong>in English (US)</strong>. There is a chance this update will break your translation. You may prefer to wait for the localized version to be released.' ),
+			/* translators: %s: DMPress version. */
+			__( 'You are about to install DMPress %s <strong>in English (US)</strong>. There is a chance this update will break your translation. You may prefer to wait for the localized version to be released.' ),
 			'development' !== $update->response ? $update->current : ''
 		) . '</p>';
 	}
