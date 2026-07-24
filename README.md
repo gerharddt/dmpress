@@ -4,7 +4,7 @@
 
 DMPress is a fork of **WordPress 7.0**, re-focused as a **headless, data-management CMS**. The block editor (Gutenberg) has been removed entirely in favour of a leaner core built around structured content and data.
 
-> **Status:** `1.0.0-beta.60` — pre-release. Not yet recommended for production.
+> **Status:** `1.0.0-beta.61` — pre-release. Not yet recommended for production.
 
 ---
 
@@ -43,7 +43,7 @@ This is a default, not a doctrine. If the ground genuinely moves — a shift in 
 DMPress keeps the `wp` namespace throughout — internally, in hooks, and on the REST API — so the existing plugin ecosystem continues to work. Core carries two version numbers:
 
 - `$wp_version` stays at **`7.0`** — what plugins check via `Requires at least`, and what wordpress.org APIs and WP-CLI see.
-- `$dmpress_version` (**`1.0.0-beta.60`**) is the product version shown to users.
+- `$dmpress_version` (**`1.0.0-beta.61`**) is the product version shown to users.
 
 Plugins that depend on the block editor will not function, but they load without fatal errors: an inert block API shim (`wp-includes/block-compat.php`) keeps `register_block_type()`, `has_blocks()`, `parse_blocks()` and friends callable as no-ops.
 
@@ -72,7 +72,11 @@ WordPress over the fork. It has its own channel, keyed on the product version an
 served from this repository's GitHub Releases. Installs check a signed manifest
 twice a day and show **Dashboard → Updates → "Update to version X"**; nothing
 installs until an admin clicks. WordPress's own updater does the download, verify,
-unpack, copy and rollback.
+unpack and copy.
+
+**There is no automatic rollback.** DMPress publishes no rollback package
+(`packages->rollback` is `false`), so a core update that fails partway is not
+reverted for you — take a backup, and try a release on a throwaway install first.
 
 Packages are **Ed25519-signed** and verified before they are applied, so a spoofed
 or tampered download is rejected. The channel is **dormant until a signing key is
@@ -89,8 +93,8 @@ public, and thereafter each release is just:
 
 ```bash
 # bump $dmpress_version in wp-includes/version.php, commit
-git tag v1.0.0-beta.60        # tag must match $dmpress_version
-git push origin v1.0.0-beta.60
+git tag v1.0.0-beta.61        # tag must match $dmpress_version
+git push origin v1.0.0-beta.61
 ```
 
 Pushing the tag triggers `.github/workflows/release.yml`, which builds, signs and
