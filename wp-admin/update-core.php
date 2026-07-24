@@ -298,6 +298,22 @@ function core_upgrade_preamble() {
 
 	echo '<ul class="core-updates">';
 	foreach ( (array) $updates as $update ) {
+		/*
+		 * DMPress: get_core_updates() returns false when there is no update data,
+		 * and (array) false is array( false ) — one element — so this loop used to
+		 * run once with $update === false. list_core_update() then read properties
+		 * off a bool, producing a "Re-install version &ndash;en_US" button with an
+		 * empty version that submitted to do-core-reinstall and did nothing.
+		 *
+		 * Stock WordPress rarely hits this because wp_version_check() repopulates
+		 * the transient immediately; in DMPress that function is a no-op, so the
+		 * gap is reachable (most obviously right after an update, when
+		 * Core_Upgrader deletes the transient).
+		 */
+		if ( ! is_object( $update ) ) {
+			continue;
+		}
+
 		echo '<li>';
 		list_core_update( $update );
 		echo '</li>';

@@ -227,6 +227,16 @@ function dmpress_update_maybe_check() {
 	 */
 	$force = ! empty( $_GET['force-check'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
+	/*
+	 * Also bypass the throttle when there is no update data at all. Core_Upgrader
+	 * deletes the 'update_core' transient after a successful update and then calls
+	 * wp_version_check() to refill it — but that function is a no-op in DMPress, so
+	 * without this the screen would sit with no data until the throttle expired.
+	 */
+	if ( ! $force && false === get_site_transient( 'update_core' ) ) {
+		$force = true;
+	}
+
 	dmpress_update_check( $force );
 }
 add_action( 'admin_init', 'dmpress_update_maybe_check' );
