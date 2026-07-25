@@ -129,6 +129,23 @@ function find_core_auto_update() {
  * @return array<string, string>|false An array of checksums on success, false on failure.
  */
 function get_core_checksums( $version, $locale ) {
+	/*
+	 * DMPress: there are no wordpress.org checksums for DMPress.
+	 *
+	 * $wp_version is frozen at 7.0 for plugin compatibility, so this would query
+	 * api.wordpress.org for *stock WordPress 7.0* checksums — which describe a
+	 * different distribution. DMPress's files legitimately differ from stock, and
+	 * where they happen to match (a file DMPress has not modified yet), the caller
+	 * in update_core() would add that file to its copy skip-list and never write
+	 * the packaged version over it. That silently under-applies updates: a file
+	 * shipped stock in one release and modified in the next would be skipped on
+	 * upgrade, leaving the new version's change unapplied even though the version
+	 * number advanced. Returning false makes update_core() copy every file from
+	 * the (already Ed25519-verified) package, which is the only correct baseline
+	 * for a fork. Both callers already handle a non-array return.
+	 */
+	return false;
+
 	$http_url = 'http://api.wordpress.org/core/checksums/1.0/?' . http_build_query( compact( 'version', 'locale' ), '', '&' );
 	$url      = $http_url;
 
