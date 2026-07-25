@@ -177,31 +177,19 @@ $your_homepage_displays_title = __( 'Your homepage displays' );
 	);
 	?>
 </label></li>
-	<li><label for="page_for_posts">
-	<?php
-	printf(
-		/* translators: %s: Select field to choose the entry whose route lists posts. */
-		__( 'Posts page: %s' ),
-		$dmpress_front_dropdown( 'page_for_posts', (int) get_option( 'page_for_posts' ), $dmpress_front_entries, $dmpress_front_show_type )
-	);
-	?>
-</label></li>
 </ul>
 	<?php
-	if ( 'page' === get_option( 'show_on_front' )
-		&& get_option( 'page_for_posts' )
-		&& get_option( 'page_for_posts' ) === get_option( 'page_on_front' )
-	) :
-		wp_admin_notice(
-			__( '<strong>Warning:</strong> these should not be the same entry!' ),
-			array(
-				'type'               => 'warning',
-				'id'                 => 'front-page-warning',
-				'additional_classes' => array( 'inline' ),
-			)
-		);
-	endif;
+	/*
+	 * DMPress: the "Posts page" field is hidden. page_for_posts is in the
+	 * 'reading' allow-list, and options.php clears any allow-listed option that
+	 * is absent from the POST, so the stored value is round-tripped through a
+	 * hidden input rather than dropped from the allow-list — nothing is wiped on
+	 * save, and the value stays available to the headless front-page REST
+	 * contract (dmpress/v1/front-page). The old "should not be the same entry"
+	 * warning is gone with the field, as it compared two now-single choices.
+	 */
 	?>
+	<input type="hidden" name="page_for_posts" value="<?php echo (int) get_option( 'page_for_posts' ); ?>" />
 <?php endif; ?>
 </fieldset></td>
 </tr>

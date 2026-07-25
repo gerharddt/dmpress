@@ -4,7 +4,7 @@
 
 DMPress is a fork of **WordPress 7.0**, re-focused as a **headless, data-management CMS**. The block editor (Gutenberg) has been removed entirely in favour of a leaner core built around structured content and data.
 
-> **Status:** `1.0.0-beta.65` — pre-release. Not yet recommended for production.
+> **Status:** `1.0.0-beta.66` — pre-release. Not yet recommended for production.
 
 ---
 
@@ -43,7 +43,7 @@ This is a default, not a doctrine. If the ground genuinely moves — a shift in 
 DMPress keeps the `wp` namespace throughout — internally, in hooks, and on the REST API — so the existing plugin ecosystem continues to work. Core carries two version numbers:
 
 - `$wp_version` stays at **`7.0`** — what plugins check via `Requires at least`, and what wordpress.org APIs and WP-CLI see.
-- `$dmpress_version` (**`1.0.0-beta.65`**) is the product version shown to users.
+- `$dmpress_version` (**`1.0.0-beta.66`**) is the product version shown to users.
 
 Plugins that depend on the block editor will not function, but they load without fatal errors: an inert block API shim (`wp-includes/block-compat.php`) keeps `register_block_type()`, `has_blocks()`, `parse_blocks()` and friends callable as no-ops.
 
@@ -94,8 +94,8 @@ public, and thereafter each release is just:
 
 ```bash
 # bump $dmpress_version in wp-includes/version.php, commit
-git tag v1.0.0-beta.65        # tag must match $dmpress_version
-git push origin v1.0.0-beta.65
+git tag v1.0.0-beta.66        # tag must match $dmpress_version
+git push origin v1.0.0-beta.66
 ```
 
 Pushing the tag triggers `.github/workflows/release.yml`, which builds, signs and
