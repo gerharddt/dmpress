@@ -289,8 +289,14 @@ $menu[70] = array( __( 'Admin' ), 'read', 'options-general.php', '', 'menu-top m
 	$submenu['options-general.php'][46] = array( __( 'Permalinks' ), 'manage_options', 'options-permalink.php' );
 
 // Tools.
-	$submenu['options-general.php'][50] = array( __( 'Tools' ), 'edit_posts', 'tools.php#dmp-group-tools', '', 'dmp-menu-heading' );
-	$submenu['options-general.php'][51] = array( __( 'Available Tools' ), 'edit_posts', 'tools.php' );
+	$submenu['options-general.php'][50] = array( __( 'Tools' ), 'edit_posts', 'import.php#dmp-group-tools', '', 'dmp-menu-heading' );
+	/*
+	 * DMPress: no "Available Tools" item. Core's tools.php is now essentially an
+	 * empty shell (the `tool_box` hook plus the removed Press This / category
+	 * converter), so it does not warrant a menu slot. tools.php still resolves by
+	 * direct URL, and a plugin that adds to the `tool_box` hook can register its
+	 * own menu entry if it needs one.
+	 */
 	$submenu['options-general.php'][52] = array( __( 'Import' ), 'import', 'import.php' );
 	$submenu['options-general.php'][53] = array( __( 'Export' ), 'export', 'export.php' );
 	$submenu['options-general.php'][54] = array( __( 'Export Personal Data' ), 'export_others_personal_data', 'export-personal-data.php' );
