@@ -148,7 +148,8 @@ $your_homepage_displays_title = __( 'Your homepage displays' );
 	<legend class="screen-reader-text"><span><?php echo $your_homepage_displays_title; ?></span></legend>
 	<p><label>
 		<input name="show_on_front" type="radio" value="posts" <?php checked( 'posts', get_option( 'show_on_front' ) ); ?> />
-		<?php _e( 'Your latest posts' ); ?>
+		<?php // DMPress: on a headless install "posts" means no fixed homepage entry is chosen, not a rendered latest-posts page. ?>
+		<?php _e( 'Not set (default)' ); ?>
 	</label>
 	</p>
 	<p><label>
