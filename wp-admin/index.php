@@ -85,15 +85,8 @@ $screen->add_help_tab(
 unset( $help );
 
 $wp_version = get_bloginfo( 'version', 'display' );
-/*
- * DMPress: display the WordPress-compatibility version without a trailing ".0"
- * ("7" rather than "7.0"). The stored $wp_version stays '7.0' — plugins compare
- * their `Requires at least` against it and version_compare() reads '7' as lower
- * than '7.0', so only the visible text is shortened, not the value.
- */
-$wp_display_version = preg_replace( '/\.0+$/', '', (string) $wp_version );
 /* translators: %s: WordPress version. */
-$wp_version_text = sprintf( __( 'Version %s' ), $wp_display_version );
+$wp_version_text = sprintf( __( 'Version %s' ), $wp_version );
 $is_dev_version  = preg_match( '/alpha|beta|RC/', $wp_version );
 
 if ( ! $is_dev_version ) {

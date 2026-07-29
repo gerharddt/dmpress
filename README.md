@@ -2,15 +2,15 @@
 
 **A content and data management platform.**
 
-DMPress is a fork of **WordPress 7**, re-focused as a **headless, data-management CMS**. The block editor (Gutenberg) has been removed entirely in favour of a leaner core built around structured content and data.
+DMPress is a fork of **WordPress 7.0**, re-focused as a **headless, data-management CMS**. The block editor (Gutenberg) has been removed entirely in favour of a leaner core built around structured content and data.
 
-> **Status:** `1.0.0-beta.73` — pre-release. Not yet recommended for production.
+> **Status:** `1.0.0-beta.74` — pre-release. Not yet recommended for production.
 
 ---
 
 ## What's different
 
-| | WordPress 7 | DMPress |
+| | WordPress 7.0 | DMPress |
 |---|---|---|
 | Editor | Block editor (Gutenberg) | Classic editor only |
 | Front end | Server-rendered by core | **Headless** — the active theme's `index.html` is served with no WordPress boot; content comes from REST |
@@ -23,7 +23,7 @@ DMPress is a fork of **WordPress 7**, re-focused as a **headless, data-managemen
 
 Also removed: Site Health, the Settings → Privacy and Connectors sections, the Customizer and Theme File Editor menu entries, the dashboard content widgets, and core self-update.
 
-The full, itemised record of every change relative to stock WordPress 7 is in **[DMPRESS-CHANGES.md](DMPRESS-CHANGES.md)**.
+The full, itemised record of every change relative to stock WordPress 7.0 is in **[DMPRESS-CHANGES.md](DMPRESS-CHANGES.md)**.
 
 ## Scope and release policy
 
@@ -43,7 +43,7 @@ This is a default, not a doctrine. If the ground genuinely moves — a shift in 
 DMPress keeps the `wp` namespace throughout — internally, in hooks, and on the REST API — so the existing plugin ecosystem continues to work. Core carries two version numbers:
 
 - `$wp_version` stays at **`7.0`** — what plugins check via `Requires at least`, and what wordpress.org APIs and WP-CLI see.
-- `$dmpress_version` (**`1.0.0-beta.73`**) is the product version shown to users.
+- `$dmpress_version` (**`1.0.0-beta.74`**) is the product version shown to users.
 
 Plugins that depend on the block editor will not function, but they load without fatal errors: an inert block API shim (`wp-includes/block-compat.php`) keeps `register_block_type()`, `has_blocks()`, `parse_blocks()` and friends callable as no-ops.
 
@@ -94,8 +94,8 @@ public, and thereafter each release is just:
 
 ```bash
 # bump $dmpress_version in wp-includes/version.php, commit
-git tag v1.0.0-beta.73        # tag must match $dmpress_version
-git push origin v1.0.0-beta.73
+git tag v1.0.0-beta.74        # tag must match $dmpress_version
+git push origin v1.0.0-beta.74
 ```
 
 Pushing the tag triggers `.github/workflows/release.yml`, which builds, signs and

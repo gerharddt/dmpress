@@ -553,16 +553,13 @@ function list_plugin_updates() {
 			}
 		}
 
-		// DMPress: display "7" not "7.0"; $cur_wp_version keeps its real value for the comparison.
-		$cur_wp_version_display = preg_replace( '/\.0+$/', '', (string) $cur_wp_version );
-
 		// Get plugin compat for running version of WordPress.
 		if ( isset( $plugin_data->update->tested ) && version_compare( $plugin_data->update->tested, $cur_wp_version, '>=' ) ) {
 			/* translators: %s: WordPress version. */
-			$compat = '<br />' . sprintf( __( 'Compatibility with WordPress %s: Yes (according to its author)' ), $cur_wp_version_display );
+			$compat = '<br />' . sprintf( __( 'Compatibility with WordPress %s: Yes (according to its author)' ), $cur_wp_version );
 		} else {
 			/* translators: %s: WordPress version. */
-			$compat = '<br />' . sprintf( __( 'Compatibility with WordPress %s: Not tested' ), $cur_wp_version_display );
+			$compat = '<br />' . sprintf( __( 'Compatibility with WordPress %s: Not tested' ), $cur_wp_version );
 		}
 		// Get plugin compat for updated version of WordPress.
 		if ( $core_update_version ) {
