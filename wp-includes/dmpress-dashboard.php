@@ -71,6 +71,18 @@ function dmpress_at_a_glance_post_types() {
  */
 function dmpress_dashboard_at_a_glance() {
 	echo '<div class="main">';
+
+	/*
+	 * The dashboard stylesheet draws an icon on every `#dashboard_right_now li a`
+	 * via `:before`, defaulting to a generic marker glyph (\f159) for anything
+	 * without one of its built-in count classes — so every custom content type
+	 * would show that same circular marker. Suppress that `:before` for this
+	 * widget's list and instead render each content type's own `menu_icon`
+	 * (a dashicon), so a new content type shows the icon it was given in the
+	 * Content-Type Builder rather than a generic circle. Scoped to
+	 * `#dashboard_right_now .main ul` so nothing else is affected.
+	 */
+	echo '<style>#dashboard_right_now .main ul li a:before{content:none;}#dashboard_right_now .main ul li a .dashicons{color:#646970;vertical-align:text-bottom;margin-right:6px;}</style>';
 	echo '<ul>';
 
 	foreach ( dmpress_at_a_glance_post_types() as $type ) {
@@ -93,24 +105,16 @@ function dmpress_dashboard_at_a_glance() {
 			admin_url( 'edit.php' )
 		);
 
-		/*
-		 * Let the dashboard's own CSS draw the icon via `li a:before`. Reuse the
-		 * native icon classes for post/page; any other content type falls back to
-		 * the stylesheet's generic custom-type icon. Do NOT also print an inline
-		 * dashicon — the `:before` already supplies one, and doing both renders a
-		 * duplicate (a stray marker next to the real icon).
-		 */
-		$class = '';
-		if ( 'post' === $type->name ) {
-			$class = 'post-count';
-		} elseif ( 'page' === $type->name ) {
-			$class = 'page-count';
-		}
+		// The type's own dashicon; fall back to a neutral content icon when it
+		// has no dashicon (e.g. a custom image or no icon set).
+		$icon = ( is_string( $type->menu_icon ) && str_starts_with( $type->menu_icon, 'dashicons-' ) )
+			? $type->menu_icon
+			: 'dashicons-admin-post';
 
 		printf(
-			'<li class="%1$s"><a href="%2$s">%3$s</a></li>',
-			esc_attr( $class ),
+			'<li><a href="%1$s"><span class="dashicons %2$s" aria-hidden="true"></span>%3$s</a></li>',
 			esc_url( $url ),
+			esc_attr( $icon ),
 			esc_html( $text )
 		);
 	}
