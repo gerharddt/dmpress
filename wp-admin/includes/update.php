@@ -333,16 +333,24 @@ function update_nag() {
 		return false;
 	}
 
-	$version_url = sprintf(
-		/* translators: %s: WordPress version. */
-		esc_url( __( 'https://wordpress.org/documentation/wordpress-version/version-%s/' ) ),
-		sanitize_title( $cur->current )
-	);
+	/*
+	 * DMPress: link to the release's own notes (from the update manifest) rather
+	 * than a wordpress.org version page, which does not exist for this fork.
+	 */
+	if ( ! empty( $cur->dmpress_notes_url ) ) {
+		$version_url = esc_url( $cur->dmpress_notes_url );
+	} else {
+		$version_url = sprintf(
+			/* translators: %s: DMPress version. */
+			esc_url( __( 'https://wordpress.org/documentation/wordpress-version/version-%s/' ) ),
+			sanitize_title( $cur->current )
+		);
+	}
 
 	if ( current_user_can( 'update_core' ) ) {
 		$msg = sprintf(
-			/* translators: 1: URL to WordPress release notes, 2: New WordPress version, 3: URL to network admin, 4: Accessibility text. */
-			__( '<a href="%1$s">WordPress %2$s</a> is available! <a href="%3$s" aria-label="%4$s">Please update now</a>.' ),
+			/* translators: 1: URL to DMPress release notes, 2: New DMPress version, 3: URL to network admin, 4: Accessibility text. */
+			__( '<a href="%1$s">DMPress %2$s</a> is available! <a href="%3$s" aria-label="%4$s">Please update now</a>.' ),
 			$version_url,
 			$cur->current,
 			network_admin_url( 'update-core.php' ),
@@ -350,8 +358,8 @@ function update_nag() {
 		);
 	} else {
 		$msg = sprintf(
-			/* translators: 1: URL to WordPress release notes, 2: New WordPress version. */
-			__( '<a href="%1$s">WordPress %2$s</a> is available! Please notify the site administrator.' ),
+			/* translators: 1: URL to DMPress release notes, 2: New DMPress version. */
+			__( '<a href="%1$s">DMPress %2$s</a> is available! Please notify the site administrator.' ),
 			$version_url,
 			$cur->current
 		);
