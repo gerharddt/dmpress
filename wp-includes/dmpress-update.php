@@ -285,11 +285,27 @@ add_action( 'init', 'dmpress_update_schedule' );
  * @return bool|WP_Error|string
  */
 function dmpress_update_verify_package( $reply, $package, $upgrader ) {
-	// Let anything already short-circuited, or non-URL local files, pass through.
-	if ( false !== $reply || ! preg_match( '#^https?://#i', (string) $package ) ) {
+	// Something else already short-circuited the download.
+	if ( false !== $reply ) {
 		return $reply;
 	}
 
+	/*
+	 * Identify the package BEFORE looking at its scheme.
+	 *
+	 * This order matters. Testing the scheme first and returning $reply for
+	 * anything that was not http(s) meant a package advertised as, say,
+	 * 'ftp://…' — or a local path that happens to exist — fell straight through
+	 * to WP_Upgrader::download_package(), whose own regex accepts ftp:// and
+	 * bare local paths, and which Core_Upgrader calls with $check_signatures
+	 * hard-coded to false. The result was a DMPress package installed with no
+	 * signature verification whatsoever: exactly the outcome signing exists to
+	 * prevent, reachable by anyone able to influence the manifest. The manifest
+	 * is fetched over HTTPS but is itself unsigned, so it is deliberately NOT
+	 * trusted to be honest about the package it points at — the signature is the
+	 * root of trust, and it must be enforced for our package regardless of how
+	 * the URL is spelled.
+	 */
 	$update = dmpress_update_find_by_package( $package );
 
 	// Not our package — leave WordPress's normal handling untouched.
@@ -297,10 +313,31 @@ function dmpress_update_verify_package( $reply, $package, $upgrader ) {
 		return $reply;
 	}
 
+	/*
+	 * It is our package, so from here every path must end in either a verified
+	 * file or a WP_Error. Require HTTPS: it is the only scheme this channel ever
+	 * publishes, it keeps the download off plaintext transports, and it prevents
+	 * the local-path branch in download_package() from being reachable at all.
+	 */
+	if ( ! preg_match( '#^https://#i', (string) $package ) ) {
+		return new WP_Error(
+			'dmpress_update_insecure_package',
+			__( 'This DMPress update was not applied because its download location is not a secure (HTTPS) address.' )
+		);
+	}
+
 	if ( empty( $update->dmpress_signature_url ) ) {
 		return new WP_Error(
 			'dmpress_update_no_signature',
 			__( 'This DMPress update cannot be installed because it is not signed.' )
+		);
+	}
+
+	// The signature must travel the same secure channel as the package.
+	if ( ! preg_match( '#^https://#i', (string) $update->dmpress_signature_url ) ) {
+		return new WP_Error(
+			'dmpress_update_insecure_signature',
+			__( 'This DMPress update was not applied because its signature location is not a secure (HTTPS) address.' )
 		);
 	}
 

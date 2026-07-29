@@ -128,6 +128,22 @@ function dmpress_front_entry( $entry_id ) {
 		return null;
 	}
 
+	/*
+	 * This feeds an unauthenticated endpoint, so publish status alone is not
+	 * enough. A published entry can still belong to a post type that is not
+	 * publicly viewable, or be password-protected — in either case its title,
+	 * slug and permalink are not public information and must not be echoed to
+	 * anonymous callers just because an administrator pointed the homepage at
+	 * it. Both are treated as "no entry", exactly like an unset option.
+	 */
+	if ( ! is_post_type_viewable( get_post_type_object( $post->post_type ) ) ) {
+		return null;
+	}
+
+	if ( '' !== $post->post_password ) {
+		return null;
+	}
+
 	return array(
 		'id'    => $post->ID,
 		'type'  => $post->post_type,
