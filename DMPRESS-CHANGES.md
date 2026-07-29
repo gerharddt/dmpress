@@ -1,7 +1,7 @@
 # DMPress — Fork Change Log
 
-DMPress is a fork of **WordPress 7.0** re-focused as a **headless, data-management CMS**.
-This document logs everything that has been changed relative to stock WordPress 7.0, grouped by:
+DMPress is a fork of **WordPress 7** re-focused as a **headless, data-management CMS**.
+This document logs everything that has been changed relative to stock WordPress 7, grouped by:
 
 1. [Removed from WordPress](#1-removed-from-wordpress)
 2. [Added by DMPress (us)](#2-added-by-dmpress-us)
@@ -10,8 +10,8 @@ This document logs everything that has been changed relative to stock WordPress 
 5. [Upstream WordPress fixes ported](#5-upstream-wordpress-fixes-ported)
 6. [Known consequences & decisions](#6-known-consequences--decisions)
 
-> **Baseline:** stock WordPress 7.0. **Product version:** DMPress 1.0.0-beta.72 (pre-release).
-> Internally `$wp_version` remains `7.0` for plugin/API compatibility; `$dmpress_version` (`1.0.0-beta.72`) is the product version shown to users.
+> **Baseline:** stock WordPress 7. **Product version:** DMPress 1.0.0-beta.73 (pre-release).
+> Internally `$wp_version` remains `7.0` for plugin/API compatibility; `$dmpress_version` (`1.0.0-beta.73`) is the product version shown to users.
 
 ---
 
@@ -165,7 +165,7 @@ Removing the form fields alone would have been a bug: `wp-admin/options.php` loo
 Consequences: `default_post_format` is no longer exposed on `/wp/v2/settings` (it was the only one of the two registered for REST). Both option rows keep whatever value they already held, and `get_option()` still reads them, so post-formats behaviour and any post-by-email setup are unchanged — they are simply no longer editable from this screen. Verified by submitting the Writing form and confirming both values survive.
 
 ### Connectors — removed
-WordPress 7.0's **Settings → Connectors** screen (AI-provider connections and their API keys) is gone in its entirety:
+WordPress 7's **Settings → Connectors** screen (AI-provider connections and their API keys) is gone in its entirety:
 
 - **Screen:** `wp-admin/options-connectors.php`, and its **Connectors** item under Settings.
 - **Subsystem:** `wp-includes/connectors.php` and `WP_Connector_Registry`, plus the `_wp_connectors_init` bootstrap on `init`.
@@ -239,17 +239,17 @@ The login, registration, lost-password, setup-config and install screens still c
 - Five now-unreferenced WordPress logo files were deleted (`w-logo-gray.png`, `wordpress-logo.png`, `wordpress-logo.svg`, `wordpress-logo-gray.svg`, `about-release-logo.svg`) so no WordPress trademark artwork ships as part of DMPress branding. See `CREDITS.md`.
 - `w-logo-white.png` and `wordpress-logo-white.svg` remain only because `about*.css` still references them; that stylesheet is orphaned (the About screens were removed) but is still enqueued as a `wp-admin` style dependency, so it was left for a separate cleanup. `w-logo-blue.png` in `wp-includes/images/` stays as the oEmbed site-icon fallback, which is inert on a headless install.
 
-### Updates silently skipped files identical to stock WordPress 7.0
+### Updates silently skipped files identical to stock WordPress 7
 `update_core()` has a copy optimisation: it calls `get_core_checksums( $wp_version, … )`
 and, for any installed file whose md5 matches the fetched checksum, adds that file to the
 `copy_dir()` skip-list — "already correct, don't copy." In DMPress `$wp_version` is frozen
-at **7.0**, so `get_core_checksums()` fetched **stock WordPress 7.0** checksums from
+at **7.0**, so `get_core_checksums()` fetched **stock WordPress 7** checksums from
 api.wordpress.org — a *different distribution's* baseline. Any file DMPress had not yet
 modified (2,174 of ~3,500 files at the time of writing were still byte-identical to stock
 7.0) matched, and was skipped. The moment a later release first modified such a file, the
 update advanced the version number but **left the file's old contents in place**.
 
-Observed as: a site updated to `1.0.0-beta.72` still showed the pre-restore Reading screen,
+Observed as: a site updated to `1.0.0-beta.73` still showed the pre-restore Reading screen,
 because `wp-admin/options-reading.php` was byte-identical to stock 7.0 until the home-page
 selector was added — the update skipped it. (`wp-includes/version.php` is copied last and
 unconditionally, which is why the version number still advanced.)
@@ -283,7 +283,7 @@ the opportunistic check bypasses its throttle when the transient is missing, so 
 repopulates immediately instead of waiting up to 12 hours.
 
 ### Manual-update message — wrong product and wrong version
-The updates screen's fallback message read *"You can update from WordPress 7.0 to WordPress 1.0.0-beta.72 manually"* — naming WordPress instead of DMPress, and reporting `$wp_version` (frozen at 7.0 for plugin compatibility) as the installed version. It now names DMPress and reports `$dmpress_version` on both sides. The adjacent "about to install … in English (US)" warning had the same product-name error.
+The updates screen's fallback message read *"You can update from WordPress 7 to WordPress 1.0.0-beta.73 manually"* — naming WordPress instead of DMPress, and reporting `$wp_version` (frozen at 7.0 for plugin compatibility) as the installed version. It now names DMPress and reports `$dmpress_version` on both sides. The adjacent "about to install … in English (US)" warning had the same product-name error.
 
 Deliberately unchanged: the *"Compatibility with WordPress %s"* lines on the plugin/theme update lists. Those describe a plugin's declared compatibility with a **WordPress** version, which is exactly what the pinned `$wp_version` is for.
 
@@ -414,7 +414,7 @@ Navigation menus are restored, but grouped under **Admin → Content** rather th
 
 ### Dual-version scheme — `wp-includes/version.php`
 - `$wp_version = '7.0'` (compatibility: plugin `Requires at least`, wordpress.org APIs, WP-CLI). **Never** set this to the DMPress version — doing so breaks plugin installation.
-- `$dmpress_version = '1.0.0-beta.72'` (product version shown in generator tags, admin footer, dashboard).
+- `$dmpress_version = '1.0.0-beta.73'` (product version shown in generator tags, admin footer, dashboard).
 
 **Release process:** bump `$dmpress_version` on every published release/push — `1.0.0-beta.1` → `1.0.0-beta.2` → … → `1.0.0` — and record what changed in this file.
 
@@ -445,7 +445,7 @@ Splitting `post` into a Content-Type Builder entry made it report `_builtin => f
 - **Logo removed:** `assets/images/scf-logo.svg` drew the letters **S C F** as vector paths — invisible to a text search, but the most prominent SCF branding on screen. There is now no logo mark at all: the toolbar renders the product name as plain text (`.acf-logo` is a text link carrying `acf_get_setting( 'name' )`), the decorative mark on the database-upgrade notice was dropped, and the SVG was deleted. Note that SCF's own stylesheet hides the toolbar `<h2>` (`display: none`), which is why the heading alone was never visible — the wordmark goes through `.acf-logo` instead. In `acf-global.css`/`.min.css` the 72px logo gutter (`.acf-nav-wrap { padding-left }`) and the `position: absolute; top: 0; left: 0` it existed to support were both removed from the base rules, and an appended block sets the wordmark to 20px, 600 weight, white. Both the readable and minified builds are patched — **the `.min` is the one actually enqueued**.
 - **Presented as the Content-Type Builder, not as SCF:** the `name` setting (`secure-custom-fields.php`) is `Content-Type Builder`, which drives the `<h2>` heading on every builder screen. The hard-coded `SCF` group header in the "More" dropdown now echoes that same setting, the toolbar logo's `aria-label`/`alt` were reworded, and the two Tools tooltips that referenced "another SCF installation" / "an SCF JSON file" were rewritten. No SCF or ACF branding renders anywhere in the admin. **Attribution is unaffected** — it lives in `CREDITS.md`, and internal identifiers (`acf_*` functions, `acf-*` post types, the `secure-custom-fields` text domain, `ACF_*` constants) are deliberately untouched so SCF-aware plugins and existing field data keep working.
 - **Toolbar active state fixed:** DMPress's `submenu_file` filter (`wp-admin/menu.php`) pins `$submenu_file` to `edit.php?post_type=acf-field-group` on every builder screen so the left-hand **Admin → Content-Type Builder** item highlights. SCF's toolbar read that same global to pick its active tab, so **Field Groups** appeared active everywhere. `views/global/navigation.php` now derives the active tab from `$typenow` (list/edit/add-new screens of each builder post type) and `$plugin_page` (slug pages such as Tools) instead. This also made SCF's separate "Add New" special case redundant.
-- **Asset cache-busting:** SCF's version never moves while the fork patches its built CSS/JS in place, so browsers kept serving stale copies of DMPress's changes. `includes/assets.php` folds `$dmpress_version` into the registered version string (`?ver=6.9.1-dmp1.0.0-beta.72`), so every release bumps the URL.
+- **Asset cache-busting:** SCF's version never moves while the fork patches its built CSS/JS in place, so browsers kept serving stale copies of DMPress's changes. `includes/assets.php` folds `$dmpress_version` into the registered version string (`?ver=6.9.1-dmp1.0.0-beta.73`), so every release bumps the URL.
 - **"Beta Features" removed from the "More" menu:** `SCF_Admin_Beta_Features::admin_menu()` returns before `add_submenu_page()`, so the page is never registered — it drops out of the Content-Type Builder nav (which is built from `$submenu`) and a direct URL returns 403. The class, `scf_register_admin_beta_feature()` and `acf()->admin_beta_features` are left intact so nothing referencing them fatals. The only shipped beta feature (`editor_sidebar`) targets the block editor, which DMPress does not have.
 - **Copyright:** all original SCF/ACF and WordPress copyrights remain with their authors; DMPress ships under GPL as a derivative work.
 
@@ -460,6 +460,7 @@ Splitting `post` into a Content-Type Builder entry made it report `_builtin => f
 - Generator meta + RSS tags → `DMPress <version>`.
 - HTTP User-Agent → `WordPress/7.0; DMPress/1.0; <url>` (keeps a WP-compatible token so services still recognise it).
 - Default outgoing-mail sender name → `DMPress`.
+- **WordPress version shown as "7", not "7.0"** in visible text (the dashboard help-tab version line, plugin-compatibility notes on the Updates screen) and throughout the readme prose. This is **display only**: the stored `$wp_version` remains `'7.0'`, because plugins compare their `Requires at least` header against it and `version_compare()` reads `'7'` as *lower* than `'7.0'` — so shortening the value itself would mark plugins that require 7.0 as incompatible. Point-release identifiers (`7.0.1`, `7.0.2`) are left intact.
 - **Admin branding sweep** — ~300 user-facing strings across the admin rebranded WordPress → DMPress, plus `wp-config-sample.php` and the `setup-config.php` install flow. The admin bar's **"About WordPress" logo menu** (and its wordpress.org / Documentation / Support / Feedback links) was removed entirely, along with the WordPress marketing pages it linked to — `about.php`, `credits.php`, `freedoms.php`, `contribute.php` (plus their network/user wrappers) — which described block-editor features DMPress no longer ships. Dangling links to those pages were cleaned up.
 
   Two categories of "WordPress" are **intentionally retained** because changing them would make the software lie: references to **wordpress.org services** (the plugin/theme directories, the salt-key service, update APIs) and **WordPress-version compatibility messages** (plugins declare `Requires at least` against a WordPress version — which is exactly what `$wp_version` reports).
