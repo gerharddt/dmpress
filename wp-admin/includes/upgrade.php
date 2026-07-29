@@ -284,7 +284,7 @@ if ( ! function_exists( 'wp_install_defaults' ) ) :
 			/* translators: %s: Gravatar URL. */
 			__(
 				'Hi, this is a comment.
-To get started with moderating, editing, and deleting comments, please visit the Comments screen in the dashboard.
+To get started with moderating, editing, and deleting comments, open the Comments screen listed under its content type in the dashboard.
 Commenter avatars come from <a href="%s">Gravatar</a>.'
 			),
 			/* translators: The localized Gravatar URL. */
