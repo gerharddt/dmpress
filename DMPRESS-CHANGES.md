@@ -10,8 +10,8 @@ This document logs everything that has been changed relative to stock WordPress 
 5. [Upstream WordPress fixes ported](#5-upstream-wordpress-fixes-ported)
 6. [Known consequences & decisions](#6-known-consequences--decisions)
 
-> **Baseline:** stock WordPress 7.0. **Product version:** DMPress 1.0.0-beta.79 (pre-release).
-> Internally `$wp_version` remains `7.0` for plugin/API compatibility; `$dmpress_version` (`1.0.0-beta.79`) is the product version shown to users.
+> **Baseline:** stock WordPress 7.0. **Product version:** DMPress 1.0.0-beta.80 (pre-release).
+> Internally `$wp_version` remains `7.0` for plugin/API compatibility; `$dmpress_version` (`1.0.0-beta.80`) is the product version shown to users.
 
 ---
 
@@ -190,6 +190,8 @@ Appearance now contains **Themes** (plus **Menus** when a theme declares menu/wi
 ### Global Comments menu — removed
 The top-level **Comments** sidebar item was removed. Comments are now a per-post-type submenu (see [§2](#2-added-by-dmpress-us)).
 
+The admin bar's **Comments node** (`wp_admin_bar_comments_menu`, the speech-bubble icon and pending-comment count) is no longer registered either — it linked to the removed global `edit-comments.php` screen. The function stays defined for plugin compatibility; only its `admin_bar_menu` registration in `class-wp-admin-bar.php` is dropped.
+
 ### Core self-update — repointed to a DMPress channel
 The wordpress.org core channel stays permanently disabled: `wp_version_check()` returns immediately and is never scheduled, so no request is made to api.wordpress.org. This matters because `$wp_version` reports `7.0` for plugin compatibility, so wordpress.org treats DMPress as a stock install and would offer the next core release as an "upgrade" — **applying it would overwrite the fork with stock WordPress.** The **plugin and theme** update checks are untouched.
 
@@ -252,7 +254,7 @@ modified (2,174 of ~3,500 files at the time of writing were still byte-identical
 7.0) matched, and was skipped. The moment a later release first modified such a file, the
 update advanced the version number but **left the file's old contents in place**.
 
-Observed as: a site updated to `1.0.0-beta.79` still showed the pre-restore Reading screen,
+Observed as: a site updated to `1.0.0-beta.80` still showed the pre-restore Reading screen,
 because `wp-admin/options-reading.php` was byte-identical to stock 7.0 until the home-page
 selector was added — the update skipped it. (`wp-includes/version.php` is copied last and
 unconditionally, which is why the version number still advanced.)
@@ -286,7 +288,7 @@ the opportunistic check bypasses its throttle when the transient is missing, so 
 repopulates immediately instead of waiting up to 12 hours.
 
 ### Manual-update message — wrong product and wrong version
-The updates screen's fallback message read *"You can update from WordPress 7.0 to WordPress 1.0.0-beta.79 manually"* — naming WordPress instead of DMPress, and reporting `$wp_version` (frozen at 7.0 for plugin compatibility) as the installed version. It now names DMPress and reports `$dmpress_version` on both sides. The adjacent "about to install … in English (US)" warning had the same product-name error.
+The updates screen's fallback message read *"You can update from WordPress 7.0 to WordPress 1.0.0-beta.80 manually"* — naming WordPress instead of DMPress, and reporting `$wp_version` (frozen at 7.0 for plugin compatibility) as the installed version. It now names DMPress and reports `$dmpress_version` on both sides. The adjacent "about to install … in English (US)" warning had the same product-name error.
 
 Deliberately unchanged: the *"Compatibility with WordPress %s"* lines on the plugin/theme update lists. Those describe a plugin's declared compatibility with a **WordPress** version, which is exactly what the pinned `$wp_version` is for.
 
@@ -417,7 +419,7 @@ Navigation menus are restored, but grouped under **Admin → Content** rather th
 
 ### Dual-version scheme — `wp-includes/version.php`
 - `$wp_version = '7.0'` (compatibility: plugin `Requires at least`, wordpress.org APIs, WP-CLI). **Never** set this to the DMPress version — doing so breaks plugin installation.
-- `$dmpress_version = '1.0.0-beta.79'` (product version shown in generator tags, admin footer, dashboard).
+- `$dmpress_version = '1.0.0-beta.80'` (product version shown in generator tags, admin footer, dashboard).
 
 **Release process:** bump `$dmpress_version` on every published release/push — `1.0.0-beta.1` → `1.0.0-beta.2` → … → `1.0.0` — and record what changed in this file.
 
@@ -448,7 +450,7 @@ Splitting `post` into a Content-Type Builder entry made it report `_builtin => f
 - **Logo removed:** `assets/images/scf-logo.svg` drew the letters **S C F** as vector paths — invisible to a text search, but the most prominent SCF branding on screen. There is now no logo mark at all: the toolbar renders the product name as plain text (`.acf-logo` is a text link carrying `acf_get_setting( 'name' )`), the decorative mark on the database-upgrade notice was dropped, and the SVG was deleted. Note that SCF's own stylesheet hides the toolbar `<h2>` (`display: none`), which is why the heading alone was never visible — the wordmark goes through `.acf-logo` instead. In `acf-global.css`/`.min.css` the 72px logo gutter (`.acf-nav-wrap { padding-left }`) and the `position: absolute; top: 0; left: 0` it existed to support were both removed from the base rules, and an appended block sets the wordmark to 20px, 600 weight, white. Both the readable and minified builds are patched — **the `.min` is the one actually enqueued**.
 - **Presented as the Content-Type Builder, not as SCF:** the `name` setting (`secure-custom-fields.php`) is `Content-Type Builder`, which drives the `<h2>` heading on every builder screen. The hard-coded `SCF` group header in the "More" dropdown now echoes that same setting, the toolbar logo's `aria-label`/`alt` were reworded, and the two Tools tooltips that referenced "another SCF installation" / "an SCF JSON file" were rewritten. No SCF or ACF branding renders anywhere in the admin. **Attribution is unaffected** — it lives in `CREDITS.md`, and internal identifiers (`acf_*` functions, `acf-*` post types, the `secure-custom-fields` text domain, `ACF_*` constants) are deliberately untouched so SCF-aware plugins and existing field data keep working.
 - **Toolbar active state fixed:** DMPress's `submenu_file` filter (`wp-admin/menu.php`) pins `$submenu_file` to `edit.php?post_type=acf-field-group` on every builder screen so the left-hand **Admin → Content-Type Builder** item highlights. SCF's toolbar read that same global to pick its active tab, so **Field Groups** appeared active everywhere. `views/global/navigation.php` now derives the active tab from `$typenow` (list/edit/add-new screens of each builder post type) and `$plugin_page` (slug pages such as Tools) instead. This also made SCF's separate "Add New" special case redundant.
-- **Asset cache-busting:** SCF's version never moves while the fork patches its built CSS/JS in place, so browsers kept serving stale copies of DMPress's changes. `includes/assets.php` folds `$dmpress_version` into the registered version string (`?ver=6.9.1-dmp1.0.0-beta.79`), so every release bumps the URL.
+- **Asset cache-busting:** SCF's version never moves while the fork patches its built CSS/JS in place, so browsers kept serving stale copies of DMPress's changes. `includes/assets.php` folds `$dmpress_version` into the registered version string (`?ver=6.9.1-dmp1.0.0-beta.80`), so every release bumps the URL.
 - **"Beta Features" removed from the "More" menu:** `SCF_Admin_Beta_Features::admin_menu()` returns before `add_submenu_page()`, so the page is never registered — it drops out of the Content-Type Builder nav (which is built from `$submenu`) and a direct URL returns 403. The class, `scf_register_admin_beta_feature()` and `acf()->admin_beta_features` are left intact so nothing referencing them fatals. The only shipped beta feature (`editor_sidebar`) targets the block editor, which DMPress does not have.
 - **Copyright:** all original SCF/ACF and WordPress copyrights remain with their authors; DMPress ships under GPL as a derivative work.
 

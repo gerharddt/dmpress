@@ -664,7 +664,12 @@ class WP_Admin_Bar {
 
 		// Content-related.
 		if ( ! is_network_admin() && ! is_user_admin() ) {
-			add_action( 'admin_bar_menu', 'wp_admin_bar_comments_menu', 60 );
+			/*
+			 * DMPress: no admin-bar Comments node. Its bubble and pending count
+			 * link to the global edit-comments.php screen, which DMPress removed —
+			 * comments are moderated per content type. wp_admin_bar_comments_menu()
+			 * is left defined for plugin compatibility but is no longer registered.
+			 */
 			add_action( 'admin_bar_menu', 'wp_admin_bar_new_content_menu', 70 );
 		}
 		add_action( 'admin_bar_menu', 'wp_admin_bar_edit_menu', 80 );
