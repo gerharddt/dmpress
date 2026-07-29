@@ -3531,13 +3531,40 @@ function check_theme_switched() {
 function _wp_customize_include() {
 
 	$is_customize_admin_page = ( is_admin() && 'customize.php' === basename( $_SERVER['PHP_SELF'] ) );
-	$should_include          = (
-		$is_customize_admin_page
-		||
+
+	$has_front_trigger = (
 		( isset( $_REQUEST['wp_customize'] ) && 'on' === $_REQUEST['wp_customize'] )
 		||
 		( ! empty( $_GET['customize_changeset_uuid'] ) || ! empty( $_POST['customize_changeset_uuid'] ) )
 	);
+
+	/*
+	 * DMPress: defense-in-depth for the Customizer bootstrap.
+	 *
+	 * Upstream loads WP_Customize_Manager for any WordPress-booting request that
+	 * carries `wp_customize=on` or a `customize_changeset_uuid` — front-end, REST
+	 * and cron included — with no authentication. That unauthenticated bootstrap
+	 * is the step the wp2shell RCE chain abuses: it forges a customize_changeset
+	 * row carrying an administrator's user_id, then a request bearing that UUID
+	 * makes the manager process the changeset in the admin's context.
+	 *
+	 * The admin Customizer page (customize.php) already gates itself on the
+	 * 'customize' capability; DMPress requires the same capability before honouring
+	 * the front-end/AJAX triggers, so only a user who could legitimately open the
+	 * Customizer can bootstrap it. Legitimate flows are unaffected: the admin page
+	 * loads via $is_customize_admin_page, and the authenticated customize_save AJAX
+	 * request (which sends wp_customize=on) still passes the capability check.
+	 * pluggable.php is loaded before the 'plugins_loaded' hook that fires this, so
+	 * current_user_can() is available here.
+	 *
+	 * This sits behind the CVE-2026-60137 / CVE-2026-63030 fixes that already stop
+	 * an attacker from forging the changeset in the first place.
+	 */
+	if ( $has_front_trigger && ! current_user_can( 'customize' ) ) {
+		return;
+	}
+
+	$should_include = ( $is_customize_admin_page || $has_front_trigger );
 
 	if ( ! $should_include ) {
 		return;
