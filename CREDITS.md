@@ -16,7 +16,7 @@ Modifications made by DMPress relative to WordPress 7.0 are documented in
 [`DMPRESS-CHANGES.md`](DMPRESS-CHANGES.md), which serves as the record of changes
 required by GPL-2.0 §2(a).
 
-DMPress fork © 2026 Ninjas For Hire. Licensed GPL-2.0-or-later.
+DMPress fork © 2026 the DMPress project and contributors. Licensed GPL-2.0-or-later.
 
 **No warranty.** DMPress is provided "AS IS", without warranty of any kind, and
 neither the authors nor any contributor is liable for any loss or harm arising
