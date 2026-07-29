@@ -85,10 +85,6 @@ function dmpress_dashboard_at_a_glance() {
 			$label
 		);
 
-		$icon = ( is_string( $type->menu_icon ) && str_starts_with( $type->menu_icon, 'dashicons-' ) )
-			? $type->menu_icon
-			: 'dashicons-admin-post';
-
 		$url = add_query_arg(
 			array(
 				'post_status' => 'publish',
@@ -97,10 +93,24 @@ function dmpress_dashboard_at_a_glance() {
 			admin_url( 'edit.php' )
 		);
 
+		/*
+		 * Let the dashboard's own CSS draw the icon via `li a:before`. Reuse the
+		 * native icon classes for post/page; any other content type falls back to
+		 * the stylesheet's generic custom-type icon. Do NOT also print an inline
+		 * dashicon — the `:before` already supplies one, and doing both renders a
+		 * duplicate (a stray marker next to the real icon).
+		 */
+		$class = '';
+		if ( 'post' === $type->name ) {
+			$class = 'post-count';
+		} elseif ( 'page' === $type->name ) {
+			$class = 'page-count';
+		}
+
 		printf(
-			'<li><a href="%1$s"><span class="dashicons %2$s" style="vertical-align:text-bottom;margin-right:4px;" aria-hidden="true"></span>%3$s</a></li>',
+			'<li class="%1$s"><a href="%2$s">%3$s</a></li>',
+			esc_attr( $class ),
 			esc_url( $url ),
-			esc_attr( $icon ),
 			esc_html( $text )
 		);
 	}
