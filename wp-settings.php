@@ -474,6 +474,7 @@ require ABSPATH . WPINC . '/scf/secure-custom-fields.php';
 require ABSPATH . WPINC . '/dmpress-content-types.php';
 require ABSPATH . WPINC . '/dmpress-front.php';
 require ABSPATH . WPINC . '/dmpress-update.php';
+require ABSPATH . WPINC . '/dmpress-dashboard.php';
 
 // Load active plugins.
 foreach ( wp_get_active_and_valid_plugins() as $plugin ) {
