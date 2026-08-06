@@ -10,8 +10,8 @@ This document logs everything that has been changed relative to stock WordPress 
 5. [Upstream WordPress fixes ported](#5-upstream-wordpress-fixes-ported)
 6. [Known consequences & decisions](#6-known-consequences--decisions)
 
-> **Baseline:** stock WordPress 7.0. **Product version:** DMPress 1.0.0-beta.82 (pre-release).
-> Internally `$wp_version` remains `7.0` for plugin/API compatibility; `$dmpress_version` (`1.0.0-beta.82`) is the product version shown to users.
+> **Baseline:** stock WordPress 7.0. **Product version:** DMPress 1.0.0-beta.83 (pre-release).
+> Internally `$wp_version` remains `7.0` for plugin/API compatibility; `$dmpress_version` (`1.0.0-beta.83`) is the product version shown to users.
 
 ---
 
@@ -254,7 +254,7 @@ modified (2,174 of ~3,500 files at the time of writing were still byte-identical
 7.0) matched, and was skipped. The moment a later release first modified such a file, the
 update advanced the version number but **left the file's old contents in place**.
 
-Observed as: a site updated to `1.0.0-beta.82` still showed the pre-restore Reading screen,
+Observed as: a site updated to `1.0.0-beta.83` still showed the pre-restore Reading screen,
 because `wp-admin/options-reading.php` was byte-identical to stock 7.0 until the home-page
 selector was added — the update skipped it. (`wp-includes/version.php` is copied last and
 unconditionally, which is why the version number still advanced.)
@@ -288,7 +288,7 @@ the opportunistic check bypasses its throttle when the transient is missing, so 
 repopulates immediately instead of waiting up to 12 hours.
 
 ### Manual-update message — wrong product and wrong version
-The updates screen's fallback message read *"You can update from WordPress 7.0 to WordPress 1.0.0-beta.82 manually"* — naming WordPress instead of DMPress, and reporting `$wp_version` (frozen at 7.0 for plugin compatibility) as the installed version. It now names DMPress and reports `$dmpress_version` on both sides. The adjacent "about to install … in English (US)" warning had the same product-name error.
+The updates screen's fallback message read *"You can update from WordPress 7.0 to WordPress 1.0.0-beta.83 manually"* — naming WordPress instead of DMPress, and reporting `$wp_version` (frozen at 7.0 for plugin compatibility) as the installed version. It now names DMPress and reports `$dmpress_version` on both sides. The adjacent "about to install … in English (US)" warning had the same product-name error.
 
 Deliberately unchanged: the *"Compatibility with WordPress %s"* lines on the plugin/theme update lists. Those describe a plugin's declared compatibility with a **WordPress** version, which is exactly what the pinned `$wp_version` is for.
 
@@ -419,7 +419,7 @@ Navigation menus are restored, but grouped under **Admin → Content** rather th
 
 ### Dual-version scheme — `wp-includes/version.php`
 - `$wp_version = '7.0'` (compatibility: plugin `Requires at least`, wordpress.org APIs, WP-CLI). **Never** set this to the DMPress version — doing so breaks plugin installation.
-- `$dmpress_version = '1.0.0-beta.82'` (product version shown in generator tags, admin footer, dashboard).
+- `$dmpress_version = '1.0.0-beta.83'` (product version shown in generator tags, admin footer, dashboard).
 
 **Release process:** bump `$dmpress_version` on every published release/push — `1.0.0-beta.1` → `1.0.0-beta.2` → … → `1.0.0` — and record what changed in this file.
 
@@ -450,7 +450,7 @@ Splitting `post` into a Content-Type Builder entry made it report `_builtin => f
 - **Logo removed:** `assets/images/scf-logo.svg` drew the letters **S C F** as vector paths — invisible to a text search, but the most prominent SCF branding on screen. There is now no logo mark at all: the toolbar renders the product name as plain text (`.acf-logo` is a text link carrying `acf_get_setting( 'name' )`), the decorative mark on the database-upgrade notice was dropped, and the SVG was deleted. Note that SCF's own stylesheet hides the toolbar `<h2>` (`display: none`), which is why the heading alone was never visible — the wordmark goes through `.acf-logo` instead. In `acf-global.css`/`.min.css` the 72px logo gutter (`.acf-nav-wrap { padding-left }`) and the `position: absolute; top: 0; left: 0` it existed to support were both removed from the base rules, and an appended block sets the wordmark to 20px, 600 weight, white. Both the readable and minified builds are patched — **the `.min` is the one actually enqueued**.
 - **Presented as the Content-Type Builder, not as SCF:** the `name` setting (`secure-custom-fields.php`) is `Content-Type Builder`, which drives the `<h2>` heading on every builder screen. The hard-coded `SCF` group header in the "More" dropdown now echoes that same setting, the toolbar logo's `aria-label`/`alt` were reworded, and the two Tools tooltips that referenced "another SCF installation" / "an SCF JSON file" were rewritten. No SCF or ACF branding renders anywhere in the admin. **Attribution is unaffected** — it lives in `CREDITS.md`, and internal identifiers (`acf_*` functions, `acf-*` post types, the `secure-custom-fields` text domain, `ACF_*` constants) are deliberately untouched so SCF-aware plugins and existing field data keep working.
 - **Toolbar active state fixed:** DMPress's `submenu_file` filter (`wp-admin/menu.php`) pins `$submenu_file` to `edit.php?post_type=acf-field-group` on every builder screen so the left-hand **Admin → Content-Type Builder** item highlights. SCF's toolbar read that same global to pick its active tab, so **Field Groups** appeared active everywhere. `views/global/navigation.php` now derives the active tab from `$typenow` (list/edit/add-new screens of each builder post type) and `$plugin_page` (slug pages such as Tools) instead. This also made SCF's separate "Add New" special case redundant.
-- **Asset cache-busting:** SCF's version never moves while the fork patches its built CSS/JS in place, so browsers kept serving stale copies of DMPress's changes. `includes/assets.php` folds `$dmpress_version` into the registered version string (`?ver=6.9.1-dmp1.0.0-beta.82`), so every release bumps the URL.
+- **Asset cache-busting:** SCF's version never moves while the fork patches its built CSS/JS in place, so browsers kept serving stale copies of DMPress's changes. `includes/assets.php` folds `$dmpress_version` into the registered version string (`?ver=6.9.1-dmp1.0.0-beta.83`), so every release bumps the URL.
 - **"Beta Features" removed from the "More" menu:** `SCF_Admin_Beta_Features::admin_menu()` returns before `add_submenu_page()`, so the page is never registered — it drops out of the Content-Type Builder nav (which is built from `$submenu`) and a direct URL returns 403. The class, `scf_register_admin_beta_feature()` and `acf()->admin_beta_features` are left intact so nothing referencing them fatals. The only shipped beta feature (`editor_sidebar`) targets the block editor, which DMPress does not have.
 - **Copyright:** all original SCF/ACF and WordPress copyrights remain with their authors; DMPress ships under GPL as a derivative work.
 
@@ -506,14 +506,20 @@ The 7.0.3 security release fixed roughly a dozen issues; their relevance here va
 - **`kses.php` — safe-CSS filter bypass (reported by Anthropic).** `safecss_filter_attr()` now rejects a CSS part when the recursive `var()`/`calc()` stripping `preg_replace()` returns `null` (PCRE backtracking limit), and tests the dangerous-character `preg_match()` strictly against `0`. Without the guard a crafted value slipped through: `null` coerced to an empty string, so the safety check "passed" and the original declaration was emitted. *Security.* Verified: benign CSS and `calc()` still pass; the null path now rejects.
 - **`http.php` — SSRF to non-routable ranges.** `wp_http_validate_url()` now also rejects link-local (`169.254/16`, including the `169.254.169.254` cloud-metadata endpoint), CGNAT (`100.64/10`), the TEST-NET / benchmark ranges, and multicast/reserved space — previously only loopback and the RFC 1918 private ranges were blocked. This matters here because the update channel and any `wp_remote_*()` caller rely on this guard. *Security.* Verified: those ranges reject; public hosts still resolve.
 - **`wp-login.php` — pre-auth reflected XSS on the login screen (CVE-2026-64638 / GHSA-52p2-r8wf-jcrf).** The `checkemail=confirm` / `checkemail=registered` notices embedded `wp_login_url()` in an `<a href>` unescaped; 7.0.3 wraps both in `esc_url()`. Ported by diffing DMPress's `wp-login.php` against the stock 7.0.3 file: after the fix the two are identical apart from DMPress's intentional login branding. *Security.*
+- **`wp-includes/user.php` — the main login-screen reflected-XSS vector (CVE-2026-64638) + registration escaping.** `wp_authenticate_username_password()` and `wp_authenticate_email_password()` echoed the submitted **username/email** into the login error message unescaped; both are now `esc_html()`-wrapped (this, more than the `wp-login.php` change above, is the reflected XSS). `register_new_user()` also gained `esc_url()` on the login link and `esc_attr()` on the admin email. *Security.*
+- **`wp-includes/user.php` — admin-email-change confirmation bypass.** `send_confirmation_on_profile_email()` now reads `$user_id` from the `personal_options_update` action, rejects when there is no authenticated user (`0 === $current_user->ID`), and resets `$_POST['email']` on its error paths. *Security.*
+- **`wp-includes/canonical.php` — post-slug enumeration.** The canonical-redirect query built its `post_type IN (…)` clause from the raw `post_type` query var rather than the already-computed, publicly-viewable-filtered `$post_types`, letting non-viewable types be probed. Now uses `$post_types`. *Security.*
+- **`wp-admin/js/inline-edit-post.js` (+ `.min.js`) — Quick Edit stored XSS.** The author drop-down built its `<option>` by string-concatenating the author display name into HTML; now uses `new Option( text, value )` (properties, no HTML parsing). Quick Edit is live in DMPress (classic editor + `edit.php` list tables), so this applies; both the source and the minified file that production loads were updated. *Security.*
+- **`wp-includes/js/wp-emoji-loader.js` (+ `.min.js`) — emoji-settings DOM-clobbering XSS.** The loader read `.textContent` from any element with id `wp-emoji-settings`; it now requires an actual `HTMLScriptElement` before parsing. *Security.*
+- **`wp-includes/class-wp-query.php` — notes excluded from comment feeds.** The comment-feed queries now exclude `comment_type = 'note'`. Ported for parity; effectively a no-op in DMPress, which serves no feeds. *Defense-in-depth.*
 
 **Not applicable (removed in DMPress):**
 - Stored XSS in the **Post Content** and **Post Date** blocks, and information disclosure in the **Latest Comments** block — those block files were deleted with the block editor.
-- **Disclosure of notes in comment feeds** — DMPress serves no feeds (the front end is headless).
 
-**Outstanding — awaiting the exact upstream changeset before porting:**
-- Stored XSS in the **Emoji settings element** and in **Quick Edit**; the **admin-email-confirmation bypass**; and **post-slug enumeration** — pending their precise diffs.
-- **Multisite user-registration privilege escalation** — low relevance (DMPress targets single-site); tracked, not yet assessed.
+**Remaining:**
+- **Multisite user-registration privilege escalation** — not reachable on a single-site install (`is_multisite()` is false), which is DMPress's target, so it is left unported; revisit if multisite is ever supported.
+
+Every non-block, single-site-reachable 7.0.3 security fix is ported. Each touched file was diffed against the stock 7.0.3 source until only DMPress's intentional branding remained.
 
 Cosmetic UI-only changes (the WP 7.0.1 "compact button" CSS refresh) and Gutenberg changes were intentionally **not** ported.
 
