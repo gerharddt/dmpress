@@ -595,9 +595,30 @@ function wp_http_validate_url( $url ) {
 		}
 		if ( $ip ) {
 			$parts = array_map( 'intval', explode( '.', $ip ) );
+			/*
+			 * DMPress: ported from WordPress 7.0.3 (SSRF to non-routable ranges).
+			 *
+			 * The original list rejected only loopback and the RFC 1918 private
+			 * ranges, so a host resolving into link-local space — most dangerously
+			 * 169.254.169.254, the cloud instance-metadata endpoint — passed
+			 * validation and could be reached via the HTTP API. The list now also
+			 * covers link-local, CGNAT, the documentation/benchmark test nets, and
+			 * multicast/reserved space. This matters here because the update
+			 * channel and any plugin using wp_remote_*() rely on this guard.
+			 */
 			if ( 127 === $parts[0] || 10 === $parts[0] || 0 === $parts[0]
 				|| ( 172 === $parts[0] && 16 <= $parts[1] && 31 >= $parts[1] )
 				|| ( 192 === $parts[0] && 168 === $parts[1] )
+				|| ( 192 === $parts[0] && 0 === $parts[1] && 0 === $parts[2] )
+				|| ( 192 === $parts[0] && 0 === $parts[1] && 2 === $parts[2] )
+				|| ( 192 === $parts[0] && 88 === $parts[1] && 99 === $parts[2] )
+				|| ( 198 === $parts[0] && 51 === $parts[1] && 100 === $parts[2] )
+				|| ( 203 === $parts[0] && 0 === $parts[1] && 113 === $parts[2] )
+				|| ( 169 === $parts[0] && 254 === $parts[1] )
+				|| ( 100 === $parts[0] && 64 <= $parts[1] && 127 >= $parts[1] )
+				|| ( 198 === $parts[0] && 18 <= $parts[1] && 19 >= $parts[1] )
+				|| ( 224 <= $parts[0] && 239 >= $parts[0] )
+				|| 240 <= $parts[0]
 			) {
 				// If host appears local, reject unless specifically allowed.
 				/**

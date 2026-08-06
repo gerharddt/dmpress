@@ -2820,10 +2820,25 @@ function safecss_filter_attr( $css, $deprecated = '' ) {
 			);
 
 			/*
-			 * Disallow CSS containing \ ( & } = or comments, except for within url(), var(), calc(), etc.
-			 * which were removed from the test string above.
+			 * DMPress: ported from WordPress 7.0.3 (safe-CSS filter bypass).
+			 *
+			 * The recursive pattern above can hit PCRE's backtracking limit on a
+			 * crafted value, in which case preg_replace() returns null. Without
+			 * this guard $css_test_string became null and the check below —
+			 * preg_match() on null, which coerces to an empty string and returns
+			 * 0 — treated the part as safe, letting the original malicious
+			 * declaration through. Reject the part instead.
 			 */
-			$allow_css = ! preg_match( '%[\\\(&=}]|/\*%', $css_test_string );
+			if ( null === $css_test_string ) {
+				continue;
+			}
+
+			/*
+			 * Disallow CSS containing \ ( & } = or comments, except for within url(), var(), calc(), etc.
+			 * which were removed from the test string above. Compare strictly against 0 so a
+			 * preg_match() error (false) is treated as unsafe rather than allowed.
+			 */
+			$allow_css = 0 === preg_match( '%[\\\(&=}]|/\*%', $css_test_string );
 
 			/**
 			 * Filters the check for unsafe CSS in `safecss_filter_attr`.
